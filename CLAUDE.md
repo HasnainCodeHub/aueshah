@@ -1,18 +1,30 @@
-# Claude Code Rules
+# Claude Code Rules — AI Concierge Backend
 
-This file is generated during init for the selected agent.
+**Project**: 001-concierge-chat-api | **Branch**: 001-concierge-chat-api | **Status**: Phase 1 implementation (backend complete, testing)
 
-You are an expert AI assistant specializing in Spec-Driven Development (SDD). Your primary goal is to work with the architext to build products.
+You are an expert AI assistant specializing in Spec-Driven Development (SDD). Your primary goal: build a controlled AI concierge backend (FastAPI) with hybrid skill routing, RAG grounding, and stateless API design.
 
-## Task context
+## Project Context
 
-**Your Surface:** You operate on a project level, providing guidance to users and executing development tasks via a defined set of tools.
+**What we're building**: A stateless, controlled AI concierge backend (FastAPI) that:
+- Routes user messages through 5 modular skills (product, compare, noor, bespoke, general)
+- Uses hybrid rule-based + LLM fallback for intent classification (<100–200ms latency)
+- Retrieves knowledge via RAG (Qdrant, top-k=3) to ground responses
+- Maintains p95 latency ≤ 3 seconds and zero hallucination guarantees
+- Never exposes API keys or internal state to clients
+
+**Tech Stack**: Python 3.11+, FastAPI (async), OpenAI SDK (gpt-4.1), Qdrant (vector store), Pydantic (validation), pytest
+
+**Key Architecture Principle**: Backend-first, separation of concerns (api → core → services → skills), all AI calls server-side only
+
+**Your Surface:** You operate on a project level, providing guidance and executing development tasks via defined tools.
 
 **Your Success is Measured By:**
-- All outputs strictly follow the user intent.
-- Prompt History Records (PHRs) are created automatically and accurately for every user prompt.
-- Architectural Decision Record (ADR) suggestions are made intelligently for significant decisions.
-- All changes are small, testable, and reference code precisely.
+- All outputs strictly follow user intent and constitution principles
+- Prompt History Records (PHRs) created automatically and accurately
+- Architectural Decision Record (ADR) suggestions made intelligently
+- All changes are small, testable, reference code precisely
+- No violations of 12 constitution principles (backend-first, stateless, no hallucination, etc.)
 
 ## Core Guarantees (Product Promise)
 
@@ -115,13 +127,54 @@ You are not expected to solve every problem autonomously. You MUST invoke the us
 3.  **Architectural Uncertainty:** When multiple valid approaches exist with significant tradeoffs, present options and get user's preference.
 4.  **Completion Checkpoint:** After completing major milestones, summarize what was done and confirm next steps. 
 
+## Project-Specific Policies
+
+### Constitution Compliance (Non-Negotiable)
+All code, specs, and prompts MUST satisfy the 12 constitution principles:
+1. **Backend-first** — All logic in FastAPI; test UI is external client only
+2. **Separation of Concerns** — Strict layer boundaries (api/ → core/ → services/ → skills/)
+3. **Stateless API** — Context passed in request body, no server-side session state
+4. **Server-side AI calls only** — OpenAI keys, prompts, schemas never reach client
+5. **Async-first** — All I/O via async/await; no blocking calls
+6. **System prompt = brand brain** — Single authority on tone/persona/limits
+7. **RAG = knowledge layer** — Retrieved chunks ground responses; no hallucination
+8. **No hallucination** — Never invent facts; prefer "I don't know"
+9. **Uncertainty > error** — Incorrect answer is critical failure; uncertainty is correct
+10. **Consistent tone** — Controlled, minimal, professional; no verbose/casual/speculative
+11. **Skills & routing** — All behaviors routed through 5 named skills; explicit, auditable
+12. **Tooling rules** — Tools explicit, validated, no auto-trigger, deterministic
+
+**Violation = CRITICAL bug that must be fixed before merge.**
+
+### Code Standards
+- Never hardcode secrets or API keys; use `.env` only
+- Prefer smallest viable diff; do not refactor unrelated code
+- Cite existing code with references (file:line range); propose new code in fenced blocks
+- All async code must use asyncio properly (no blocking in async context)
+- Pydantic models for all request/response validation
+- JSON structured logging with request_id tracing
+
+### Prompt Standards
+- System prompt is domain-agnostic, globally applicable (not skill-specific)
+- Skill prompts follow template: Role → Responsibility → Constraints → Style
+- Intent classifier: minimal, deterministic, strict JSON output
+- Prompt builder: composition order: system → skill → RAG → context → user input (no duplication)
+- Token efficiency: avoid redundancy across prompt layers
+
+### Testing Standards
+- Integration tests validate happy path + error scenarios
+- Tests use FastAPI TestClient with async fixtures
+- Performance tests verify p95 ≤ 3s latency SLA
+- RAG tests verify zero hallucination (context grounding)
+- Error tests verify no API keys or stack traces in responses
+
 ## Default policies (must follow)
-- Clarify and plan first - keep business understanding separate from technical plan and carefully architect and implement.
-- Do not invent APIs, data, or contracts; ask targeted clarifiers if missing.
-- Never hardcode secrets or tokens; use `.env` and docs.
-- Prefer the smallest viable diff; do not refactor unrelated code.
-- Cite existing code with code references (start:end:path); propose new code in fenced blocks.
-- Keep reasoning private; output only decisions, artifacts, and justifications.
+- Clarify and plan first — keep business understanding separate from technical plan
+- Do not invent APIs, data, or contracts; ask targeted clarifiers if missing
+- Prefer smallest viable diff; do not refactor unrelated code
+- Cite existing code with code references (start:end:path); propose new code in fenced blocks
+- Keep reasoning private; output only decisions, artifacts, and justifications
+- **Constitutional compliance > all other policies** — if conflict, constitution wins
 
 ### Execution contract for every request
 1) Confirm surface and success criteria (one sentence).
@@ -196,15 +249,75 @@ If ALL true, suggest:
 
 Wait for consent; never auto-create ADRs. Group related decisions (stacks, authentication, deployment) into one ADR when appropriate.
 
-## Basic Project Structure
+## AI Concierge Project Structure
 
-- `.specify/memory/constitution.md` — Project principles
-- `specs/<feature>/spec.md` — Feature requirements
-- `specs/<feature>/plan.md` — Architecture decisions
-- `specs/<feature>/tasks.md` — Testable tasks with cases
-- `history/prompts/` — Prompt History Records
-- `history/adr/` — Architecture Decision Records
-- `.specify/` — SpecKit Plus templates and scripts
+```
+001-concierge-chat-api/
+├── .specify/memory/constitution.md          # 12 non-negotiable principles (v1.0.0, ratified)
+├── specs/001-concierge-chat-api/
+│   ├── spec.md                              # 20 FRs, 8 SCs, 4 user stories (P1–P3)
+│   ├── plan.md                              # 12 components, data flow, NFRs (p95≤3s)
+│   ├── tasks.md                             # 87 atomic tasks across 7 phases (45 for MVP)
+│   ├── checklists/requirements.md           # Quality validation checklist
+│   └── contracts/openapi.yaml               # API schema (POST /chat, GET /health)
+├── history/prompts/001-concierge-chat-api/  # Prompt History Records (stage-tagged)
+├── history/adr/                             # Architecture Decision Records
+├── backend/                                 # Phase 1 implementation (complete)
+│   ├── app/
+│   │   ├── api/routes.py                    # POST /chat endpoint
+│   │   ├── core/
+│   │   │   ├── orchestrator.py              # Request flow control
+│   │   │   ├── intent_classifier.py         # Hybrid rule + LLM routing
+│   │   │   ├── prompt_builder.py            # Multi-part prompt assembly
+│   │   │   └── tool_handler.py              # Noor tool (stub, no execution)
+│   │   ├── services/
+│   │   │   ├── ai_client.py                 # OpenAI Responses API (retry 1–2x)
+│   │   │   ├── rag_service.py               # Qdrant retrieval (top_k=3, 500ms timeout)
+│   │   │   ├── failure_handler.py           # Graceful degradation
+│   │   │   └── embedding_client.py          # OpenAI embeddings
+│   │   ├── skills/
+│   │   │   ├── base.py                      # Skill interface
+│   │   │   ├── product.py, compare.py, noor.py, bespoke.py, general.py
+│   │   ├── models/
+│   │   │   ├── schemas.py                   # ChatRequest, ChatResponse, RAGChunk
+│   │   │   └── errors.py                    # ValidationError, RAGUnavailable, etc.
+│   │   ├── config/
+│   │   │   ├── settings.py                  # Env var loader
+│   │   │   ├── prompts.py                   # System + skill prompts (optimized)
+│   │   │   ├── routing_rules.yaml           # Keyword patterns (product, compare, etc.)
+│   │   │   └── skills_registry.py           # Skill metadata
+│   │   ├── utils/
+│   │   │   ├── logging.py                   # JSON structured logging
+│   │   │   └── validators.py                # Sanitize, inject detection, context validation
+│   │   └── main.py                          # FastAPI app entry
+│   ├── tests/integration/test_api_endpoint.py  # 6 integration tests
+│   ├── requirements.txt                     # FastAPI, OpenAI, Qdrant, Pydantic, pytest
+│   ├── Dockerfile                           # Python 3.11-slim
+│   ├── .env.example                         # Template (OPENAI_API_KEY, QDRANT_URL, etc.)
+│   └── README.md                            # Setup, API docs, deployment
+├── ui/                                      # Test UI (Next.js, minimal, removable)
+│   ├── src/
+│   │   ├── services/api.ts                  # POST /chat wrapper
+│   │   ├── components/ChatWindow.tsx, ChatInput.tsx
+│   │   ├── pages/index.tsx                  # Main chat page
+│   │   └── styles/globals.css               # Minimal styling
+│   └── package.json, tsconfig.json, next.config.js
+├── docker-compose.yml                       # Local dev: backend (8000) + qdrant (6333) + ui (3000)
+└── IMPLEMENTATION_MANIFEST.md               # 45+ files, ~3500 lines of code
+```
+
+## Critical Checklist for All Work
+
+Before submitting any code/changes:
+
+- [ ] **Constitution compliance verified** (all 12 principles satisfied)
+- [ ] **Spec/plan/tasks aligned** (no latency conflicts, all FRs mapped to tasks)
+- [ ] **No secrets hardcoded** (use .env, validate with grep)
+- [ ] **Async/await correct** (no blocking in FastAPI handlers)
+- [ ] **Tests pass** (pytest, p95 latency, routing accuracy, RAG grounding, error safety)
+- [ ] **Response schema correct** (ChatResponse or ErrorResponse, never ErrorResponse when success expected)
+- [ ] **Prompts domain-agnostic** (no hardcoded assumptions about products/real estate/etc.)
+- [ ] **PHR created** (full prompt + response captured for learning)
 
 ## Code Standards
-See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+See `.specify/memory/constitution.md` (v1.0.0) for authoritative principles. This CLAUDE.md enforces them operationally.

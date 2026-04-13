@@ -1,0 +1,67 @@
+skills:
+  product:
+    keywords:
+      - "ring"
+      - "bracelet"
+      - "earring"
+      - "earrings"
+      - "pendant"
+      - "necklace"
+      - "tiara"
+      - "waist adornment"
+      - "collection"
+      - "empire allegiance"
+      - "velvet line"
+      - "luxura"
+      - "diamond"
+      - "gold"
+      - "karat"
+      - "gemstone"
+      - "piece"
+      - "features"
+      - "specifications"
+      - "details"
+      - "tell me about"
+    patterns:
+      - "tell.*?about.*?(?:ring|bracelet|earring|pendant|necklace|tiara|collection|piece)"
+      - "(?:details|specs|features).*?(?:ring|bracelet|earring|pendant|necklace|tiara|piece)"
+
+  compare:
+    keywords:
+      - "compare"
+      - "difference"
+      - "versus"
+      - "vs"
+      - "which"
+      - "better"
+      - "differ"
+    patterns:
+      - "compare.*?(?:and|vs|versus)"
+      - "(?:difference|differ).*?between"
+
+  noor:
+    keywords:
+      - "noor"
+      - "noor collection"
+    patterns:
+      - "\\bnoor\\b"
+
+  bespoke:
+    keywords:
+      - "custom"
+      - "bespoke"
+      - "made to order"
+      - "one-of-a-kind"
+      - "one of a kind"
+      - "tailor"
+      - "personalize"
+      - "personalized"
+      - "design my own"
+      - "private concierge"
+    patterns:
+      - "(?:custom|bespoke).*?(?:design|piece|order|request)"
+      - "design.*?(?:my own|something)"
+
+  general:
+    keywords: []
+    patterns: []
