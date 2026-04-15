@@ -21,6 +21,12 @@ class InjectionDetected(ChatException):
         super().__init__(message, code=400)
 
 
+class OffTopic(ChatException):
+    """Client asked something outside Aueshah's concierge scope."""
+    def __init__(self, message: str = "Out of scope"):
+        super().__init__(message, code=200)
+
+
 class RAGUnavailable(ChatException):
     """Vector store/RAG service is unavailable."""
     def __init__(self, message: str = "RAG service unavailable"):

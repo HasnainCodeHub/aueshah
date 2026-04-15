@@ -1,30 +1,36 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
 }
 
+const autoGrow = (el: HTMLTextAreaElement) => {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 140) + "px";
+};
+
 export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled }) => {
   const [input, setInput] = useState("");
   const taRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    const el = taRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 140) + "px";
-  }, [input]);
 
   const submit = () => {
     const v = input.trim();
     if (!v || disabled) return;
     onSend(v);
     setInput("");
+    if (taRef.current) {
+      taRef.current.style.height = "auto";
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    autoGrow(e.target);
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       submit();
     }
@@ -41,12 +47,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled }) => {
       <textarea
         ref={taRef}
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={handleChange}
         onKeyDown={handleKey}
         placeholder="Ask about collections, bespoke design, appointments…"
         disabled={disabled}
         className="chat-input"
         rows={1}
+        cols={1}
+        wrap="soft"
       />
       <button
         type="submit"

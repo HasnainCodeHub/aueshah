@@ -50,17 +50,27 @@ class RAGService:
         top_k = min(top_k, 3)  # Enforce max 3 chunks
 
         try:
-            # Timeout for RAG retrieval
             async with asyncio.timeout(settings.rag_timeout_seconds):
-                # For Phase 1, return empty list (actual Qdrant integration pending)
-                # In production, this would query Qdrant:
-                # results = await self.client.search(
-                #     collection_name="knowledge",
-                #     query_vector=query_embedding,
-                #     limit=top_k,
-                # )
-                logger.info("RAG: Mock retrieval (no vector store configured yet)")
-                return []
+                result = await self.client.query_points(
+                    collection_name=settings.qdrant_collection,
+                    query=query_embedding,
+                    limit=top_k,
+                    with_payload=True,
+                )
+                chunks: List[RAGChunk] = []
+                for point in result.points:
+                    payload = point.payload or {}
+                    content = payload.get("content")
+                    if not content:
+                        continue
+                    chunks.append(
+                        RAGChunk(
+                            content=content,
+                            source=payload.get("source"),
+                            relevance_score=float(max(0.0, min(1.0, point.score or 0.0))),
+                        )
+                    )
+                return chunks
 
         except asyncio.TimeoutError:
             logger.warning(f"RAG timeout after {settings.rag_timeout_seconds}s")

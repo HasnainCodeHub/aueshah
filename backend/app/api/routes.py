@@ -3,9 +3,10 @@ import logging
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
+from app.config.prompts import OFF_TOPIC_RESPONSE
 from app.models.schemas import ChatRequest, ChatResponse, ErrorResponse
-from app.models.errors import ValidationError, InjectionDetected
-from app.utils.validators import sanitize_input, detect_prompt_injection, validate_context
+from app.models.errors import ValidationError, InjectionDetected, OffTopic
+from app.utils.validators import sanitize_input, detect_prompt_injection, detect_off_topic
 from app.core.orchestrator import Orchestrator
 from app.services.failure_handler import FailureHandler
 
@@ -53,13 +54,16 @@ async def chat(request: ChatRequest, orchestrator: Orchestrator = Depends(get_or
             logger.warning("Prompt injection detected")
             raise InjectionDetected("Invalid input detected")
 
-        # Step 3: Validate context
-        context = validate_context(request.context)
+        # Step 3: Fast off-topic check — warm in-character redirect, not an error
+        if detect_off_topic(message):
+            logger.info("Off-topic request — returning warm redirect")
+            return ChatResponse(
+                reply=OFF_TOPIC_RESPONSE,
+                metadata={"intent": "off_topic", "skill": "general", "routing_source": "guardrail"},
+            )
 
-        # Step 4: Create validated request
-        validated_request = ChatRequest(message=message, context=context)
-
-        # Step 5: Orchestrate request
+        # Step 4: Orchestrate request (context already validated by Pydantic schema)
+        validated_request = ChatRequest(message=message, context=request.context)
         response = await orchestrator.handle_chat(validated_request)
 
         return response
@@ -71,6 +75,13 @@ async def chat(request: ChatRequest, orchestrator: Orchestrator = Depends(get_or
     except InjectionDetected as e:
         logger.warning(f"Injection detected: {e.message}")
         return JSONResponse(status_code=400, content=ErrorResponse(error=e.message, code=400).model_dump())
+
+    except OffTopic:
+        logger.info("Off-topic guardrail tripped in Agents SDK — returning warm redirect")
+        return ChatResponse(
+            reply=OFF_TOPIC_RESPONSE,
+            metadata={"intent": "off_topic", "skill": "general", "routing_source": "guardrail"},
+        )
 
     except Exception as e:
         reply, code = FailureHandler.handle_exception(e)

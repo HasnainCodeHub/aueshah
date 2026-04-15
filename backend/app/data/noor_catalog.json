@@ -1,0 +1,76 @@
+{
+  "_source": "Scraped from https://aueshah.com/ — official Noor Collection product pages.",
+  "_note": "Limited edition: 143 pieces worldwide per SKU. Not publicly listed; private viewing by appointment only. All pieces are 925 sterling silver with 18-carat gold plating, zircon-set, Mughal jali-inspired.",
+  "pieces": [
+    {
+      "id": "noor-ring",
+      "name": "The Noor Ring",
+      "url": "https://aueshah.com/product/the-noor-ring/",
+      "category": "ring",
+      "metal_tone": "warm",
+      "metal": "925 sterling silver with 18k gold plating",
+      "stones": "pear-shaped zircon center with pavé brilliant-cut zircon border",
+      "style": "heritage",
+      "age_tier": ["established", "mature"],
+      "occasion": ["love", "anniversary", "legacy", "milestone"],
+      "description": "Built on Mughal arch geometry, the Noor Ring rises from an open jali base cut with scrollwork visible through the lattice. A single pear-shaped zircon sits suspended within a pointed oval frame at the crown, hand-set, centered. A pavé border of brilliant-cut zircons traces the inner frame. The outer edges extend into four pointed lobes — a seal-like crest profile that sits wide and flat against the hand.",
+      "narrative": "Love outlasted the distance. 1,096 kilometres once existed between two people who refused to let it matter — he measured the distance, then made it the price of a ring."
+    },
+    {
+      "id": "noor-bracelet",
+      "name": "The Noor Bracelet",
+      "url": "https://aueshah.com/product/the-noor-bracelet/",
+      "category": "bracelet",
+      "metal_tone": "cool",
+      "metal": "925 sterling silver with 18k gold plating",
+      "stones": "brilliant-cut pavé-set zircons with open-set zircon at the center of each panel",
+      "style": "heritage",
+      "age_tier": ["established", "mature"],
+      "occasion": ["love", "anniversary", "legacy"],
+      "description": "A heritage cuff of articulated square jali panels, hand-linked. Open-cut Mughal lattice with pavé-set brilliant-cut zircons at every edge and corner; one brilliant-cut zircon open-set at the center of each panel, visible through the metalwork from every angle. The cuff conforms to the wrist as it moves.",
+      "narrative": "He spent more than a month counting every 'I love you' across every medium, every hour, every distance. When he reached 5,098, he made it the price — then built it into this cuff."
+    },
+    {
+      "id": "noor-earrings",
+      "name": "The Noor Earrings",
+      "url": "https://aueshah.com/product/the-noor-earrings/",
+      "category": "earrings",
+      "metal_tone": "cool",
+      "metal": "925 sterling silver with 18k gold plating",
+      "stones": "2 pear-shaped zircon anchors, 5 free-hanging teardrop zircons per earring, brilliant-cut pavé border",
+      "style": "heritage",
+      "age_tier": ["young", "established", "mature"],
+      "occasion": ["love", "gift", "celebration", "legacy"],
+      "description": "Two stacked jali panels per piece, open-cut so metal recedes and stone remains. Two pear-shaped zircons anchor each panel; five free-hanging teardrop zircons descend from the lower panel, the largest at the center, graduating in size toward each side. Shoulder-length drops.",
+      "narrative": "Two pieces, one person — always together. Born the same year, made for each other."
+    },
+    {
+      "id": "noor-necklace",
+      "name": "The Noor Necklace",
+      "url": "https://aueshah.com/product/the-noor-necklace/",
+      "category": "necklace",
+      "metal_tone": "neutral",
+      "metal": "925 sterling silver with 18k gold plating",
+      "stones": "pavé-set brilliant-cut zircons with thirteen free-hanging pear-shaped zircon drops",
+      "style": "heritage",
+      "age_tier": ["established", "mature"],
+      "occasion": ["love", "legacy", "milestone"],
+      "description": "A collar necklace inspired by Mughal jali openwork and Pakhtoon traditional teardrop stone design. A center stone with graduating zircons, thirteen pear-shaped drops hanging freely along the lower edge, and pavé-set stones throughout.",
+      "narrative": "The Noor Necklace is reserved only for those who know that the most precious of things are kept closest to the heart — a name coded in numbers: 11 for N, two 00 for O-O, 9 for R."
+    },
+    {
+      "id": "noor-tiara",
+      "name": "The Noor Tiara",
+      "url": "https://aueshah.com/product/the-noor-tiara/",
+      "category": "tiara",
+      "metal_tone": "warm",
+      "metal": "925 sterling silver with 18k gold plating",
+      "stones": "pear-shaped zircons in Pakhtoon teardrop silhouette",
+      "style": "heritage",
+      "age_tier": ["established", "mature"],
+      "occasion": ["legacy", "milestone", "celebration", "status"],
+      "description": "A heritage headpiece built on Mughal jali openwork — pear-shaped gems rising in a balanced lattice. Each stone sparkles with intended brilliance; every curve, rise, and hand-set zircon reflects meticulous craftsmanship. Feeling should never outshine refinement.",
+      "narrative": "Where legacy chooses you. Built to last, meant to mean something — 143, the numerical code for 'I love you'."
+    }
+  ]
+}

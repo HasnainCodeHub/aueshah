@@ -72,7 +72,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               <div className={`avatar ${msg.role}`}>
                 {msg.role === "user" ? "U" : "AI"}
               </div>
-              <div>
+              <div className="bubble-wrap">
                 <div className="bubble">{msg.content}</div>
                 <div className="meta">
                   {formatTime(msg.timestamp)}
