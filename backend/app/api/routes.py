@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 from app.config.prompts import OFF_TOPIC_RESPONSE
-from app.models.schemas import ChatRequest, ChatResponse, ErrorResponse
+from app.models.schemas import ChatRequest, ChatResponse, ErrorResponse, AppointmentRequest, AppointmentResponse
 from app.models.errors import ValidationError, InjectionDetected, OffTopic
 from app.utils.validators import sanitize_input, detect_prompt_injection, detect_off_topic
 from app.core.orchestrator import Orchestrator
@@ -86,6 +86,50 @@ async def chat(request: ChatRequest, orchestrator: Orchestrator = Depends(get_or
     except Exception as e:
         reply, code = FailureHandler.handle_exception(e)
         return JSONResponse(status_code=code, content=ErrorResponse(error=reply, code=code).model_dump())
+
+
+@router.post("/appointment-request", response_model=AppointmentResponse)
+async def request_appointment(request: AppointmentRequest):
+    """
+    POST /appointment-request endpoint.
+
+    Captures appointment requests from clients (email, phone, preferred date, notes).
+    The concierge team will contact the client within 24 hours.
+
+    Args:
+        request: AppointmentRequest with email, phone, appointment_type, notes
+
+    Returns:
+        AppointmentResponse with confirmation and reference ID
+    """
+    try:
+        # Generate reference ID for tracking
+        import uuid
+        from datetime import datetime
+        reference_id = f"APT-{uuid.uuid4().hex[:8].upper()}"
+
+        # Log the appointment request (in real system, this would save to database/CRM)
+        logger.info(
+            f"Appointment requested: {reference_id} | "
+            f"Type: {request.appointment_type} | Email: {request.email}"
+        )
+
+        # Return confirmation to client
+        return AppointmentResponse(
+            status="success",
+            message=(
+                f"Thank you! We've received your request (Ref: {reference_id}). "
+                f"Our concierge team will contact you at {request.email} within 24 hours to confirm your appointment."
+            ),
+            reference_id=reference_id
+        )
+
+    except Exception as e:
+        logger.error(f"Appointment request error: {e}")
+        return AppointmentResponse(
+            status="error",
+            message="We encountered an issue processing your request. Please contact service@aueshah.com directly."
+        )
 
 
 @router.get("/health")
