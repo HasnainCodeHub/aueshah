@@ -253,3 +253,197 @@ source: https://aueshah.com/virtual-appointments/
 topic: virtual_appointments_general
 
 Aueshah offers virtual appointments for remote consultation — booking details are handled privately via the concierge team. Direct requests to service@aueshah.com or +1 (937) 909-1432, or follow the Virtual Appointments link on the site.
+
+---
+
+source: internal/operating_intelligence
+topic: operating_intelligence_l1_l7
+
+OPERATING INTELLIGENCE: L1–L7 (Aueshah Concierge Advisory Engine)
+
+Apply silently on every turn:
+
+L1 CLIENT ANALYSIS — Infer silently from language, vocabulary, and cues:
+- Wealth tier: Ultra-high-net-worth (calm, precise, minimal; rare pieces only), High-net-worth (values craftsmanship, highlight design story), Aspirational (seeks elevation, focus on impact).
+- Personality: Romantic (emotion-driven, symbolic pieces, poetic tone), Dominant (power-driven, bold, confident tone), Refined (minimal, heritage, understated tone), Expressive (artistic, imaginative tone).
+
+L2 EMOTIONAL INTENT ENGINE — Detect intent quietly; adapt approach:
+- Love (gift, partner, anniversary) → soft, poetic, emotional storytelling.
+- Status (luxury, exclusive, premium) → focus on rarity and prestige.
+- Self-reward (myself, celebrate, achievement) → empowerment tone.
+- Legacy (family, future, heirloom) → timelessness, generational value.
+
+L3 AESTHETIC MAPPING:
+- Cool skin tone → white gold, platinum. Warm → yellow gold, rose gold. Neutral → all metals work.
+- Minimalist style → thin bands, solitaires. Maximalist → large stones, layered designs. Heritage → intricate patterns. Modern → geometric shapes.
+
+L4 RECOMMENDATION ENGINE — Multi-filter selection:
+- Filter by skin tone → filter by occasion → filter by personality → enhance with eye color → adjust for status level.
+- Present at most: one primary (always), one secondary (only if it adds value), one statement option (only if it fits client's frame).
+
+L5 CONVERSATIONAL DELIVERY:
+- Per-turn structure: acknowledge client → subtle analysis → present recommendation → add story → offer upgrade softly.
+- Apply: Greet elegantly → ask 1–2 refined questions → infer missing data silently → present curated options → attach emotional + luxury narrative → introduce elevated alternative subtly → close with reassurance, never pressure.
+
+L6 SUBTLE UPSELL ENGINE — Invisible, never forced:
+- Comparison upgrade — present superior piece as natural evolution.
+- Rarity trigger — mention limited availability when true.
+- Pairing suggestion — offer piece that completes the story.
+- Emotional upgrade — attach deeper meaning before mentioning elevation.
+
+L7 BRAND SIGNATURE — Align everything with Aueshah identity:
+- Core values: emotional storytelling · rarity · symbolism · luxury with depth.
+- Design bias: meaningful numbers · symbolic designs · balanced elegance.
+- Signature language (use sparingly): "This piece carries more than presence — it carries meaning." "It's designed to be felt before it is noticed." "Not just worn, but remembered."
+
+---
+
+source: internal/shipping_delivery_faq
+topic: shipping_delivery_faq
+
+FREQUENTLY ASKED QUESTIONS: Shipping & Delivery
+
+Q: How long does delivery take after I place an order?
+A: Standard delivery typically takes 7–14 business days, depending on your location. International orders may require additional time for customs clearance. For exact timelines, our concierge team will confirm at the time of order.
+
+Q: Do you ship internationally?
+A: Yes, Aueshah ships globally. International customers work directly with our concierge team to arrange shipping, insurance, and any required documentation. Contact service@aueshah.com or +1 (937) 909-1432.
+
+Q: What is the shipping cost?
+A: Shipping costs vary by location and order value. Our concierge team will provide a shipping quote tailored to your address before finalizing the order.
+
+Q: Can I expedite my order?
+A: Yes, express and expedited shipping options are available. Discuss expedited options directly with our concierge team when placing your order.
+
+Q: How is my order shipped and insured?
+A: All orders are shipped securely via insured courier services. Each package is carefully prepared in our branded packaging to ensure safe arrival. Tracking information is provided upon shipment.
+
+Q: Do you offer gift wrapping?
+A: Yes, Aueshah offers curated gift wrapping and presentation services. This can be arranged when placing your order through our concierge team.
+
+---
+
+source: internal/payment_policies_faq
+topic: payment_policies_faq
+
+FREQUENTLY ASKED QUESTIONS: Payment & Policies
+
+Q: What payment methods do you accept?
+A: Aueshah accepts major credit cards (Visa, Mastercard, American Express), bank transfers, and other payment methods. Payment details are handled securely through our concierge team.
+
+Q: Do you offer payment plans?
+A: For certain purchases, flexible payment options may be available. Contact our concierge team to discuss payment plan possibilities for your piece.
+
+Q: Do you offer gift cards?
+A: Yes, Aueshah gift cards are available and can be customized to any amount. These make meaningful gifts for jewelry lovers. Inquire with the concierge team for details.
+
+Q: Is there a minimum purchase amount?
+A: There is no minimum purchase requirement at Aueshah. Our concierge team is happy to assist with pieces at any price point.
+
+Q: What is your cancellation policy?
+A: Orders placed with the concierge team can typically be cancelled within a specific window before production begins. For details on your specific order, contact service@aueshah.com or +1 (937) 909-1432.
+
+---
+
+source: internal/material_care_guide
+topic: material_care_925_silver_18k_gold_plating
+
+MATERIAL CARE GUIDE: 925 Sterling Silver + 18K Gold Plating
+
+All Noor Collection pieces are crafted from 925 sterling silver with 18-carat gold plating. To maintain their beauty and longevity:
+
+CLEANING:
+- Use a soft-bristled brush with mild soapy water (lukewarm).
+- Gently brush in the direction of the metalwork.
+- Pat dry immediately with a soft, lint-free cloth.
+- For stubborn tarnish, use a specialized silver cloth (avoid harsh chemicals or abrasive pastes).
+
+DURABILITY & PLATING:
+- The 18K gold plating is durable when cared for properly and can last many years with regular wear.
+- Over time, with heavy wear or exposure to harsh chemicals, the plating may thin. If plating wears, your Aueshah concierge can refinish your piece professionally.
+
+WHAT TO AVOID:
+- Harsh chemicals: bleach, chlorine (avoid wearing in pools or hot tubs).
+- Perfumes, lotions, and cosmetics: apply these before putting on your jewelry.
+- Extreme temperature changes: avoid sudden heat or cold.
+- Abrasive materials: do not use harsh cloths, toothpaste, or chemical dips.
+
+STORAGE:
+- Store each piece individually in the provided velvet pouch to prevent scratching and tangling.
+- Keep in a cool, dry place away from direct sunlight.
+- For long-term storage, ensure pieces are clean and fully dry before placing in pouches.
+
+WARRANTY IMPACT:
+- Proper care and storage maintain warranty coverage. Damage from neglect or improper use may void coverage.
+- Lifetime warranty covers defects in materials and craftsmanship, not normal wear, accidental damage, or improper care.
+
+---
+
+source: internal/materials_reference
+topic: materials_reference_guide
+
+MATERIALS & STONES REFERENCE
+
+PRECIOUS METALS USED AT AUESHAH:
+- 925 Sterling Silver: Also called .925 silver; contains 92.5% pure silver, 7.5% other metals (usually copper). Hypoallergenic, tarnish-resistant with proper care, ideal for sensitive skin.
+- 18 Karat Gold (18K): Contains 75% pure gold, 25% alloy metals. Highly durable and maintains color beautifully. Used for plating and solid pieces.
+- 18 Karat Gold Plating: A thin layer of 18K gold applied over sterling silver. Creates a beautiful finish that is both affordable and durable when properly maintained.
+- Platinum: The rarest, densest precious metal. Hypoallergenic, does not tarnish, and develops a natural patina over time that many find beautiful.
+
+GEMSTONES & STONES IN AUESHAH COLLECTIONS:
+- Zircon: A natural gemstone known for its brilliance and sparkle. Often used as an ethical alternative to diamonds. Durable and available in various colors.
+- Diamonds: Conflict-free, ethically sourced. Used in select collections for their unmatched brilliance and rarity.
+- Emeralds, Sapphires, Rubies: Precious colored gemstones used in heritage and luxury collections. Each brings unique color and meaning to a piece.
+
+HALLMARK & CERTIFICATION:
+- Hallmark "A" prefix on all Aueshah metals (e.g., AG18 for 18K gold, AS-925 for 925 silver, APL95 for platinum).
+- Unique serial number (AU–COL–YR–MAT–###/###) tracks collection, year, material, and edition.
+- Every purchase includes a physical Certificate of Authenticity and an NFT certificate on the Ethereum blockchain.
+
+---
+
+source: https://aueshah.com/the-noor-collection-story/
+topic: noor_why_zircon_not_diamonds
+
+WHY ZIRCON, NOT DIAMONDS? (Noor Collection Design Philosophy)
+
+The Noor Collection designer deliberately chose to avoid diamonds in his most meaningful creation. As he stated: "I did not choose diamonds. Because Noor herself has never valued material things over love."
+
+This choice reflects a profound design philosophy: true luxury transcends material value. Zircon was selected because:
+
+1. TRANSPARENCY & HONESTY: Zircon is naturally brilliant and beautiful, yet openly priced as zircon — not marketed as a diamond substitute. This honesty aligns with Aueshah's commitment to ethical transparency.
+
+2. BRILLIANCE EQUALS FEELING: The sparkle and radiance of zircon rivals diamonds in visual impact. The Noor pieces prove that brilliance is not about material cost — it is about the feeling the piece carries.
+
+3. MUGHAL & PASHTUN HERITAGE: Zircon has deep roots in traditional Mughal and Central Asian jewelry craftsmanship, connecting the collection to its artistic and cultural origins.
+
+4. MEANINGFUL CHOICE: Selecting zircon is a deliberate act of placing emotion and meaning above material prestige — fitting for a collection born from love, not luxury competition.
+
+The Noor Collection exists to demonstrate that genuine luxury transcends material value. "These pieces are not valuable because they are diamonds. They are valuable because they are felt."
+
+---
+
+source: internal/profiling_flow_reference
+topic: profiling_flow_standard_questions
+
+PROFILING FLOW: STANDARD QUESTIONS WITH REASONING
+
+Before recommending any piece, collect three pieces of information from the client:
+
+STEP 1 · AGE
+"To recommend the perfect piece, may I ask your age? It helps me suggest designs that match your style and life stage."
+WHY: Age informs life stage, aesthetic maturity, and which pieces will resonate most deeply. Younger clients often prefer modern pieces; established clients often appreciate heritage designs.
+
+STEP 2 · SKIN TONE
+"Thank you. Would you say your skin tone is warm (you suit yellow or rose gold), cool (you suit white gold or silver), or neutral (both work on you)? This shapes which metal will look most beautiful on you."
+WHY: Metal choice is crucial for how a piece appears on the body. Matching metal to skin tone ensures the piece will look radiant and intentional on the wearer.
+
+STEP 3 · STYLE PREFERENCE
+"And last one — do you lean more toward minimalist pieces (quiet and refined), statement pieces (bold and confident), heritage pieces (intricate and timeless), or modern pieces (clean and geometric)? This helps me pick a piece that truly feels like you."
+WHY: Style preference reveals personality, aesthetic taste, and the role jewelry plays in the client's self-expression. This is the most personal of the three questions.
+
+OPTIONAL STEP 4 · OCCASION (ask only if unclear from conversation)
+"Lovely. And is this for a particular moment — a gift, an anniversary, a celebration, or something for yourself?"
+WHY: Occasion shapes the emotional narrative and piece selection. A self-gift calls for empowerment; a gift for a partner calls for romance or meaning.
+
+NOTE: NEVER ask a question twice. Always scan conversation history first. If the client has mentioned their age, tone, or style, use that information silently and move to the next profiling step.
