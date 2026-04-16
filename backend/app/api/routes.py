@@ -1,14 +1,19 @@
 """FastAPI routes for the chat API."""
+import asyncio
+import uuid as uuid_mod
 import logging
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 
 from app.config.prompts import OFF_TOPIC_RESPONSE
-from app.models.schemas import ChatRequest, ChatResponse, ErrorResponse, AppointmentRequest, AppointmentResponse
+from app.models.schemas import ChatRequest, ChatResponse, ErrorResponse, AppointmentRequest, AppointmentResponse, cap_context
 from app.models.errors import ValidationError, InjectionDetected, OffTopic
 from app.utils.validators import sanitize_input, detect_prompt_injection, detect_off_topic
 from app.core.orchestrator import Orchestrator
 from app.services.failure_handler import FailureHandler
+from app.middleware.rate_limiter import check_rate_limit
+from app.auth.visitor import get_visitor_id, set_visitor_cookie
+from app.services.persistence_writer import persist_turn
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +32,7 @@ def get_orchestrator() -> Orchestrator:
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest, orchestrator: Orchestrator = Depends(get_orchestrator)):
+async def chat(request: ChatRequest, http_request: Request, orchestrator: Orchestrator = Depends(get_orchestrator)):
     """
     POST /chat endpoint.
 
@@ -46,6 +51,10 @@ async def chat(request: ChatRequest, orchestrator: Orchestrator = Depends(get_or
         500: Internal error
     """
     try:
+        # Step 0: Rate limit check (sliding window, per-IP)
+        client_ip = http_request.client.host if http_request.client else "unknown"
+        await check_rate_limit(client_ip)
+
         # Step 1: Validate message
         message = sanitize_input(request.message)
 
@@ -62,11 +71,36 @@ async def chat(request: ChatRequest, orchestrator: Orchestrator = Depends(get_or
                 metadata={"intent": "off_topic", "skill": "general", "routing_source": "guardrail"},
             )
 
-        # Step 4: Orchestrate request (context already validated by Pydantic schema)
-        validated_request = ChatRequest(message=message, context=request.context)
+        # Step 4: Defense-in-depth context cap (Pydantic validator already caps, but enforce here too)
+        capped_context = cap_context(request.context)
+
+        # Step 5: Resolve visitor identity
+        visitor_id = get_visitor_id(http_request)
+        session_id = request.session_id or str(uuid_mod.uuid4())
+
+        # Step 6: Orchestrate request
+        validated_request = ChatRequest(message=message, context=capped_context, session_id=session_id)
         response = await orchestrator.handle_chat(validated_request)
 
-        return response
+        # Step 7: Persist chat turn (fire-and-forget — never blocks response)
+        metadata = response.metadata or {}
+        asyncio.create_task(persist_turn(
+            user_id=None,  # Group C will wire authenticated user_id
+            visitor_id=uuid_mod.UUID(visitor_id),
+            session_id=uuid_mod.UUID(session_id) if len(session_id) == 36 else uuid_mod.uuid4(),
+            user_message=message,
+            assistant_reply=response.reply,
+            intent=metadata.get("intent"),
+            skill=metadata.get("skill"),
+            routing_source=metadata.get("routing_source"),
+            latency_ms=metadata.get("latency_ms"),
+        ))
+
+        # Step 8: Set visitor cookie on response
+        from starlette.responses import Response as StarletteResponse
+        json_response = JSONResponse(content=response.model_dump())
+        set_visitor_cookie(json_response, visitor_id)
+        return json_response
 
     except ValidationError as e:
         logger.warning(f"Validation error: {e.message}")

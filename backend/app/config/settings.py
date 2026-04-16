@@ -32,6 +32,43 @@ class Settings(BaseSettings):
     enable_retry: bool = True
     max_retries: int = 2
 
+    # Phase 2: Neon Postgres
+    neon_database_url: str = ""
+
+    # Phase 2: Redis
+    redis_url: str = ""
+
+    # Phase 2: Rate limiting & timeout
+    rate_limit_per_min: int = 5
+    request_timeout_seconds: int = 30  # Production: set REQUEST_TIMEOUT_SECONDS=15 via env
+    enable_rate_limit: bool = False
+    max_context_messages: int = 15
+
+    # Phase 2: WordPress Auth
+    wp_base_url: str = ""
+    wp_jwks_url: str = ""
+    wp_issuer: str = ""
+    wp_jwks_cache_ttl: int = 600
+
+    # Phase 2: Session JWT
+    jwt_signing_key: str = ""
+    jwt_expires_seconds: int = 86400
+
+    # Phase 2: Admin
+    admin_api_token: str = ""
+
+    # Phase 2: SendGrid
+    sendgrid_api_key: str = ""
+    sendgrid_from_email: str = "concierge@aueshah.com"
+    sendgrid_from_name: str = "Aueshah Concierge"
+
+    # Phase 2: Slack
+    slack_webhook_noor: str = ""
+    slack_webhook_appointments: str = ""
+
+    # Phase 2: Business logic
+    noor_cooldown_days: int = 90
+
     class Config:
         env_file = ".env"
         case_sensitive = False

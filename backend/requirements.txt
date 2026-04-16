@@ -9,3 +9,17 @@ python-dotenv==1.0.0
 pytest==7.4.3
 pytest-asyncio==0.21.1
 tiktoken==0.5.2
+
+# Phase 2: Persistence & Auth
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.29.0
+alembic==1.13.3
+redis==5.2.1
+python-jose[cryptography]==3.3.0
+
+# Phase 2: Notifications
+sendgrid==6.11.0
+slack_sdk==3.33.4
+
+# Phase 2: Dev/Test
+fakeredis==2.26.2

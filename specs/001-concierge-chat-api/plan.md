@@ -1,103 +1,92 @@
-# Implementation Plan: AI Concierge Backend — Chat Intelligence
+# Implementation Plan: AI Concierge Phase 2 — Persistence, WordPress Auth, Rate Limiting, Noor Allocation
 
-**Branch**: `001-concierge-chat-api` | **Date**: 2026-04-14 | **Spec**: [spec.md](spec.md)  
-**Input**: Feature specification from `/specs/001-concierge-chat-api/spec.md`
+**Branch**: `001-concierge-chat-api` | **Date**: 2026-04-16 | **Spec**: `specs/001-concierge-chat-api/spec.md`
+**Input**: Phase 1 backend (complete + optimized) + Client Requirements Document (2026-04-16)
 
 ---
 
 ## Summary
 
-Build a stateless, controlled AI concierge backend (FastAPI) with hybrid skill routing, RAG-grounded responses, and graceful failure handling. The system accepts chat messages with optional conversation context, classifies intent via rule-based routing + LLM fallback, retrieves up to 3 relevant knowledge chunks, constructs a multi-prompt (system + skill + RAG + context), calls OpenAI Responses API (gpt-4.1), and returns a structured reply. On failure, retry 1–2 times with backoff; if still unavailable, return a safe fallback response. Include a temporary Next.js test UI (removable, no business logic).
+Phase 1 delivered a stateless FastAPI concierge with hybrid skill routing, RAG grounding, and 1,958ms p95 latency. Phase 2 layers in **client-mandated production hardening**:
+
+1. **Rate limiting + 15s timeout + crash prevention** (CRITICAL — prevents API abuse, cost explosion, server overload)
+2. **Neon Serverless Postgres persistence** (users, chat history, appointments, noor_allocation_requests, activity log)
+3. **WordPress-bridged authentication** (client site is WP; we trust WP-issued JWT and mirror users into Neon)
+4. **Noor Allocation request workflow** (143-piece collection — formal request, concierge approval, cooldown)
+5. **Personalization engine** (returning users greeted with profile + last-discussed context, recommendations grounded in saved preferences)
+6. **Notification fan-out** (concierge email + Slack on appointment / Noor request, confirmation email to client)
+
+**Approach**: Extend the existing `backend/app/` layout with `db/`, `auth/`, `middleware/`, and `services/notifications/` modules. Stateless API contract is preserved — server-side persistence is for memory/personalization/audit, not session state. Conversation context is still passed in the request body, but capped to 10–15 messages and merged with persisted summary on the server.
 
 ---
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+  
-**Primary Dependencies**: FastAPI (async web framework), OpenAI Python SDK (gpt-4.1 Responses API), Qdrant Python client (vector search), Pydantic (validation), httpx (async HTTP)  
-**Storage**: Qdrant (vector store, pre-populated); Neon/PostgreSQL optional for Phase 2 persistence  
-**Testing**: pytest, pytest-asyncio, httpx test client  
-**Target Platform**: Linux/Docker container (cloud-ready)  
-**Project Type**: Backend (Python FastAPI) + temporary frontend test UI (Next.js)  
-**Performance Goals**: 3 seconds p95 end-to-end latency; 95% success rate under normal load  
-**Constraints**: No authentication, no persistent session state, stateless API, <100–200ms skill routing latency, p95 ≤3 second end-to-end latency  
-**Scale/Scope**: Phase 1 single-user load (~1–10 concurrent requests during testing)
+**Language/Version**: Python 3.11+
+**Primary Dependencies**: FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, SendGrid SDK (or AWS SES), `slack_sdk` (async webhook).
+**Storage**:
+  - **Neon Serverless Postgres** (primary OLTP — users, chat_history, appointments, noor_allocation_requests, user_activity)
+  - **Qdrant** (vector store, unchanged from Phase 1)
+  - **Redis** (rate-limit counters, idempotency keys, optional short-term cache) — Upstash serverless if Neon-style serverless preferred
+**Testing**: pytest + pytest-asyncio + httpx AsyncClient; testcontainers-postgres for integration; respx for OpenAI/WordPress HTTP mocking
+**Target Platform**: Linux container (Docker) on Fly.io / Railway / Render; Neon as managed Postgres
+**Project Type**: Web (backend-only — UI is the client's WordPress site + existing Next.js test harness)
+**Performance Goals**:
+  - p95 chat latency ≤ 3s (unchanged)
+  - Auth verification ≤ 150ms (cached JWKS)
+  - DB writes (chat persistence) ≤ 50ms async (non-blocking on response path)
+  - Rate-limit check ≤ 5ms
+**Constraints**:
+  - Max 5 requests/min/IP on `/chat`
+  - 15s hard request timeout
+  - Conversation context capped at 15 messages server-side regardless of payload
+  - WP is source of truth for identity; we never store WP password hashes
+  - All AI-side keys server-side only (constitution IV)
+**Scale/Scope**: Single tenant (Aueshah), expected <1k DAU initially, ~143 Noor pieces total, low-volume appointment requests (<100/month at launch)
+
+### NEEDS CLARIFICATION (resolved in Phase 0 research.md)
+
+- WP auth mechanism (JWT plugin vs Application Passwords vs Cookie-shared) → see research.md §1
+- Notification provider (SendGrid vs AWS SES vs Postmark) → see research.md §3
+- Redis provider (Upstash serverless vs self-hosted) → see research.md §2
+- Cooldown duration default for Noor re-requests → see research.md §4
+- Concierge admin surface (separate Next.js admin vs WP admin plugin) → see research.md §5
 
 ---
 
 ## Constitution Check
 
-**GATE: Must pass before Phase 1 design. Re-check after implementation.**
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-| Principle | Requirement | Status | Notes |
-|-----------|-------------|--------|-------|
-| **Backend-first** | All logic in FastAPI; test UI is external client only | ✅ Clear | Next.js UI has no business logic; all AI, routing, RAG on backend |
-| **Separation of Concerns** | api/ → services/ → skills/, rag/, db/; no cross-layer leakage | ✅ Clear | Layered structure defined below; layer boundaries explicit |
-| **Stateless API** | Context passed explicitly in request; no server-side session state | ✅ Clear | Conversation context in request body (JSON array); no session cookies |
-| **All AI calls server-side** | OpenAI keys, prompts, tool schemas never reach client | ✅ Clear | Keys in env vars; prompts in backend config; no client-side AI calls |
-| **Async-first** | All I/O (DB, OpenAI, Qdrant) via async/await; no blocking calls | ✅ Clear | FastAPI async handlers; httpx async client; async Qdrant calls; async DB if added |
-| **System prompt = brand brain** | System prompt defines tone/persona/limits; single authority | ✅ Clear | System prompt stored in config; passed to every AI call; immutable |
-| **RAG = knowledge layer** | Retrieved chunks ground responses; distinct from system prompt | ✅ Clear | RAG service retrieves top-3 chunks; injected into prompt context |
-| **No hallucination** | Never invent catalog data, pricing, availability, people; prefer uncertainty | ✅ Clear | RAG grounding required; fallback response acknowledges limits |
-| **Uncertainty > error** | "I don't know" is correct; invented answer is critical failure | ✅ Clear | Fallback response is uncertainty-safe ("temporarily unable...") |
-| **Consistent tone** | Controlled, minimal, premium; no verbose/casual/speculative | ✅ Clear | Enforced by system prompt; skill prompts inherit tone |
-| **Skills & routing** | All behaviors routed through 5 named skills; explicit, auditable routing | ✅ Clear | Hybrid routing with config-driven rules; skill registry source of truth |
-| **Skill modularity** | Each skill is isolated; swappable without affecting others | ✅ Clear | Skill interface (input/output/fallback) defined; decoupled from orchestration |
-| **Tooling rules** | Tools explicit, validated, no auto-trigger, deterministic handling | ✅ Clear | Noor tool schema defined; no tool loops; explicit invocation only |
-| **Top-k limit** | Max 3–5 chunks per RAG query; no over-retrieval | ✅ Clear | top_k=3 hard limit in RAG service |
-| **Retry + fallback** | Retry 1–2 times; then fallback response; log all attempts | ✅ Clear | Retry strategy defined in core orchestration; logging at each step |
-| **Noor exclusion** | No auto-indexing of Noor data; manual review + approval required | ✅ Clear | Noted as Phase 1 constraint; Noor skill is stub (intent-only) |
+| § | Principle | Phase 2 Compliance |
+|---|-----------|-------------------|
+| I | Controlled concierge | ✅ Personalization stays within brand rails; no generic-assistant drift |
+| II.1 | Backend-first | ✅ All auth/db/rate-limit logic in FastAPI; WP only issues identity token |
+| II.2 | Separation of concerns | ✅ New layers stay in their lanes: `db/` only DB, `auth/` only identity, `middleware/` only cross-cutting |
+| II.3 | Stateless API | ✅ Request still self-contained (token + context in headers/body); persistence is for memory, not session |
+| II.4 | Server-side AI calls | ✅ Unchanged |
+| II.5 | Async-first | ✅ asyncpg + SQLAlchemy 2.0 async + httpx async + redis.asyncio |
+| III | AI behavior rules | ✅ Personalization grounds in retrieved profile, not invention; uncertainty preserved |
+| IV | Skills routing | ✅ New `noor_request` flow is part of existing `noor` skill — no new skill class added without registry |
+| V | RAG standards | ✅ Unchanged — Qdrant only, top-k=3, 500–800 token chunks |
+| VI.1 | `visitor_id` primary key | ⚠️ Identity now anchored on `wp_user_id` (mapped to internal `user_id`); `visitor_id` retained for anonymous pre-login messages, merged on first login. **Justified**: WP is product source of truth; ADR required. |
+| VI.2 | Store summaries, not transcripts | ⚠️ Client explicitly requires chat history persistence. **Justified**: store full messages but cap *prompt context* to 15. ADR required. |
+| VI.3 | Active context bounded ≤15 | ✅ Enforced in middleware before AI call |
+| VI.4 | Privacy by default | ✅ Profile fields are user-provided (profiling Q&A), not inferred |
+| VII | Tooling rules | ✅ Notification + DB writes are explicit, validated, logged |
+| VIII | API contract stability | ✅ `/chat` shape preserved; new endpoints under `/v1/auth/*`, `/v1/appointments`, `/v1/noor-requests` |
+| IX.3 | Rate limiting mandatory | ✅ Now enforced — was the gap |
+| X.1 | p95 ≤ 3s | ✅ Persistence on background task; reads cached |
+| X.3 | Graceful degradation | ✅ DB-down → log warning, serve chat without history; Redis-down → fail-open with logged warning |
+| XI | SDD cycle | ✅ This plan precedes implementation |
+| XII | Non-goals | ✅ No new generic-assistant capabilities |
 
-**Gate Result**: ✅ **PASS** — All constitution principles mapped to design; no violations.
+**Constitution Violations Requiring ADR**:
+1. **VI.1** — `wp_user_id` becomes the primary identity anchor (vs `visitor_id`-only) → ADR-002
+2. **VI.2** — Full chat messages persisted (not only summaries) → ADR-003
+3. **IX.3** — Phase 1 deferred rate limiting; now formally added → tracked as compliance restoration, ADR-004 documents the limiter design
 
----
-
-## Phase 1 Design Clarifications
-
-Explicit decisions made for Phase 1 implementation (2026-04-14):
-
-### 1. LLM Classification Fallback
-
-- **Prompt**: `"Classify the user intent into one of: product, compare, noor, bespoke, general. Return JSON: {intent: ..., confidence: ...}"`
-- **Temperature**: 0 (deterministic)
-- **Structured Output**: JSON only (intent label + confidence score)
-- **No Skill Descriptions**: LLM classifier receives only the user message and list of valid intents
-- **Rationale**: Minimal, lightweight, deterministic; no dependency on skill metadata bloat
-
-### 2. Stateless Context Management
-
-- **Caller Responsibility**: API does NOT manage conversation history; caller maintains full context
-- **Request Format**: Context passed in request body each time: `{ "message": "...", "context": [history...] }`
-- **No Session Cookies**: Stateless API only; no server-side session store
-- **Context Limit**: Enforce 10–15 message maximum in orchestrator (truncate older messages)
-- **No Echo in Response**: API does NOT return context in response; caller re-sends maintained context on next request
-- **Test UI**: Next.js test UI manages chat state locally (in-memory array)
-
-### 3. Error Response Codes
-
-- Use **standard HTTP status codes only**:
-  - `200` → Success
-  - `400` → Bad request (validation error, injection detected, empty message)
-  - `429` → Rate limit (deferred to Phase 2)
-  - `500` → Internal server error (unexpected exception)
-  - `503` → Service unavailable (AI provider timeout after retries, RAG failure, etc.)
-- **No Custom Codes**: Avoid non-standard codes; all errors mapped to 1 of 5 above
-
-### 4. Test UI in Phase 1
-
-- **Include in Tasks**: Next.js test UI is required for Phase 1 validation and testing
-- **Minimal Implementation**: ChatInput, ChatWindow, optional JsonDebugger; no styling, no persistence
-- **Zero Business Logic**: All logic in backend; UI is pure client
-- **Fully Decoupled**: Delete `/ui/` directory; backend continues unaffected
-- **Local State Only**: UI manages conversation history in memory (lost on page reload; expected for test UI)
-
-### 5. Noor Tool Phase 1
-
-- **Schema Definition Only**: Include Noor tool schema definition in Phase 1 tasks
-- **No Execution Logic**: Do NOT implement tool execution (webhook, function call, etc.) yet
-- **Integration Point**: Define where tool execution *would* happen (tool_handler); leave stub/placeholder
-- **No Auto-Trigger**: Tool must not be invoked automatically; marked for Phase 2 workflow implementation
-- **Skill Remains Stub**: Noor skill detects intent, acknowledges it; no tool invocation in Phase 1
+These are tracked in **Complexity Tracking** below and will be raised as ADR suggestions to the user before code lands.
 
 ---
 
@@ -107,642 +96,199 @@ Explicit decisions made for Phase 1 implementation (2026-04-14):
 
 ```text
 specs/001-concierge-chat-api/
-├── spec.md              # Clarified feature specification
-├── plan.md              # This file (architectural plan)
-├── research.md          # (Phase 0 output, if research needed)
-├── data-model.md        # Phase 1 output (data entities, schemas)
-├── contracts/           # Phase 1 output (API contracts)
-│   ├── openapi.yaml     # OpenAPI 3.0 schema for /chat
-│   └── errors.md        # Error codes and response structures
-├── quickstart.md        # Phase 1 output (dev setup, running locally)
-└── checklists/
-    └── requirements.md  # Quality checklist (requirements validation)
+├── plan.md              # THIS FILE
+├── research.md          # Phase 0 — WP auth, Redis, notifications, cooldown, admin surface
+├── data-model.md        # Phase 1 — 5 Neon tables + relationships
+├── quickstart.md        # Phase 1 — local dev setup (Neon + Redis + WP test mode)
+├── contracts/
+│   └── openapi.yaml     # Phase 1 — extended API (auth, appointments, noor-requests, admin)
+└── tasks.md             # Phase 2 — generated by /sp.tasks (NOT by this command)
 ```
 
 ### Source Code (repository root)
 
 ```text
-backend/                         # FastAPI backend
+backend/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py                 # FastAPI app entrypoint
 │   ├── api/
-│   │   ├── __init__.py
-│   │   └── routes.py           # POST /chat route
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── orchestrator.py     # Main request orchestrator
-│   │   ├── intent_classifier.py # Hybrid rule+LLM routing
-│   │   ├── prompt_builder.py   # Multi-prompt construction
-│   │   └── tool_handler.py     # Tool invocation (deterministic, no loops)
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── ai_client.py        # OpenAI Responses API wrapper
-│   │   ├── rag_service.py      # Embedding + Qdrant retrieval
-│   │   ├── embedding_client.py # Embedding generation (OpenAI embeddings)
-│   │   └── failure_handler.py  # Retry + fallback logic
-│   ├── skills/
-│   │   ├── __init__.py
-│   │   ├── base.py             # Skill base class (interface)
-│   │   ├── product.py          # Product skill
-│   │   ├── compare.py          # Compare skill
-│   │   ├── noor.py             # Noor skill (intent-only stub)
-│   │   ├── bespoke.py          # Bespoke skill
-│   │   └── general.py          # General/fallback skill
+│   │   ├── routes.py                  # /chat (extended), /health (existing)
+│   │   ├── auth_routes.py             # NEW — /v1/auth/wp-login, /v1/auth/me, /v1/auth/logout
+│   │   ├── appointment_routes.py      # NEW — /v1/appointments (POST/GET status)
+│   │   ├── noor_routes.py             # NEW — /v1/noor-requests (POST/GET status)
+│   │   └── admin_routes.py            # NEW — /v1/admin/noor-requests (concierge approve/decline)
+│   ├── auth/                          # NEW
+│   │   ├── wp_verifier.py             # Verify WP-issued JWT (JWKS fetch + cache)
+│   │   ├── dependencies.py            # FastAPI Depends(get_current_user)
+│   │   └── visitor.py                 # Anonymous visitor_id cookie issuance + merge-on-login
+│   ├── core/                          # Existing — orchestrator, intent_classifier, prompt_builder, tool_handler
+│   │   └── personalization.py         # NEW — load profile + last-N summary, inject into prompt
+│   ├── db/                            # NEW
+│   │   ├── session.py                 # Async engine + sessionmaker (Neon DSN)
+│   │   ├── models.py                  # SQLAlchemy 2.0 declarative — User, ChatMessage, Appointment, NoorAllocationRequest, UserActivity
+│   │   └── repositories/
+│   │       ├── users.py
+│   │       ├── chat_history.py
+│   │       ├── appointments.py
+│   │       └── noor_requests.py
+│   ├── middleware/                    # NEW
+│   │   ├── rate_limiter.py            # Redis-backed sliding-window, 5/min/IP, fail-open
+│   │   ├── timeout.py                 # 15s hard cap via asyncio.wait_for
+│   │   └── error_handler.py           # Unified fallback message envelope
+│   ├── services/                      # Existing + new
+│   │   ├── ai_client.py               # Existing
+│   │   ├── rag_service.py             # Existing
+│   │   ├── failure_handler.py         # Existing
+│   │   ├── embedding_client.py        # Existing
+│   │   ├── notifications/             # NEW
+│   │   │   ├── email.py               # SendGrid wrapper (concierge alert + client confirmation)
+│   │   │   └── slack.py               # Async webhook → #noor-requests / #appointments
+│   │   ├── noor_workflow.py           # NEW — create_request, check_cooldown, approve, decline
+│   │   └── appointment_workflow.py    # NEW — create + notify (replaces inline /appointment-request)
+│   ├── skills/                        # Existing — base, product, compare, noor, bespoke, general
 │   ├── models/
-│   │   ├── __init__.py
-│   │   ├── schemas.py          # Pydantic request/response models
-│   │   ├── entities.py         # Data entities (if persistent store added)
-│   │   └── errors.py           # Error response models
+│   │   ├── schemas.py                 # Extended — add WPLoginRequest, NoorAllocationRequest schemas, AppointmentRequest already exists
+│   │   └── errors.py                  # Existing + AuthFailure, RateLimited, CooldownActive
 │   ├── config/
-│   │   ├── __init__.py
-│   │   ├── settings.py         # Environment config
-│   │   ├── prompts.py          # System prompt, skill prompts, templates
-│   │   ├── routing_rules.yaml  # Hybrid routing rules (keywords, patterns)
-│   │   └── skills_registry.py  # Skill definitions, metadata
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── logging.py          # Structured logging setup
-│   │   └── validators.py       # Input sanitization, prompt injection detection
-│   └── db/
-│       ├── __init__.py
-│       └── models.py           # (Optional Phase 2) Neon/PostgreSQL models
+│   │   ├── settings.py                # + NEON_DATABASE_URL, REDIS_URL, WP_BASE_URL, WP_JWKS_URL, SENDGRID_API_KEY, SLACK_WEBHOOK_*
+│   │   ├── prompts.py                 # Existing (already optimized)
+│   │   └── routing_rules.yaml         # Existing
+│   └── main.py                        # Existing — register new middleware + routers
+├── alembic/                           # NEW — migrations
+│   ├── env.py
+│   └── versions/
+│       └── 0001_initial.py            # Creates all 5 tables + indexes
 ├── tests/
-│   ├── __init__.py
-│   ├── conftest.py             # Pytest fixtures
-│   ├── unit/
-│   │   ├── test_intent_classifier.py
-│   │   ├── test_prompt_builder.py
-│   │   ├── test_skills.py
-│   │   └── test_failure_handler.py
 │   ├── integration/
-│   │   ├── test_orchestrator.py # End-to-end request flow
-│   │   ├── test_api_endpoint.py
-│   │   └── test_rag_integration.py
-│   └── contracts/
-│       └── test_api_schema.py   # OpenAPI schema validation
-├── .env.example                # Environment template
-├── requirements.txt            # Python dependencies
-├── Dockerfile                  # Docker build for backend
-└── docker-compose.yml          # Local dev setup
-
-ui/                             # Temporary Next.js test UI (removable)
-├── src/
-│   ├── components/
-│   │   ├── ChatInput.tsx       # Input field + send button
-│   │   ├── ChatWindow.tsx      # Message display
-│   │   └── JsonDebugger.tsx    # Optional: raw response viewer
-│   ├── pages/
-│   │   └── index.tsx           # Main chat page
-│   ├── services/
-│   │   └── api.ts              # Fetch wrapper for /chat endpoint
-│   └── styles/
-│       └── globals.css         # Minimal styling
-├── package.json
-├── next.config.js
-├── tsconfig.json
-├── .env.example                # NEXT_PUBLIC_API_URL
-└── README.md                   # Instructions (removable)
+│   │   ├── test_api_endpoint.py       # Existing
+│   │   ├── test_auth_flow.py          # NEW
+│   │   ├── test_rate_limiter.py       # NEW
+│   │   ├── test_noor_workflow.py      # NEW
+│   │   └── test_appointment_workflow.py # NEW
+│   └── unit/
+│       ├── test_personalization.py    # NEW
+│       └── test_history_capping.py    # NEW
+├── requirements.txt                   # + sqlalchemy[asyncio], asyncpg, alembic, redis, python-jose, httpx, sendgrid, slack_sdk
+├── alembic.ini                        # NEW
+└── .env.example                       # Updated with new vars
 ```
 
-**Structure Decision**: Backend-first monorepo with FastAPI backend (`backend/`) and removable Next.js test UI (`ui/`). The backend is independently runnable and testable; the UI is a consumer-only client that can be deleted without affecting backend logic.
+**Structure Decision**: Extend existing `backend/app/` layout with four new top-level modules (`auth/`, `db/`, `middleware/`, `services/notifications/`). No new top-level project. Frontend is unchanged — the existing test UI continues to work, and the production UI is the client's WordPress site (out of scope for this repo).
 
 ---
 
-## Data Flow
+## Phase 0: Research Topics
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         Request: POST /chat                                   │
-│  Payload: { "message": "Tell me about Product X", "context": [history...] }  │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-                        ┌─────────────────────────┐
-                        │  API Layer              │
-                        │  ✓ Validate schema      │
-                        │  ✓ Sanitize inputs      │
-                        │  ✓ Detect injection     │
-                        └─────────────┬───────────┘
-                                      │
-                                      ▼
-                    ┌──────────────────────────────────────┐
-                    │  Intent Classifier (Hybrid Routing)  │
-                    │  Step 1: Rule-based keywords/patterns│
-                    │  Step 2: If no match → LLM classify  │
-                    │  Step 3: Default → general skill     │
-                    └─────────────┬────────────────────────┘
-                                  │
-                                  ▼
-                         ┌────────────────────┐
-                         │  Skill Selector    │
-                         │  Route to skill    │
-                         │  (product/compare/ │
-                         │   noor/bespoke/    │
-                         │   general)         │
-                         └────────┬───────────┘
-                                  │
-                    ┌─────────────┴─────────────┐
-                    │                           │
-          ┌─────────▼─────────┐     ┌──────────▼──────────┐
-          │  Skill: use_rag?  │     │  Skill: use_tool?   │
-          │  YES: retrieve    │     │  YES: define in     │
-          │  top_k=3 chunks   │     │  skill schema       │
-          │  NO: skip RAG     │     │  (Noor only, Phase1)│
-          └────────┬──────────┘     └────────────────────┘
-                   │
-                   ▼
-    ┌─────────────────────────────────────┐
-    │  Prompt Builder                     │
-    │  ───────────────────────────────────│
-    │  1. System prompt (brand brain)     │
-    │  2. Skill prompt (context/role)     │
-    │  3. RAG chunks (if available)       │
-    │  4. Conversation context (last 15)  │
-    │  5. Current message                 │
-    │  6. Tool schema (if applicable)     │
-    └──────────────┬──────────────────────┘
-                   │
-                   ▼
-    ┌─────────────────────────────────────┐
-    │  OpenAI Responses API Call          │
-    │  (with retry 1–2x + backoff)        │
-    │                                     │
-    │  Attempt 1: Send prompt             │
-    │    → Success? Return response       │
-    │    → Timeout/Error? Wait 200ms      │
-    │                                     │
-    │  Attempt 2: Retry                   │
-    │    → Success? Return response       │
-    │    → Timeout/Error? Wait 500ms      │
-    │                                     │
-    │  Attempt 3+: Failed                 │
-    │    → Return safe fallback reply     │
-    └──────────────┬──────────────────────┘
-                   │
-                   ▼
-    ┌──────────────────────────────────────┐
-    │  Tool Response Handler (if tool used)│
-    │  Deterministic: no loops, explicit   │
-    │  fallback if tool fails              │
-    └──────────────┬───────────────────────┘
-                   │
-                   ▼
-    ┌──────────────────────────────────────┐
-    │  Response Builder                    │
-    │  { "reply": "...", "metadata": {...}}│
-    └──────────────┬───────────────────────┘
-                   │
-                   ▼
-    ┌──────────────────────────────────────┐
-    │  Logging & Observability             │
-    │  - Intent decision (rule/LLM)        │
-    │  - Skill selected                    │
-    │  - RAG chunks used (if any)          │
-    │  - Retries (if any)                  │
-    │  - Latency                           │
-    │  - Errors (if any)                   │
-    └──────────────┬───────────────────────┘
-                   │
-                   ▼
-    ┌──────────────────────────────────────┐
-    │  Response: POST /chat                │
-    │  { "reply": "Based on our..."  }     │
-    │  OR                                  │
-    │  { "error": "..." } (error case)     │
-    └──────────────────────────────────────┘
+To be resolved in `research.md`:
+
+1. **WordPress → Backend identity bridge**
+   - Options: (a) WP JWT Authentication plugin (RS256 JWKS), (b) WP Application Passwords (Basic auth → exchange for our JWT), (c) WP cookie + nonce shared via reverse proxy
+   - Decide: signing algorithm, JWKS caching TTL, claim mapping (`sub` → `wp_user_id`, `email`, `display_name`)
+
+2. **Rate-limit + Redis provider**
+   - Upstash serverless (REST + Redis protocol, free tier) vs Fly Redis vs Render Redis
+   - Sliding window vs fixed window vs token bucket — pick sliding window log for fairness at low limits (5/min)
+
+3. **Notification provider**
+   - SendGrid (free 100/day) vs AWS SES (cheaper at scale, more setup) vs Postmark (best deliverability, paid)
+   - Slack: incoming webhook URL per channel (#noor-requests, #appointments)
+
+4. **Noor cooldown policy**
+   - Default 90 days post-approval; configurable per-user override; pending requests block new submissions immediately
+
+5. **Concierge admin surface**
+   - MVP: minimal token-protected endpoints + curl/Postman; v2: lightweight Next.js admin page or WP plugin embedding our admin API
+
+6. **Stateless contract preservation**
+   - How to merge persisted history with caller-supplied context without breaking statelessness — answer: caller still passes context; server treats it as ephemeral display state, while persisted history feeds personalization separately
+
+---
+
+## Phase 1: Design Artifacts (to be produced)
+
+### data-model.md (entities)
+
+5 tables in Neon:
+
+1. **users** — `id` (uuid pk), `wp_user_id` (int unique), `email` (citext unique), `display_name`, `phone`, `age_range`, `skin_tone`, `style_preference`, `preferred_collection`, `favorite_metals` (text[]), `favorite_styles` (text[]), `status`, `created_at`, `last_seen_at`
+2. **chat_messages** — `id`, `user_id` fk (nullable for anon), `visitor_id`, `session_id`, `role` ('user'|'assistant'), `content`, `intent`, `skill`, `latency_ms`, `created_at` — partitioned by month if volume warrants
+3. **appointments** — `id`, `reference_id` (APT-XXXXXXXX unique), `user_id` fk, `appointment_type`, `preferred_date`, `notes`, `status` ('pending'|'confirmed'|'completed'|'cancelled'), `confirmed_by`, `scheduled_at`, `meeting_link`, `created_at`, `updated_at`
+4. **noor_allocation_requests** — `id`, `user_id` fk, `full_name`, `purpose`, `timeline`, `delivery_location`, `contact_method`, `contact_details`, `status` ('pending'|'approved'|'declined'), `cooldown_until`, `submitted_at`, `reviewed_at`, `reviewed_by`, `internal_notes`, `source` default 'AI Concierge', `created_at`, `updated_at`
+5. **user_activity** — `id`, `user_id` fk, `activity_type`, `details` (jsonb), `created_at`
+
+Indexes: `users(email)`, `users(wp_user_id)`, `chat_messages(user_id, created_at desc)`, `noor_allocation_requests(user_id, status)`, `appointments(user_id, status)`.
+
+### contracts/openapi.yaml (extended API)
+
+New / changed endpoints:
+
+| Method | Path | Auth | Purpose |
+|--------|------|------|---------|
+| POST | `/v1/auth/wp-login` | WP token in body | Verify WP JWT, mint our session JWT, upsert user |
+| GET | `/v1/auth/me` | Bearer | Return current user profile |
+| POST | `/v1/auth/logout` | Bearer | Invalidate session |
+| POST | `/chat` | Optional Bearer | Existing — now persists + personalizes if authed |
+| POST | `/v1/appointments` | Optional Bearer | Create appointment, notify concierge |
+| GET | `/v1/appointments/{ref_id}` | Bearer | Status check |
+| POST | `/v1/noor-requests` | Bearer required | Create Noor allocation request (cooldown enforced) |
+| GET | `/v1/noor-requests/me` | Bearer | List own requests + status |
+| GET | `/v1/admin/noor-requests` | Admin token | List all pending |
+| PATCH | `/v1/admin/noor-requests/{id}` | Admin token | Approve / decline + notes |
+| GET | `/health` | None | Existing |
+
+All responses follow stable error envelope: `{ "error": "string", "code": int }`.
+
+### quickstart.md (local dev)
+
+```bash
+# 1. Provision Neon (free tier) → copy connection string
+cp backend/.env.example backend/.env
+# Set NEON_DATABASE_URL, REDIS_URL (Upstash), WP_BASE_URL, WP_JWKS_URL,
+#     SENDGRID_API_KEY, SLACK_WEBHOOK_NOOR, SLACK_WEBHOOK_APPOINTMENTS,
+#     ADMIN_API_TOKEN, JWT_SIGNING_KEY
+
+# 2. Run migrations
+cd backend && alembic upgrade head
+
+# 3. Seed Qdrant (existing script, unchanged)
+python -m app.scripts.seed_rag
+
+# 4. Start dev server
+uvicorn app.main:app --reload --port 8000
+
+# 5. Local WP mock (for offline dev)
+python -m app.scripts.wp_mock --port 8080
 ```
 
----
+### Agent context update
 
-## Component Responsibilities
-
-### 1. API Layer (`app/api/routes.py`)
-
-**Responsibility**: HTTP request/response handling, validation, error transformation.
-
-**Scope**:
-- Define `POST /chat` endpoint
-- Accept `ChatRequest` (message: string, context: optional array)
-- Validate payload using Pydantic schemas
-- Call orchestrator with request data
-- Catch exceptions and transform to `ChatResponse` or error response
-- Return 200 on success, 400/500 on error (always structured JSON)
-
-**Dependencies**: Pydantic, FastAPI, orchestrator service
+Run `.specify/scripts/bash/update-agent-context.sh claude` to add new tech (Neon, asyncpg, SQLAlchemy 2.0 async, Alembic, Redis, python-jose, SendGrid, slack_sdk) to `CLAUDE.md` between markers — preserving manual additions.
 
 ---
 
-### 2. Orchestrator (`app/core/orchestrator.py`)
+## Phase 2 (NOT this command): Tasks
 
-**Responsibility**: Main request orchestration, flow control, state passing.
+Will be produced by `/sp.tasks`. Anticipated grouping (for forward visibility only):
 
-**Scope**:
-- Receive validated ChatRequest
-- Delegate to intent classifier → skill selector → RAG (if needed) → prompt builder → AI client
-- Handle orchestration errors (timeouts, missing components)
-- Delegate to failure handler on AI client failure
-- Return structured ChatResponse (or raise exception for API layer to catch)
-- Coordinate logging at each step
-
-**Dependencies**: Intent classifier, skill router, RAG service, prompt builder, AI client, failure handler
+- **Group A — Foundation (Days 1–2)**: Redis + rate-limit middleware, 15s timeout, error envelope, conversation history capping middleware, integration tests
+- **Group B — Persistence (Days 3–4)**: Neon setup, Alembic migration 0001, SQLAlchemy models, repositories, async session wiring
+- **Group C — WP Auth (Days 5–6)**: JWKS verifier, `/v1/auth/wp-login`, `Depends(get_current_user)`, anonymous visitor cookie + merge-on-login, ADR-002
+- **Group D — Personalization (Days 7–8)**: `core/personalization.py`, profile-aware system prompt block, persisted-history retrieval (last N), `/chat` extension, ADR-003
+- **Group E — Noor Allocation (Days 9–10)**: `noor_workflow.py`, `/v1/noor-requests` POST/GET, cooldown enforcement, admin endpoints, notifications wiring
+- **Group F — Appointments (Day 11)**: Migrate inline `/appointment-request` into `appointment_workflow.py`, add notifications, status endpoint
+- **Group G — Test & Harden (Days 12–13)**: Load test rate limit, timeout chaos test, end-to-end flow tests, deploy to staging
 
 ---
 
-### 3. Intent Classifier (`app/core/intent_classifier.py`)
-
-**Responsibility**: Hybrid rule-based + LLM-based intent detection.
-
-**Scope**:
-- Load routing rules from `config/routing_rules.yaml` (keyword patterns per skill)
-- Check message against rules in order: product → compare → noor → bespoke → general
-- If no rule match: invoke lightweight LLM classifier (temperature=0, structured output)
-- Return (skill_name, confidence, source: "rule"|"llm") tuple
-- Log routing decision
-- Ensure latency < 100–200ms (rules only ~ 10ms; LLM fallback ~ 200ms)
-
-**Dependencies**: Routing rules config, OpenAI client (for LLM classification fallback), logging
-
----
-
-### 4. Skill Router
-
-**Responsibility**: Select and invoke the correct skill based on classification.
-
-**Scope**:
-- Receive (skill_name, ...) from intent classifier
-- Load skill from registry (verify it exists)
-- Extract skill metadata (use_rag, allow_tool, prompt template)
-- Pass skill context to prompt builder
-- No response generation (skill defines only metadata/instructions)
-
-**Dependencies**: Skills registry, logging
-
----
-
-### 5. Prompt Builder (`app/core/prompt_builder.py`)
-
-**Responsibility**: Construct multi-part prompt for OpenAI call.
-
-**Scope**:
-- Receive: system_prompt, skill_prompt, rag_chunks (optional), conversation_context, current_message, tool_schema (optional)
-- Assemble in order:
-  1. System prompt (brand brain, tone, constraints)
-  2. Skill-specific prompt (context, instructions)
-  3. RAG chunks (if available): "Based on the following context: [chunks]"
-  4. Conversation history (last 10–15 messages)
-  5. Current message: "User: {message}"
-  6. Tool schema (if tool_call allowed): "Tools available: [schema]"
-- Ensure total token count is reasonable (< 4k tokens)
-- Return assembled prompt dict for OpenAI API
-
-**Dependencies**: Token counter (tiktoken), logging
-
----
-
-### 6. AI Client (`app/services/ai_client.py`)
-
-**Responsibility**: OpenAI Responses API wrapper with retry logic.
-
-**Scope**:
-- Initialize async httpx client with OpenAI API key
-- Call gpt-4.1 Responses API with prompt, temperature=0 (deterministic)
-- Handle response: extract reply text
-- Detect tool use (if applicable) → delegate to tool handler
-- Implement retry logic (1–2 retries, 200ms → 500ms backoff)
-- On final failure: raise exception (for failure handler to catch)
-- Log all attempts (success, retries, final failure)
-
-**Dependencies**: OpenAI API, httpx, logging, failure handler
-
----
-
-### 7. RAG Service (`app/services/rag_service.py`)
-
-**Responsibility**: Vector search and chunk retrieval.
-
-**Scope**:
-- Receive query (message, optional skill context)
-- Generate embedding via embedding client
-- Query Qdrant: search with top_k=3, similarity threshold (if any)
-- Return list of RAGChunk (content, source, relevance_score)
-- Log retrieval metrics (chunks found, relevance scores)
-- Timeout: 500ms; if exceeded, return empty list (RAG failure → continue without RAG)
-
-**Dependencies**: Embedding client, Qdrant Python client, logging
-
----
-
-### 8. Failure Handler (`app/services/failure_handler.py`)
-
-**Responsibility**: Graceful degradation on external service failure.
-
-**Scope**:
-- Receive exception from AI client or RAG service
-- Classify failure: timeout, rate limit, server error, invalid API key, etc.
-- Decision logic:
-  - AI client failure (after retries) → return safe fallback reply
-  - RAG service failure → continue without RAG (orchestrator retries prompt builder without RAG chunks)
-- Return safe response: `{ "reply": "I'm temporarily unable to provide a detailed response. Please try again." }`
-- Log failure details (service, error code, attempt count) for ops visibility
-
-**Dependencies**: Logging, error models
-
----
-
-### 9. Skills Layer (`app/skills/base.py`, `*.py`)
-
-**Responsibility**: Modular, reusable skill definitions.
-
-**Scope**:
-- Base class: `Skill(name, prompt_template, use_rag, allow_tool, output_schema)`
-- Five skill implementations:
-  - **ProductSkill**: RAG-enabled, retrieves product info
-  - **CompareSkill**: RAG-enabled, retrieves comparative info
-  - **NoorSkill**: Intent-only (Phase 1); tool schema defined but no execution
-  - **BespokeSkill**: Custom requests, RAG optional, tool optional
-  - **GeneralSkill**: Fallback, minimal RAG, no tools
-- Each skill is isolated; swappable without affecting orchestration
-- Skill registry stores all skill definitions
-
-**Dependencies**: None (pure data)
-
----
-
-### 10. Tool Handler (`app/core/tool_handler.py`)
-
-**Responsibility**: Deterministic tool invocation (no loops).
-
-**Scope**:
-- Receive tool call from AI response (tool_name, tool_input)
-- Validate against skill's allowed tool schema
-- Execute tool function (Noor tool in Phase 1: stub that returns acknowledgment)
-- Return tool response to AI in a second call (if allowed) OR embed in fallback response
-- Ensure no loops: at most 1 tool call per request (no recursive tool use)
-- Log tool invocation and outcome
-
-**Dependencies**: Skill definitions, logging
-
----
-
-### 11. Config (`app/config/`)
-
-**Responsibility**: Centralized configuration storage.
-
-**Scope**:
-- `settings.py`: Environment variables (API keys, Qdrant URL, log level, timeouts)
-- `prompts.py`: System prompt, skill prompts, fallback messages (all as strings/templates)
-- `routing_rules.yaml`: Keyword patterns for each skill
-  ```yaml
-  skills:
-    product:
-      keywords: ["product", "tell me about", "features", "specifications"]
-      patterns: ["product.*?(?:details|info|specs)"]
-    compare:
-      keywords: ["compare", "difference", "versus", "which"]
-    noor:
-      keywords: ["noor"]
-    bespoke:
-      keywords: ["custom", "bespoke", "specific"]
-    general:
-      keywords: []  # fallback
-  ```
-- `skills_registry.py`: Skill metadata (name, prompt, use_rag, allow_tool, output schema)
-
-**Dependencies**: None
-
----
-
-### 12. Models & Schemas (`app/models/`)
-
-**Responsibility**: Data validation and serialization.
-
-**Scope**:
-- `schemas.py`:
-  - `ChatRequest`: message (str), context (optional list of {role, content})
-  - `ChatResponse`: reply (str), metadata (optional: intent, skill, latency_ms)
-  - `ErrorResponse`: error (str), code (int)
-- `entities.py`: Placeholder for Phase 2 (Neon/PostgreSQL entities)
-- `errors.py`: Custom exception classes (RAGUnavailable, AITimeout, ValidationError)
-
-**Dependencies**: Pydantic
-
----
-
-## API Contract
-
-### POST /chat
-
-**Request**:
-```json
-{
-  "message": "Tell me about Product X",
-  "context": [
-    {
-      "role": "user",
-      "content": "What are your best-selling items?"
-    },
-    {
-      "role": "assistant",
-      "content": "Our most popular products are [...]"
-    }
-  ]
-}
-```
-
-- `message`: (string, required, non-empty, max 5000 chars)
-- `context`: (array of {role, content}, optional, max 15 items, ordered chronologically)
-
-**Response (Success)**:
-```json
-{
-  "reply": "Based on our current inventory, Product X offers...",
-  "metadata": {
-    "intent": "product",
-    "skill": "product",
-    "latency_ms": 1250,
-    "routing_source": "rule"
-  }
-}
-```
-
-- `reply`: (string, always present)
-- `metadata`: (optional) — intent, skill used, latency, routing decision
-
-**Response (Error)**:
-```json
-{
-  "error": "I'm temporarily unable to provide a detailed response. Please try again.",
-  "code": 503
-}
-```
-
-- `error`: (string, always present on error)
-- `code`: (int, HTTP-like; 400=validation, 503=unavailable, 500=internal)
-
-**Status Codes**:
-- `200`: Success
-- `400`: Validation error (malformed JSON, empty message, injection detected)
-- `503`: Service unavailable (AI provider, vector store down; after retries exhausted)
-- `500`: Internal server error (unexpected exception)
-
----
-
-## Non-Functional Requirements
-
-### Performance
-
-- **Latency**: p95 ≤ 3 seconds, p99 < 4 seconds
-  - Routing: < 100–200ms (rules ~10ms, LLM ~200ms)
-  - RAG: < 500ms
-  - AI: < 2 seconds (including retries)
-  - Orchestration overhead: < 100ms
-- **Throughput**: Single-threaded async ~10–50 concurrent requests; phase 1 assumes <10
-- **Token efficiency**: Prompts capped at ~3–4k tokens to stay under latency and cost budgets
-
-### Reliability
-
-- **Availability**: 95% success rate under normal load (phase 1 baseline)
-- **Retry strategy**: 1–2 retries with exponential backoff (200ms, 500ms)
-- **Fallback**: Safe fallback response on all failures
-- **Logging**: All requests logged; retries/failures logged with context
-- **Error isolation**: RAG failure doesn't block AI call; AI failure returns graceful fallback
-
-### Observability
-
-- **Structured logging**: JSON format with fields: timestamp, level, component, request_id, intent, skill, latency_ms, error (if any)
-- **Metrics**: Request count, latency histogram, retry count, failure count (per service)
-- **Tracing**: Request ID passed through all components for debugging
-
-### Security & Safety
-
-- **Input validation**: All inputs validated via Pydantic; sanitize before RAG/AI
-- **Injection detection**: Heuristic check for prompt injection patterns
-- **Key management**: All API keys in environment variables; never logged or returned
-- **Response safety**: No API keys, system prompt, or internal paths in responses
-- **RAG grounding**: No hallucination; fallback on missing context
-
----
-
-## Temporary Test UI (Next.js)
-
-### Purpose
-- External client for manual testing of the chat API
-- Completely removable; does NOT influence backend design
-
-### Architecture
-- Standalone Next.js app
-- TypeScript for type safety
-- Single page: chat interface
-- Calls `POST /chat` endpoint (URL from `.env`)
-
-### Components
-- **ChatInput**: Text input + send button; disables send while awaiting response
-- **ChatWindow**: Displays conversation history (user messages, assistant replies); scrolls to latest
-- **JsonDebugger** (optional): Shows raw JSON response for debugging
-
-### Features
-- Display chat history (client-side state only; no persistent storage)
-- Show latency and routing metadata (from response metadata)
-- Handle API errors gracefully (display error message from response.error)
-- Clear conversation button (reset client state)
-
-### Constraints
-- Zero business logic (all logic in backend)
-- No authentication
-- No persistent storage
-- No styling (minimal CSS, focus on functionality)
-- **Removal**: Delete `/ui` directory; backend continues unaffected
-
-### Environment
-```
-NEXT_PUBLIC_API_URL=http://localhost:8000  # Backend URL
-```
-
----
-
-## Failure Scenarios & Handling
-
-| Scenario | Handling | Result |
-|----------|----------|--------|
-| Malformed JSON | API validates, rejects with 400 | User sees error message |
-| Empty message | Validation error, 400 | User must retry with content |
-| Prompt injection | Heuristic detection, sanitize or reject | Either sanitized reply or error message |
-| Intent ambiguous | LLM classifier handles; defaults to general | Reply from general skill |
-| RAG unavailable (timeout) | Continue without RAG after 500ms timeout | Reply grounded in system prompt only |
-| RAG no matches | Return empty chunks; continue | Reply acknowledges "I don't have specific info" |
-| AI provider timeout | Retry 1–2x (200ms, 500ms); if still down, fallback | Safe fallback reply + 503 error |
-| AI rate limit | Logged; fallback on exhaustion | Safe fallback reply |
-| Skill not found | Should not happen (validated in router) | Internal error, 500 |
-| Tool execution error | Log error, return fallback response | User sees uncertainty message |
-| Total latency > 3s | Log warning; still return response | May miss p95 SLA (≤3s) but no data loss |
-
----
-
-## Technical Decisions & Rationale
-
-| Decision | Rationale | Alternatives |
-|----------|-----------|--------------|
-| FastAPI (async Python) | Python ecosystem (OpenAI SDK), easy to maintain, built-in async, pydantic validation | Node.js (simpler), Go (faster but overkill for phase 1) |
-| Hybrid rule-based + LLM routing | Rule-based: fast, deterministic, auditable. LLM fallback: handles nuance. Balances performance + accuracy | Full LLM routing (slower, less deterministic) or pure rules (less accurate) |
-| OpenAI Responses API (gpt-4.1) | Aligned with brand choice; tool-ready for phase 2; mature API | Anthropic (different API), open-source models (no tool support) |
-| Qdrant (vector store) | Fast, cloud-native, explicit vector search; matches constitutional choice | Pinecone (proprietary), Weaviate (heavier) |
-| Stateless API (context in request) | Simpler, no session management, easier testing, explicit data flow | Server-side session (adds state, complexity) |
-| Fallback reply on failure | Improves UX; user never sees error message; ops can still debug via logs | Return error to user (hurts UX); return empty reply (confusing) |
-| Skill modularity | Easy to test, swap, extend skills without affecting orchestration | Monolithic response generator (harder to maintain, harder to extend) |
-| 10–15 message context limit | Balances token budget, latency, cost; prevents hallucination drift | No context (bad UX) or unlimited (expensive, slow) |
-| Explicit tool schema (no auto-trigger) | Deterministic; no surprise tool calls; explicit logging | Auto-trigger (unpredictable, hard to debug) |
-
----
-
-## Implementation Notes
-
-### Phase 1 Scope (This Plan)
-
-1. ✅ POST /chat endpoint (request/response validation)
-2. ✅ Intent classifier (hybrid rule + LLM)
-3. ✅ Skill router + 5 skills (product, compare, noor stub, bespoke, general)
-4. ✅ Prompt builder (multi-part prompts)
-5. ✅ OpenAI Responses API client (with retry + fallback)
-6. ✅ RAG integration (Qdrant, top_k=3)
-7. ✅ Failure handling (retry 1–2x, fallback response)
-8. ✅ Structured logging (intent, skill, retries, errors)
-9. ✅ Next.js test UI (minimal, removable)
-10. ✅ API contracts (OpenAPI schema)
-
-### Out of Scope (Phase 2+)
-
-- Authentication / authorization
-- User session persistence (visitor_id tracking)
-- Long-term conversation memory
-- Noor skill full workflow (tool execution)
-- Production UI
-- WordPress integration
-- Rate limiting / API gateway
-- Advanced observability (tracing, custom metrics)
-
-### Risks & Mitigations
-
-| Risk | Mitigation |
-|------|-----------|
-| AI provider latency >> 4s | Monitor p95 latency; add timeouts; fallback on slow responses |
-| RAG relevance poor | Tune chunking (500–800 tokens); verify Qdrant index quality; monitor retrieval accuracy |
-| Skill routing misclassification | Start with conservative rules; log all LLM fallback decisions; iterate based on failures |
-| Prompt injection attacks | Heuristic filtering; never directly concatenate user input into system prompt; test common payloads |
-| API key exposure | Use environment variables only; never log keys; audit secret handling |
-| No fallback response | Test all failure paths in CI; ensure fallback is safe and on-brand |
-
----
-
-## Readiness for Phase 2 (Tasks)
-
-Once implementation tasks are generated (via `/sp.tasks`), they will decompose this plan into:
-1. Unit tests for each component (intent classifier, prompt builder, skills, etc.)
-2. Integration tests (end-to-end request flow, RAG integration, AI client)
-3. Contract tests (API schema validation)
-4. Error scenario tests (timeouts, injection, RAG unavailable, etc.)
-5. Async/await implementation details (FastAPI handlers, httpx client setup)
-6. Configuration loading and environment variable validation
-7. Docker setup and local dev environment
-
-Each task will be P1–P3 (P1 = blocking, P2 = required, P3 = nice-to-have) and will reference this plan's components and data flow.
+## Complexity Tracking
+
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| Constitution VI.1 — `wp_user_id` as identity anchor (was: `visitor_id` only) | Client product runs on WordPress; users already have WP accounts. Forcing a parallel `visitor_id`-first identity creates double accounts and breaks "remember me across sessions" requirement. | Visitor-only identity rejected: cannot satisfy "personalization based on saved profile" because we'd have no stable cross-device key. ADR-002 will document. |
+| Constitution VI.2 — Persist full chat messages (not only summaries) | Client explicitly requires "AI bot will remember the user by his recent activities" — distillation loses the recency signal needed for warm re-engagement greetings. | Summary-only rejected: cannot reconstruct "last discussed Noor Collection" without raw messages. Mitigated by capping *prompt context* to 15 (constitution VI.3 still satisfied). ADR-003 will document. |
+| New top-level modules `auth/`, `db/`, `middleware/`, `services/notifications/` | Each is a distinct concern with its own test surface and dependency footprint. Folding them into existing modules would violate II.2 separation of concerns. | Single `services/` dump rejected: would create a 20+ file mega-module and entangle JWT logic with OpenAI logic. |
+
+ADR suggestions to be raised after this plan is approved:
+- **ADR-002**: WordPress JWT as primary identity anchor for personalization
+- **ADR-003**: Persist full chat messages with prompt-context cap (vs summary-only)
+- **ADR-004**: Sliding-window Redis rate limiter (5 req/min/IP) + 15s timeout middleware
+- **ADR-005**: Neon Serverless Postgres as primary OLTP store

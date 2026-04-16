@@ -35,9 +35,9 @@ def test_chat_with_context(client):
 
 
 def test_chat_empty_message(client):
-    """Test that empty message returns 400."""
+    """Test that empty message returns 422 (Pydantic min_length=1 validation)."""
     response = client.post("/chat", json={"message": ""})
-    assert response.status_code == 400
+    assert response.status_code == 422
 
 
 def test_chat_whitespace_message(client):

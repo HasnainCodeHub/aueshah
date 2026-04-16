@@ -1,0 +1,497 @@
+openapi: 3.1.0
+info:
+  title: Aueshah AI Concierge API
+  version: 2.0.0
+  description: |
+    Phase 2 API — adds WordPress-bridged authentication, persistence (Neon),
+    rate limiting, Noor allocation workflow, appointments with notifications,
+    and concierge admin endpoints.
+
+    Phase 1 endpoints (`POST /chat`, `GET /health`) remain backward-compatible.
+  contact:
+    name: Aueshah Engineering
+    email: engineering@aueshah.com
+
+servers:
+  - url: https://api.aueshah.com
+    description: Production
+  - url: http://localhost:8000
+    description: Local dev
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: chat
+  - name: auth
+  - name: appointments
+  - name: noor
+  - name: admin
+  - name: health
+
+paths:
+  # ───────────────────── Health ─────────────────────
+  /health:
+    get:
+      tags: [health]
+      security: []
+      summary: Liveness probe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+
+  # ───────────────────── Chat ─────────────────────
+  /chat:
+    post:
+      tags: [chat]
+      security:
+        - {}                # anonymous allowed
+        - BearerAuth: []    # authenticated is richer
+      summary: Send a message to the concierge
+      description: |
+        Anonymous requests work with `visitor_id` cookie.
+        Authenticated requests get personalization (profile-aware greeting,
+        last-discussed context) and persisted history.
+        Rate limit: 5 req/min/IP. Hard timeout: 15s.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChatRequest' }
+      responses:
+        '200':
+          description: Reply generated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ChatResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '408': { $ref: '#/components/responses/Timeout' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
+  # ───────────────────── Auth ─────────────────────
+  /v1/auth/wp-login:
+    post:
+      tags: [auth]
+      security: []
+      summary: Exchange a WordPress JWT for our session JWT
+      description: |
+        Verifies the WP-issued JWT (RS256, via cached JWKS), upserts the user
+        into Neon, and returns our session access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [wp_token]
+              properties:
+                wp_token: { type: string, description: JWT issued by the WP JWT plugin }
+                visitor_id: { type: string, format: uuid, description: Anonymous visitor cookie to merge }
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: { type: string }
+                  token_type: { type: string, example: Bearer }
+                  expires_in: { type: integer, example: 86400 }
+                  user: { $ref: '#/components/schemas/UserPublic' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+
+  /v1/auth/me:
+    get:
+      tags: [auth]
+      summary: Get current user profile
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserPublic' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+
+  /v1/auth/logout:
+    post:
+      tags: [auth]
+      summary: Revoke the current session token
+      responses:
+        '204': { description: Logged out }
+
+  # ─────────────────── Appointments ───────────────────
+  /v1/appointments:
+    post:
+      tags: [appointments]
+      security:
+        - {}
+        - BearerAuth: []
+      summary: Create an appointment request
+      description: |
+        Captures contact info and notifies concierge team via email + Slack.
+        Concierge contacts client within 24h to confirm.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AppointmentCreate' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppointmentResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /v1/appointments/{reference_id}:
+    get:
+      tags: [appointments]
+      summary: Check appointment status
+      parameters:
+        - { name: reference_id, in: path, required: true, schema: { type: string, pattern: '^APT-[A-Z0-9]{8}$' } }
+      responses:
+        '200':
+          description: Appointment detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appointment' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ─────────────────── Noor allocation ───────────────────
+  /v1/noor-requests:
+    post:
+      tags: [noor]
+      summary: Submit a Noor Collection allocation request
+      description: |
+        Requires authentication. Enforces cooldown:
+        - Blocks if user has a `pending` request.
+        - Blocks if user has an `approved` request with `cooldown_until > now()`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NoorRequestCreate' }
+      responses:
+        '201':
+          description: Submitted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NoorRequestResponse' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+        '409':
+          description: Cooldown / pending request active
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  /v1/noor-requests/me:
+    get:
+      tags: [noor]
+      summary: List the authenticated user's own Noor requests
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requests:
+                    type: array
+                    items: { $ref: '#/components/schemas/NoorRequest' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+
+  # ─────────────────── Admin ───────────────────
+  /v1/admin/noor-requests:
+    get:
+      tags: [admin]
+      security:
+        - AdminToken: []
+      summary: List Noor requests (concierge)
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [pending, approved, declined] } }
+        - { name: limit, in: query, schema: { type: integer, default: 50, maximum: 200 } }
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requests:
+                    type: array
+                    items: { $ref: '#/components/schemas/NoorRequestAdmin' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+
+  /v1/admin/noor-requests/{id}:
+    patch:
+      tags: [admin]
+      security:
+        - AdminToken: []
+      summary: Approve or decline a Noor request
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [approved, declined] }
+                internal_notes: { type: string }
+                reviewed_by: { type: string }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NoorRequestAdmin' }
+        '401': { $ref: '#/components/responses/AuthFailure' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/admin/appointments:
+    get:
+      tags: [admin]
+      security:
+        - AdminToken: []
+      summary: List appointments (concierge)
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [pending, confirmed, completed, cancelled] } }
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  appointments:
+                    type: array
+                    items: { $ref: '#/components/schemas/Appointment' }
+
+  /v1/admin/appointments/{reference_id}:
+    patch:
+      tags: [admin]
+      security:
+        - AdminToken: []
+      summary: Confirm / cancel an appointment
+      parameters:
+        - { name: reference_id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, enum: [confirmed, cancelled, completed] }
+                scheduled_at: { type: string, format: date-time }
+                meeting_link: { type: string, format: uri }
+                confirmed_by: { type: string }
+                internal_notes: { type: string }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appointment' }
+
+# ─────────────────── Components ───────────────────
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    AdminToken:
+      type: apiKey
+      in: header
+      name: X-Admin-Token
+
+  schemas:
+    # Chat
+    ChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        context:
+          type: array
+          maxItems: 50   # server caps to 15 regardless
+          items:
+            type: object
+            required: [role, content]
+            properties:
+              role: { type: string, enum: [user, assistant] }
+              content: { type: string }
+        session_id:
+          type: string
+          format: uuid
+          description: Groups messages into a conversation
+
+    ChatResponse:
+      type: object
+      required: [reply]
+      properties:
+        reply: { type: string }
+        metadata:
+          type: object
+          properties:
+            intent: { type: string }
+            skill: { type: string }
+            routing_source: { type: string, enum: [rule, llm, guardrail] }
+            latency_ms: { type: integer }
+
+    # User
+    UserPublic:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        wp_user_id: { type: integer }
+        email: { type: string, format: email }
+        display_name: { type: string }
+        age_range: { type: string }
+        skin_tone: { type: string }
+        style_preference: { type: string }
+        preferred_collection: { type: string }
+        favorite_metals: { type: array, items: { type: string } }
+        favorite_styles: { type: array, items: { type: string } }
+        role: { type: string, enum: [client, concierge, admin] }
+
+    # Appointment
+    AppointmentCreate:
+      type: object
+      required: [email, appointment_type]
+      properties:
+        email: { type: string, format: email }
+        phone: { type: string }
+        appointment_type:
+          type: string
+          enum: [virtual, in-person, bespoke, general]
+        preferred_date: { type: string }
+        notes: { type: string, maxLength: 1000 }
+
+    AppointmentResponse:
+      type: object
+      properties:
+        status: { type: string, example: success }
+        message: { type: string }
+        reference_id: { type: string, pattern: '^APT-[A-Z0-9]{8}$' }
+
+    Appointment:
+      type: object
+      properties:
+        reference_id: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        appointment_type: { type: string }
+        preferred_date: { type: string }
+        notes: { type: string }
+        status: { type: string, enum: [pending, confirmed, completed, cancelled] }
+        scheduled_at: { type: string, format: date-time }
+        meeting_link: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    # Noor
+    NoorRequestCreate:
+      type: object
+      required: [full_name, purpose, timeline, delivery_location, contact_method, contact_details]
+      properties:
+        full_name: { type: string, minLength: 2, maxLength: 255 }
+        purpose: { type: string, minLength: 5, maxLength: 1000 }
+        timeline: { type: string, maxLength: 128 }
+        delivery_location: { type: string, maxLength: 255 }
+        contact_method: { type: string, enum: [email, phone, both] }
+        contact_details: { type: string, maxLength: 255 }
+
+    NoorRequestResponse:
+      type: object
+      properties:
+        status: { type: string, example: success }
+        message: { type: string }
+        reference_id: { type: string, pattern: '^NOR-[A-Z0-9]{8}$' }
+
+    NoorRequest:
+      type: object
+      properties:
+        reference_id: { type: string }
+        full_name: { type: string }
+        purpose: { type: string }
+        timeline: { type: string }
+        delivery_location: { type: string }
+        contact_method: { type: string }
+        status: { type: string, enum: [pending, approved, declined] }
+        cooldown_until: { type: string, format: date-time, nullable: true }
+        submitted_at: { type: string, format: date-time }
+        reviewed_at: { type: string, format: date-time, nullable: true }
+
+    NoorRequestAdmin:
+      allOf:
+        - $ref: '#/components/schemas/NoorRequest'
+        - type: object
+          properties:
+            user: { $ref: '#/components/schemas/UserPublic' }
+            internal_notes: { type: string }
+            reviewed_by: { type: string }
+
+    # Error envelope
+    Error:
+      type: object
+      required: [error, code]
+      properties:
+        error: { type: string }
+        code: { type: integer }
+        retry_after: { type: integer, description: Seconds (429/408 only) }
+
+  responses:
+    ValidationError:
+      description: Bad request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    AuthFailure:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    RateLimited:
+      description: Too many requests
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Timeout:
+      description: Request exceeded 15s budget
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    ServiceUnavailable:
+      description: Upstream (OpenAI/Qdrant/DB) unavailable after retries
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

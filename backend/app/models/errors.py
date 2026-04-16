@@ -55,3 +55,33 @@ class InternalError(ChatException):
     """Unexpected internal error."""
     def __init__(self, message: str = "Internal server error"):
         super().__init__(message, code=500)
+
+
+class AuthFailure(ChatException):
+    """Authentication or authorization failed."""
+    def __init__(self, message: str = "Authentication required"):
+        super().__init__(message, code=401)
+
+
+class RateLimited(ChatException):
+    """Too many requests from this client."""
+    def __init__(self, message: str = "Too many requests. Please wait a moment."):
+        super().__init__(message, code=429)
+
+
+class CooldownActive(ChatException):
+    """User is within the Noor cooldown period."""
+    def __init__(self, message: str = "You have an active Noor request. New requests unlock after the cooldown period."):
+        super().__init__(message, code=409)
+
+
+class NoorPendingConflict(ChatException):
+    """User already has a pending Noor request."""
+    def __init__(self, message: str = "You already have a pending Noor request under review."):
+        super().__init__(message, code=409)
+
+
+class DatabaseUnavailable(ChatException):
+    """Database connection failed."""
+    def __init__(self, message: str = "Database temporarily unavailable"):
+        super().__init__(message, code=503)

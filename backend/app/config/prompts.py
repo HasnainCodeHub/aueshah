@@ -142,3 +142,5 @@ OFF_TOPIC_RESPONSE = (
     "something beautiful — shall I show you a piece that might suit you, or share a little "
     "about our collections?"
 )
+
+FALLBACK_MESSAGE = "There appears to be a temporary delay. Please try again shortly."
