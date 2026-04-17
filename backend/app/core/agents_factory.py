@@ -16,8 +16,11 @@ from agents import Agent, ModelSettings, function_tool
 
 from app.config.prompts import SKILL_PROMPTS, SYSTEM_PROMPT
 from app.config.settings import settings
+from app.db.session import get_session_factory
+from app.db.repositories import noor_requests as noor_repo
 from app.services.noor_catalog import find_best_noor_pieces
 from app.services.rag_service import RAGService
+from app.utils.metrics import NOOR_REQUESTS_TOTAL
 from app.utils.validators import injection_guardrail, off_topic_guardrail
 
 logger = logging.getLogger(__name__)
@@ -116,6 +119,99 @@ async def search_catalog(query: str) -> str:
         return "(catalog lookup unavailable)"
 
 
+@function_tool
+async def submit_noor_request(
+    full_name: str,
+    purpose: str,
+    timeline: str,
+    delivery_location: str,
+    contact_method: str,
+    contact_detail: str,
+) -> str:
+    """Submit a Noor Collection allocation request on behalf of the client.
+
+    Call this ONLY after you have collected ALL five fields from the client in
+    conversation. The backend stores the request and generates a reference ID.
+    The concierge team will review and reach out within 48 hours.
+
+    Args:
+        full_name: Client's full name as it should appear on records.
+        purpose: The occasion or reason (what this piece means to them).
+        timeline: When they'd hope to receive it (e.g. "within 3 months").
+        delivery_location: City / country for delivery.
+        contact_method: "email", "phone", or "both".
+        contact_detail: The actual email address, phone number, or both.
+
+    Returns a confirmation with reference ID, or an error/block reason.
+    """
+    factory = get_session_factory()
+    if factory is None:
+        return "(Noor submission unavailable — database not configured. Ask the client to contact service@aueshah.com directly.)"
+
+    from app.core.agents_context import get_current_user_id
+
+    user_id = get_current_user_id()
+    if user_id is None:
+        return "(Noor submissions require authentication. Please ask the client to log in first.)"
+
+    try:
+        async with factory() as session:
+            approved_count = await noor_repo.count_approved(session)
+            if approved_count >= settings.noor_max_allocations:
+                return (
+                    "The Noor Collection has reached its full allocation of "
+                    f"{settings.noor_max_allocations} pieces. "
+                    "This collection is now permanently closed to new requests. "
+                    "I'd be happy to guide you toward our other exceptional collections."
+                )
+
+            blocking = await noor_repo.user_has_active(session, user_id)
+            if blocking is not None:
+                if blocking.status == "pending":
+                    NOOR_REQUESTS_TOTAL.labels(outcome="blocked_pending").inc()
+                    return (
+                        f"You already have a pending Noor allocation request "
+                        f"(Ref: {blocking.reference_id}). Our concierge team is reviewing it "
+                        f"and will reach out personally. In the meantime, I'd love to show you "
+                        f"our other collections."
+                    )
+                if blocking.status == "declined":
+                    NOOR_REQUESTS_TOTAL.labels(outcome="blocked_cooldown").inc()
+                    return (
+                        "The Noor Collection remains exceptionally limited. "
+                        "Your prior request has already been reviewed and a decision has been shared. "
+                        "I'd be happy to explore our other extraordinary collections with you."
+                    )
+                NOOR_REQUESTS_TOTAL.labels(outcome="blocked_cooldown").inc()
+                return (
+                    f"Your previous Noor allocation (Ref: {blocking.reference_id}) is still "
+                    f"within the allocation window. I'd love to show you our other collections "
+                    f"in the meantime."
+                )
+
+            row = await noor_repo.create(
+                session,
+                user_id=user_id,
+                full_name=full_name,
+                purpose=purpose,
+                timeline=timeline,
+                delivery_location=delivery_location,
+                contact_method=contact_method,
+                contact_details=contact_detail,
+            )
+
+        NOOR_REQUESTS_TOTAL.labels(outcome="created").inc()
+        return (
+            f"Noor allocation request submitted successfully. "
+            f"Reference ID: {row.reference_id}. "
+            f"Our concierge team will review your request and reach out personally within 48 hours."
+        )
+
+    except Exception as e:
+        logger.error(f"submit_noor_request tool error: {e}", exc_info=True)
+        return "(An error occurred while submitting the request. Please ask the client to contact service@aueshah.com directly.)"
+
+
 # ---------- Instruction helpers ----------
 
 def _specialist_instructions(skill_key: str) -> str:
@@ -161,7 +257,7 @@ def build_triage_agent() -> Agent:
         instructions=_specialist_instructions("noor"),
         model=model,
         model_settings=model_settings,
-        tools=[noor_recommend],
+        tools=[noor_recommend, submit_noor_request],
     )
 
     bespoke_agent = Agent(

@@ -20,11 +20,19 @@ class ContextMessage(BaseModel):
     content: str = Field(..., min_length=1, max_length=10000)
 
 
+class PageContext(BaseModel):
+    """Describes which page the visitor is currently viewing on the website."""
+    page_type: str = Field(..., max_length=64, description="e.g. product, collection, homepage, blog, cart")
+    product_name: Optional[str] = Field(None, max_length=255)
+    collection_name: Optional[str] = Field(None, max_length=255)
+
+
 class ChatRequest(BaseModel):
     """Request payload for POST /chat endpoint."""
     message: str = Field(..., min_length=1, max_length=5000)
     context: Optional[List[ContextMessage]] = Field(default=None)
     session_id: Optional[str] = Field(default=None, description="Groups messages into a conversation")
+    page_context: Optional[PageContext] = Field(default=None, description="Current page the visitor is viewing")
 
     @field_validator("context")
     @classmethod

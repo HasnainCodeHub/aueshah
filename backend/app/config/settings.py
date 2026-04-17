@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     # OpenAI
     openai_api_key: str
-    openai_model: str = "gpt-4-turbo-preview"
+    openai_model: str = "gpt-4.1"
 
     # Qdrant
     qdrant_url: str = "http://localhost:6333"
@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     qdrant_collection: str = "aueshah_knowledge"
 
     # Embedding
-    embedding_model: str = "text-embedding-3-small"
-    embedding_dim: int = 1536
+    embedding_model: str = "text-embedding-3-large"
+    embedding_dim: int = 3072
 
     # Timeouts (in seconds)
     chat_timeout_seconds: float = 4.0
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     # Phase 2: Rate limiting & timeout
     rate_limit_per_min: int = 5
-    request_timeout_seconds: int = 30  # Production: set REQUEST_TIMEOUT_SECONDS=15 via env
+    request_timeout_seconds: int = 15
     enable_rate_limit: bool = False
     max_context_messages: int = 15
 
@@ -61,13 +61,15 @@ class Settings(BaseSettings):
     sendgrid_api_key: str = ""
     sendgrid_from_email: str = "concierge@aueshah.com"
     sendgrid_from_name: str = "Aueshah Concierge"
+    concierge_alert_email: str = "concierge@aueshah.com"
 
     # Phase 2: Slack
     slack_webhook_noor: str = ""
     slack_webhook_appointments: str = ""
 
     # Phase 2: Business logic
-    noor_cooldown_days: int = 90
+    noor_cooldown_days: int = 365
+    noor_max_allocations: int = 143
 
     class Config:
         env_file = ".env"
