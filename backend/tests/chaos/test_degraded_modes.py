@@ -17,16 +17,12 @@ from httpx import ASGITransport, AsyncClient
 async def test_redis_down_fail_open_allows_chat():
     """Rate limiter must NOT block traffic when Redis is unreachable."""
     from app.api import routes as routes_mod
-    from app.config.settings import settings
     from app.main import app
     from app.middleware import rate_limiter as rl
     from app.models.schemas import ChatResponse
 
     async def _handle(self, request, *, personalization_preamble=None, **kwargs):  # noqa: ARG001
         return ChatResponse(reply="ok", metadata={})
-
-    original_flag = settings.enable_rate_limit
-    settings.enable_rate_limit = True
 
     fake_client = MagicMock()
     fake_pipe = MagicMock()
@@ -37,15 +33,12 @@ async def test_redis_down_fail_open_allows_chat():
     fake_pipe.execute = AsyncMock(side_effect=ConnectionError("Redis unreachable"))
     fake_client.pipeline = MagicMock(return_value=fake_pipe)
 
-    try:
-        with patch.object(rl, "get_redis_client", return_value=fake_client), patch.object(
-            routes_mod.Orchestrator, "handle_chat", new=_handle
-        ), patch("app.api.routes.persist_turn", new_callable=AsyncMock):
-            transport = ASGITransport(app=app)
-            async with AsyncClient(transport=transport, base_url="http://test") as ac:
-                resp = await ac.post("/chat", json={"message": "hello"})
-    finally:
-        settings.enable_rate_limit = original_flag
+    with patch.object(rl, "get_redis_client", return_value=fake_client), patch.object(
+        routes_mod.Orchestrator, "handle_chat", new=_handle
+    ), patch("app.api.routes.persist_turn", new_callable=AsyncMock):
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post("/chat", json={"message": "hello"})
 
     assert resp.status_code == 200
     assert resp.json()["reply"] == "ok"
@@ -107,7 +100,7 @@ async def test_openai_timeout_returns_brand_safe_fallback():
 
 @pytest.mark.asyncio
 async def test_sendgrid_failure_does_not_break_noor_submission():
-    """Notification fan-out is fire-and-forget. SendGrid + Slack failure must not 500."""
+    """Notification fan-out is fire-and-forget. SendGrid failure must not 500."""
     import uuid as _uuid
     from datetime import datetime, timezone
     from app.auth.dependencies import get_current_user
@@ -155,9 +148,6 @@ async def test_sendgrid_failure_does_not_break_noor_submission():
             "app.services.noor_workflow.email_notifier.send_concierge_noor_alert",
             new=AsyncMock(side_effect=Exception("SendGrid 500")),
         ), patch(
-            "app.services.noor_workflow.slack_notifier.notify_noor_request",
-            new=AsyncMock(side_effect=Exception("Slack 503")),
-        ), patch(
             "app.services.noor_workflow.log_activity",
             new=AsyncMock(),
         ):
@@ -182,10 +172,10 @@ async def test_sendgrid_failure_does_not_break_noor_submission():
     assert resp.json()["reference_id"] == "NOR-CHAOS001"
 
 
-# ─── 5. Slack webhook 500 on appointment → still succeeds ─────────
+# ─── 5. SendGrid 500 on appointment → still succeeds ─────────────
 
 @pytest.mark.asyncio
-async def test_slack_failure_does_not_break_appointment():
+async def test_sendgrid_failure_does_not_break_appointment():
     from app.db.session import get_session
     from app.main import app
     from datetime import datetime, timezone
@@ -219,9 +209,6 @@ async def test_slack_failure_does_not_break_appointment():
         ), patch(
             "app.services.appointment_workflow.email_notifier.send_concierge_appointment_alert",
             new=AsyncMock(side_effect=Exception("SendGrid 500")),
-        ), patch(
-            "app.services.appointment_workflow.slack_notifier.notify_appointment",
-            new=AsyncMock(side_effect=Exception("Slack 503")),
         ):
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as ac:

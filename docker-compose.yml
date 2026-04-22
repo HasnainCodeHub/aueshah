@@ -1,5 +1,9 @@
 version: "3.8"
 
+# Local development stack. Gives you a full backend without needing
+# Neon, Upstash, or Qdrant Cloud. Override with your real URLs via `.env`
+# if you want to point at managed services instead.
+
 services:
   backend:
     build:
@@ -7,15 +11,53 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    env_file:
+      - backend/.env
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Override with local service URLs — these win over anything in .env
+      # because compose merges `environment` on top of `env_file`.
       - QDRANT_URL=http://qdrant:6333
+      - QDRANT_API_KEY=
+      - NEON_DATABASE_URL=postgresql+asyncpg://aueshah:aueshah@postgres:5432/aueshah
+      - REDIS_URL=redis://redis:6379
       - LOG_LEVEL=INFO
     depends_on:
-      - qdrant
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
     volumes:
       - ./backend/app:/app/app
     command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=aueshah
+      - POSTGRES_PASSWORD=aueshah
+      - POSTGRES_DB=aueshah
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aueshah -d aueshah"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -34,3 +76,6 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     command: sh -c "npm install && npm run dev"
+
+volumes:
+  postgres_data:

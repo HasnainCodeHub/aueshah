@@ -93,6 +93,8 @@ class WPLoginRequest(BaseModel):
     """Exchange a WordPress JWT for our session JWT."""
     wp_token: str = Field(..., min_length=10)
     visitor_id: Optional[str] = Field(None, description="Anonymous visitor cookie to merge")
+    user_email: Optional[str] = Field(None, max_length=255, description="Email from WP /token response body — WP REST API hides this from /users/me")
+    user_display_name: Optional[str] = Field(None, max_length=255, description="Display name from WP /token response body")
 
 
 class AuthResponse(BaseModel):
@@ -156,3 +158,11 @@ class AdminNoorDecision(BaseModel):
     status: str = Field(..., pattern="^(approved|declined)$")
     internal_notes: Optional[str] = None
     reviewed_by: Optional[str] = None
+
+
+class PIIDeletionResponse(BaseModel):
+    """T204: GDPR right-to-erasure response summary."""
+    deleted: bool
+    user_id: str
+    counts: Optional[Dict[str, int]] = None
+    reason: Optional[str] = None

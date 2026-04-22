@@ -28,11 +28,16 @@ async def wp_login(body: WPLoginRequest, http_request: Request, session=Depends(
 
     wp_claims = await verify_wp_token(body.wp_token)
 
+    # Prefer body-supplied fields (from WP /token response) over verifier fallbacks,
+    # since WP REST API hides real email from /wp/v2/users/me in default context.
+    real_email = body.user_email or wp_claims.email
+    real_display_name = body.user_display_name or wp_claims.display_name
+
     user = await user_repo.upsert_from_wp_claims(
         session,
         wp_user_id=wp_claims.wp_user_id,
-        email=wp_claims.email,
-        display_name=wp_claims.display_name,
+        email=real_email,
+        display_name=real_display_name,
     )
 
     # T150: Merge anonymous visitor history to authenticated user

@@ -1,5 +1,6 @@
 """Application settings and configuration."""
 import os
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
@@ -39,16 +40,16 @@ class Settings(BaseSettings):
     redis_url: str = ""
 
     # Phase 2: Rate limiting & timeout
+    # Rate limiting is always on when REDIS_URL is configured; absent REDIS_URL
+    # the limiter fails open (see app/middleware/rate_limiter.py).
     rate_limit_per_min: int = 5
     request_timeout_seconds: int = 15
-    enable_rate_limit: bool = False
     max_context_messages: int = 15
 
-    # Phase 2: WordPress Auth
+    # Phase 2: WordPress Auth (HS256 via JWT Authentication for WP-API plugin)
     wp_base_url: str = ""
-    wp_jwks_url: str = ""
     wp_issuer: str = ""
-    wp_jwks_cache_ttl: int = 600
+    wp_jwt_secret: str = Field(default="", validation_alias="JWT_AUTH_SECRET_KEY")
 
     # Phase 2: Session JWT
     jwt_signing_key: str = ""
@@ -62,10 +63,6 @@ class Settings(BaseSettings):
     sendgrid_from_email: str = "concierge@aueshah.com"
     sendgrid_from_name: str = "Aueshah Concierge"
     concierge_alert_email: str = "concierge@aueshah.com"
-
-    # Phase 2: Slack
-    slack_webhook_noor: str = ""
-    slack_webhook_appointments: str = ""
 
     # Phase 2: Business logic
     noor_cooldown_days: int = 365

@@ -40,7 +40,6 @@ SECRET_FRAGMENTS = [
     "NEON_DATABASE_URL",
     "QDRANT_API_KEY",
     "WP_JWKS_URL",
-    "SLACK_WEBHOOK",
     "Traceback (most recent call last)",
     "File \"/app/",
     'asyncio.gather',

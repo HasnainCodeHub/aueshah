@@ -7,6 +7,7 @@ import redis.asyncio as aioredis
 
 from app.config.settings import settings
 from app.models.errors import RateLimited
+from app.utils.metrics import RATE_LIMIT_HITS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +35,6 @@ async def close_redis():
 
 async def check_rate_limit(client_ip: str) -> None:
     """Check sliding-window rate limit. Raises RateLimited if exceeded. Fails open on Redis errors."""
-    if not settings.enable_rate_limit:
-        return
-
     client = get_redis_client()
     if client is None:
         return
@@ -59,6 +57,7 @@ async def check_rate_limit(client_ip: str) -> None:
                 "Rate limit exceeded",
                 extra={"ip": client_ip, "count": count, "limit": settings.rate_limit_per_min},
             )
+            RATE_LIMIT_HITS_TOTAL.inc()
             raise RateLimited()
 
     except RateLimited:

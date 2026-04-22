@@ -7,7 +7,10 @@ from app.utils.logging import setup_logging
 from app.config.settings import settings
 from app.api.routes import router
 from app.api.auth_routes import auth_router
+from app.api.noor_routes import noor_router
+from app.api.admin_routes import admin_router
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.request_context import RequestContextMiddleware
 from app.middleware.timeout import TimeoutMiddleware
 from app.middleware.rate_limiter import close_redis
 from app.db.session import close_engine
@@ -27,14 +30,30 @@ app = FastAPI(
 # 1. Error handler — catches all unhandled exceptions, returns safe JSON envelope
 app.add_middleware(ErrorHandlerMiddleware)
 
-# 2. CORS
+# 1a. Request context — must run inside the error handler so the request_id
+# is also stamped on logs emitted by the error path.
+app.add_middleware(RequestContextMiddleware)
+
+# 2. CORS — DEV: allow all origins so the WP/Elementor editor can reach localhost.
+# ⚠️ PRODUCTION: replace with the locked-down block below before deploying.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex=".*",   # wildcard that still permits credentials
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# PRODUCTION CORS (uncomment and remove the block above before deploying):
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "https://aueshah.com",
+#         "https://www.aueshah.com",
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+#     allow_headers=["*"],
+# )
 
 # 3. Timeout — 15s hard cap on /chat requests
 app.add_middleware(TimeoutMiddleware)
@@ -42,6 +61,8 @@ app.add_middleware(TimeoutMiddleware)
 # Include routes
 app.include_router(router)
 app.include_router(auth_router)
+app.include_router(noor_router)
+app.include_router(admin_router)
 
 
 @app.on_event("startup")

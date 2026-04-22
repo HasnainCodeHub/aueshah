@@ -19,7 +19,6 @@ python-jose[cryptography]==3.3.0
 
 # Phase 2: Notifications
 sendgrid==6.11.0
-slack_sdk==3.33.4
 
 # Phase 2: Dev/Test
 fakeredis==2.26.2

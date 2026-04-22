@@ -44,7 +44,6 @@ async def test_429_after_5_requests(mock_redis):
 
     with patch("app.middleware.rate_limiter.get_redis_client", return_value=fake_redis), \
          patch("app.middleware.rate_limiter.settings") as mock_settings:
-        mock_settings.enable_rate_limit = True
         mock_settings.rate_limit_per_min = 5
         mock_settings.redis_url = "redis://fake"
 
@@ -63,7 +62,6 @@ async def test_redis_down_fail_open():
 
     with patch("app.middleware.rate_limiter.get_redis_client", return_value=failing_redis), \
          patch("app.middleware.rate_limiter.settings") as mock_settings:
-        mock_settings.enable_rate_limit = True
         mock_settings.rate_limit_per_min = 5
         mock_settings.redis_url = "redis://fake"
 
@@ -72,21 +70,11 @@ async def test_redis_down_fail_open():
 
 
 @pytest.mark.asyncio
-async def test_rate_limit_disabled_allows_all():
-    """When ENABLE_RATE_LIMIT is False, all requests pass."""
-    with patch("app.middleware.rate_limiter.settings") as mock_settings:
-        mock_settings.enable_rate_limit = False
+async def test_no_redis_url_allows_all():
+    """When REDIS_URL is empty, limiter is disabled — all requests pass."""
+    with patch("app.middleware.rate_limiter._redis_client", None), \
+         patch("app.middleware.rate_limiter.settings") as mock_settings:
+        mock_settings.redis_url = ""
 
         for _ in range(100):
             await check_rate_limit("1.2.3.4")
-
-
-@pytest.mark.asyncio
-async def test_no_redis_url_allows_all():
-    """When REDIS_URL is empty, all requests pass."""
-    with patch("app.middleware.rate_limiter._redis_client", None), \
-         patch("app.middleware.rate_limiter.settings") as mock_settings:
-        mock_settings.enable_rate_limit = True
-        mock_settings.redis_url = ""
-
-        await check_rate_limit("1.2.3.4")
