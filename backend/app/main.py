@@ -43,6 +43,31 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Chrome "Private Network Access" — public HTTPS sites calling http://127.0.0.1
+# require this header on the preflight (and the matching response). Without it
+# Chrome blocks the request with: "Permission was denied for this request to
+# access the `loopback` address space."
+@app.middleware("http")
+async def private_network_access(request, call_next):
+    if request.method == "OPTIONS" and request.headers.get("access-control-request-private-network", "").lower() == "true":
+        from fastapi.responses import Response
+        origin = request.headers.get("origin", "*")
+        return Response(
+            status_code=204,
+            headers={
+                "Access-Control-Allow-Origin": origin,
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": request.headers.get("access-control-request-headers", "*"),
+                "Access-Control-Allow-Private-Network": "true",
+                "Access-Control-Max-Age": "86400",
+            },
+        )
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    return response
 # PRODUCTION CORS (uncomment and remove the block above before deploying):
 # app.add_middleware(
 #     CORSMiddleware,

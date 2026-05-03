@@ -36,6 +36,7 @@ class User(Base):
     preferred_collection: Mapped[str | None] = mapped_column(String(64), nullable=True)
     favorite_metals: Mapped[list | None] = mapped_column(ARRAY(Text), server_default="{}")
     favorite_styles: Mapped[list | None] = mapped_column(ARRAY(Text), server_default="{}")
+    profile_facts: Mapped[dict] = mapped_column(JSONB, nullable=False, server_default="{}")
 
     role: Mapped[str] = mapped_column(String(16), nullable=False, server_default="client")
     status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="active")

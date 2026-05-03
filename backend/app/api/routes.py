@@ -67,7 +67,7 @@ async def _load_personalization(user) -> str | None:
 
     try:
         async with factory() as session:
-            recent = await chat_repo.get_recent_for_user(session, user.id, limit=10)
+            recent = await chat_repo.get_recent_for_user(session, user.id, limit=24)
             last_intent = await chat_repo.get_last_intent(session, user.id)
     except Exception:
         logger.warning("Failed to load personalization context — continuing", exc_info=True)
@@ -80,35 +80,41 @@ async def _load_personalization(user) -> str | None:
 
 
 async def _capture_profile_updates(user, message: str) -> None:
-    """T169: Best-effort extraction of profile fields from a user message.
+    """LLM-based profile fact extraction.
 
-    Runs as a background task; never raises and never blocks the response.
-    Skips fields the user has already set (no overwrite).
+    Runs as a background task — calls the LLM to merge any new facts from
+    the user's latest message into the JSONB profile_facts column. Never
+    raises; logs failures and moves on.
     """
-    extracted = extract_profile_fields(message)
-    if not extracted:
-        return
-
-    delta = diff_against_user(
-        extracted,
-        current_age_range=user.age_range,
-        current_skin_tone=user.skin_tone,
-        current_style_preference=user.style_preference,
-    )
-    if not delta:
-        return
+    from app.services.llm_profile_extractor import extract_and_merge
 
     factory = get_session_factory()
     if factory is None:
         return
 
+    existing = user.profile_facts or {}
+    new_facts = await extract_and_merge(message, existing)
+
+    if new_facts == existing or not isinstance(new_facts, dict):
+        return
+
     try:
         async with factory() as session:
-            await user_repo.update_profile(session, user.id, **delta)
+            from sqlalchemy import update as _sql_update
+            from app.db.models import User as _User
+            await session.execute(
+                _sql_update(_User)
+                .where(_User.id == user.id)
+                .values(profile_facts=new_facts)
+            )
+            await session.commit()
         get_summary_cache().invalidate(user.id)
-        logger.info("Profile fields captured from chat", extra={"user_id": str(user.id), "fields": list(delta)})
+        logger.info(
+            "Profile facts updated via LLM",
+            extra={"user_id": str(user.id), "fact_keys": sorted(new_facts.keys())},
+        )
     except Exception:
-        logger.warning("Failed to persist extracted profile fields", exc_info=True)
+        logger.warning("Failed to persist LLM-extracted profile facts", exc_info=True)
 
 
 @router.post("/chat", response_model=ChatResponse)

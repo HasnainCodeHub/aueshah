@@ -17,13 +17,14 @@ Bespoke: 60 days from last interaction).
 """
 from __future__ import annotations
 
+import json
 from datetime import datetime, timedelta, timezone
 from typing import Iterable, Optional
 
 from app.db.models import ChatMessage, User
 
-MAX_SUMMARY_MESSAGES = 6
-MAX_SUMMARY_CHARS = 800
+MAX_SUMMARY_MESSAGES = 20
+MAX_SUMMARY_CHARS = 2400
 NOOR_MEMORY_EXPIRY_DAYS = 30
 BESPOKE_MEMORY_EXPIRY_DAYS = 60
 MEMORY_TRIGGERING_INTENTS = {"noor", "bespoke"}
@@ -99,25 +100,54 @@ def _has_qualifying_interaction(
     return False
 
 
+def _facts_block(user: User) -> Optional[str]:
+    """Render the JSONB profile_facts as a readable block."""
+    facts = getattr(user, "profile_facts", None) or {}
+    if not isinstance(facts, dict) or not facts:
+        return None
+    lines: list[str] = []
+    for k, v in facts.items():
+        if v in (None, "", [], {}):
+            continue
+        if isinstance(v, (dict, list)):
+            v = json.dumps(v, ensure_ascii=False)
+        key = k.replace("_", " ").title()
+        lines.append(f"  - {key}: {v}")
+    if not lines:
+        return None
+    return "Known facts:\n" + "\n".join(lines)
+
+
 def build_preamble(
     user: Optional[User],
     recent_messages: Optional[list[ChatMessage]] = None,
     last_intent: Optional[str] = None,
 ) -> Optional[str]:
-    """Assemble the full per-user preamble. Returns None for anonymous users
-    or users who haven't recently engaged with Noor/Bespoke."""
+    """Assemble the full per-user preamble for an authenticated user.
+
+    Always returns a preamble for any authenticated user — at minimum the
+    name, plus whatever facts and recent history we have.
+    """
     if user is None:
         return None
 
     msgs = recent_messages or []
-    if not _has_qualifying_interaction(msgs, last_intent):
-        return None
-
     sections: list[str] = []
     sections.append(
         "RETURNING-CLIENT CONTEXT (use silently — never recite the profile back verbatim, "
-        "but let it shape your tone, recommendations, and what you reference)."
+        "but let it shape your tone, recommendations, and what you reference). "
+        "Address the client by name when natural; weave in their stated preferences, "
+        "budget, occasion, and prior interest without making them repeat themselves."
     )
+
+    # Identity line — always present for authenticated users
+    name = (user.display_name or "").strip()
+    if name:
+        sections.append(f"Client identity: {name} (email: {user.email})")
+
+    facts = _facts_block(user)
+    if facts:
+        sections.append(facts)
 
     profile = _profile_block(user)
     if profile:

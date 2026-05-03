@@ -76,6 +76,7 @@ async def update_profile(
     preferred_collection: Optional[str] = None,
     favorite_metals: Optional[list[str]] = None,
     favorite_styles: Optional[list[str]] = None,
+    display_name: Optional[str] = None,
 ) -> Optional[User]:
     """Patch user profile fields — only writes the keys explicitly passed."""
     values: dict = {}
@@ -91,6 +92,8 @@ async def update_profile(
         values["favorite_metals"] = favorite_metals
     if favorite_styles is not None:
         values["favorite_styles"] = favorite_styles
+    if display_name is not None:
+        values["display_name"] = display_name
 
     if not values:
         return await get_by_id(session, user_id)

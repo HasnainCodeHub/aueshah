@@ -1,0 +1,235 @@
+<script>
+(function () {
+  var BACKEND = "https://texts-hometown-based-donations.trycloudflare.com";
+  var WP_MINT = "/wp-json/aueshah/v1/mint-token";
+  var LOGIN_URL = "/my-account/?redirect_to=" + encodeURIComponent(location.pathname);
+  var TOKEN_KEY = "aueshah_token";
+  var VISITOR_KEY = "aueshah_visitor_id";
+
+  function escHtml(s) {
+    var map = {"&":"&amp;","<":"&lt;",">":"&gt;"};
+    map[String.fromCharCode(34)] = "&quot;";
+    map[String.fromCharCode(39)] = "&#39;";
+    return String(s).replace(/[&<>"']/g, function (c) { return map[c]; });
+  }
+  function getVisitor() {
+    var v = localStorage.getItem(VISITOR_KEY);
+    if (!v) {
+      v = (crypto.randomUUID ? crypto.randomUUID() : ("v_" + Date.now()));
+      localStorage.setItem(VISITOR_KEY, v);
+    }
+    return v;
+  }
+
+  var session = null;
+  var busy = false;
+
+  async function ensureSession() {
+    // Always check who is currently logged into WP (truth source = the cookie)
+    var wp = null;
+    try {
+      var headers = { "Content-Type": "application/json" };
+      if (window.AueshahWP && window.AueshahWP.nonce) {
+        headers["X-WP-Nonce"] = window.AueshahWP.nonce;
+      }
+      var mint = await fetch(WP_MINT, { method: "POST", credentials: "same-origin", headers: headers });
+      if (mint.ok) {
+        wp = await mint.json();
+      }
+    } catch (e) {}
+
+    if (!wp || !wp.token) {
+      // Not logged into WP. Clear any stale backend token.
+      localStorage.removeItem(TOKEN_KEY);
+      return null;
+    }
+
+    // Try cached backend token, but only if it matches the current WP user
+    var token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      try {
+        var r = await fetch(BACKEND + "/v1/auth/me", { headers: { Authorization: "Bearer " + token } });
+        if (r.ok) {
+          var me = await r.json();
+          if (me && me.email === wp.user_email) {
+            session = { token: token, user: me };
+            return session;
+          }
+        }
+      } catch (e) {}
+      localStorage.removeItem(TOKEN_KEY);
+    }
+
+    // Exchange fresh
+    try {
+      var exch = await fetch(BACKEND + "/v1/auth/wp-login", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wp_token: wp.token, user_email: wp.user_email, user_display_name: wp.user_display_name, visitor_id: getVisitor() })
+      });
+      if (!exch.ok) return null;
+      var out = await exch.json();
+      localStorage.setItem(TOKEN_KEY, out.access_token);
+      session = { token: out.access_token, user: out.user };
+      return session;
+    } catch (e) { return null; }
+  }
+
+  function ensureLog(input) {
+    var log = document.getElementById("aueshah-chat-log");
+    if (log) return log;
+    log = document.createElement("div");
+    log.id = "aueshah-chat-log";
+    log.style.cssText = "max-width:720px;margin:24px auto;padding:0 24px;";
+    var anchor = (input.closest ? (input.closest("section") || input.closest("form") || input.parentElement) : input.parentElement);
+    anchor.parentElement.insertBefore(log, anchor);
+    return log;
+  }
+  function append(role, text, log) {
+    var div = document.createElement("div");
+    var isUser = role === "user";
+    var bg = isUser ? "#f5f0e6" : "#fff";
+    div.style.cssText = "margin:12px 0;padding:14px 18px;border-radius:6px;background:" + bg + ";border:1px solid #e8dfd0;";
+    var html = '<div style="font-size:11px;letter-spacing:0.12em;color:#a8927a;margin-bottom:6px;">' + (isUser ? "YOU" : "AUESHAH") + '</div>';
+    html += '<div class="msg-body" style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#3a2f24;">' + escHtml(text) + '</div>';
+    div.innerHTML = html;
+    log.appendChild(div);
+    div.scrollIntoView({ behavior: "smooth", block: "end" });
+    return div.querySelector(".msg-body");
+  }
+
+  async function send(message, input) {
+    if (busy) return;
+    if (!message) return;
+    if (!message.trim) return;
+    if (!message.trim()) return;
+    if (!session) return;
+    busy = true;
+    var log = ensureLog(input);
+    append("user", message, log);
+    var reply = append("bot", "...", log);
+    try {
+      var r = await fetch(BACKEND + "/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.token },
+        body: JSON.stringify({
+          message: message,
+          session_id: session.user.id,
+          page_context: { page_type: "bespoke", collection_name: null, product_name: null }
+        })
+      });
+      var data = await r.json();
+      reply.textContent = data.reply || data.detail || "No response received.";
+    } catch (e) {
+      reply.textContent = "[error: " + e.message + "]";
+    } finally { busy = false; }
+  }
+
+  function cloneNode(el) {
+    var c = el.cloneNode(true);
+    el.parentNode.replaceChild(c, el);
+    return c;
+  }
+
+  function showLockedState() {
+    var panel = document.getElementById("au-chat-panel");
+    var locked = document.getElementById("au-chat-locked");
+    if (panel) panel.style.display = "none";
+    if (locked) locked.style.display = "flex";
+    var link = document.getElementById("au-login-link");
+    if (link) {
+      link.href = LOGIN_URL;
+      link.addEventListener("click", function (e) { e.preventDefault(); location.href = LOGIN_URL; });
+    }
+  }
+  function showChatState(displayName) {
+    var panel = document.getElementById("au-chat-panel");
+    var locked = document.getElementById("au-chat-locked");
+    var topUser = document.getElementById("au-topbar-user");
+    var topName = document.getElementById("au-topbar-name");
+    if (panel) panel.style.display = "flex";
+    if (locked) locked.style.display = "none";
+    if (topUser) topUser.style.display = "flex";
+    if (topName) topName.textContent = displayName || "";
+  }
+
+  async function wire() {
+    var input = document.getElementById("au-chat-input");
+    if (!input) input = document.querySelector("textarea");
+    if (!input) { setTimeout(wire, 400); return; }
+    var sendBtn = document.getElementById("au-send-btn");
+
+    input = cloneNode(input);
+    if (sendBtn) sendBtn = cloneNode(sendBtn);
+
+    // Override the inline-onclick global so quick-chip buttons work
+    var quickMap = {
+      "Bespoke Commission": "I would like to start a bespoke commission.",
+      "Browse Collections": "Show me your collections.",
+      "Virtual Appointment": "I would like to book a virtual appointment.",
+      "About Aueshah": "Tell me about Aueshah.",
+      "Our Story": "Tell me about Aueshah."
+    };
+    window.auSendQuick = function (btn, label) {
+      if (!session) { location.href = LOGIN_URL; return; }
+      if (btn) { btn.disabled = true; btn.style.opacity = "0.5"; }
+      send(quickMap[label] || label, input);
+    };
+
+    var sess = await ensureSession();
+    if (!sess) {
+      showLockedState();
+      input.disabled = true;
+      input.placeholder = "Please sign in to chat";
+      if (sendBtn) sendBtn.style.opacity = "0.4";
+      var log = ensureLog(input);
+      log.innerHTML = '<div style="text-align:center;padding:24px;background:#fbf8f1;border:1px solid #e8dfd0;border-radius:6px;"><div style="font-size:14px;color:#3a2f24;margin-bottom:12px;">Please sign in to receive personalised guidance.</div><a href="' + LOGIN_URL + '" style="display:inline-block;padding:10px 24px;background:#a8927a;color:#fff;text-decoration:none;letter-spacing:0.1em;font-size:12px;">SIGN IN</a></div>';
+      document.querySelectorAll(".au-chip-btn").forEach(function (b) {
+        var newB = cloneNode(b);
+        newB.addEventListener("click", function (e) { e.preventDefault(); location.href = LOGIN_URL; });
+      });
+      return;
+    }
+
+    console.log("[aueshah] signed in as", sess.user.display_name || sess.user.email);
+    showChatState(sess.user.display_name || sess.user.email);
+    input.placeholder = "Ask me anything about these pieces...";
+
+    function fire() {
+      var v = input.value;
+      input.value = "";
+      send(v, input);
+    }
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        if (!e.shiftKey) {
+          e.preventDefault();
+          fire();
+        }
+      }
+    });
+    if (sendBtn) sendBtn.addEventListener("click", function (e) { e.preventDefault(); fire(); });
+
+    var chipQuery = {
+      "bespoke commission": "I would like to start a bespoke commission.",
+      "browse collections": "Show me your collections.",
+      "virtual appointment": "I would like to book a virtual appointment.",
+      "about aueshah": "Tell me about Aueshah.",
+      "our story": "Tell me about Aueshah."
+    };
+    document.querySelectorAll(".au-chip-btn").forEach(function (b) {
+      var newB = cloneNode(b);
+      var t = (newB.textContent || "").trim().toLowerCase();
+      var msg = chipQuery[t];
+      if (msg) {
+        newB.addEventListener("click", function (e) {
+          e.preventDefault();
+          send(msg, input);
+        });
+      }
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wire);
+  else wire();
+})();
+</script>
