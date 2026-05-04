@@ -44,7 +44,7 @@ NEON_ERRORS_TOTAL = Counter(
 
 NOTIFICATION_FAILURES_TOTAL = Counter(
     "notification_failures_total",
-    "SendGrid notification failures (best-effort sends).",
+    "Resend notification failures (best-effort sends).",
     ["channel"],  # 'email'
 )
 

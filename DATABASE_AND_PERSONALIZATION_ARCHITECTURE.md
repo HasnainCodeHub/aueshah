@@ -613,9 +613,9 @@ Caching (optional): Redis
   - reason: cache user profiles + chat history
   - improves latency for returning users
 
-Email Service: SendGrid or AWS SES
-  - reason: send appointment confirmations
-  - cheap at scale
+Email Service: Resend
+  - reason: send appointment + Noor confirmations and concierge alerts
+  - simple signup (single API key), 3,000 emails/month free, async-friendly
 
 Slack Integration: slack-sdk
   - reason: notify concierge team
@@ -657,7 +657,7 @@ Slack Integration: slack-sdk
 | Component | Monthly Cost |
 |-----------|--------------|
 | PostgreSQL (AWS RDS) | $20–50 |
-| SendGrid (emails) | $0–20 |
+| Resend (emails) | $0–20 |
 | Slack integration | Free |
 | Server (backend) | $20–50 |
 | **Total** | **~$50–100/month** |

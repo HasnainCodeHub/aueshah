@@ -1,6 +1,6 @@
 <script>
 (function () {
-  var BACKEND = "https://texts-hometown-based-donations.trycloudflare.com";
+  var BACKEND = "https://top-endorsement-frost-become.trycloudflare.com";
   var WP_MINT = "/wp-json/aueshah/v1/mint-token";
   var LOGIN_URL = "/my-account/?redirect_to=" + encodeURIComponent(location.pathname);
   var TOKEN_KEY = "aueshah_token";
@@ -79,7 +79,15 @@
     if (log) return log;
     log = document.createElement("div");
     log.id = "aueshah-chat-log";
-    log.style.cssText = "max-width:720px;margin:24px auto;padding:0 24px;";
+    log.style.cssText = "max-width:760px;width:100%;margin:24px auto;padding:20px 22px;height:480px;max-height:60vh;min-height:300px;overflow-y:auto;background:#fbf8f1;border:1px solid #e8dfd0;border-radius:10px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;font-family:Georgia,serif;";
+    if (!document.getElementById("au-chat-styles")) {
+      try {
+        var st = document.createElement("style");
+        st.id = "au-chat-styles";
+        st.textContent = "@keyframes auDot{0%,80%,100%{opacity:0.3;transform:scale(0.85)}40%{opacity:1;transform:scale(1.1)}}";
+        (document.head || document.body).appendChild(st);
+      } catch (e) {}
+    }
     var anchor = (input.closest ? (input.closest("section") || input.closest("form") || input.parentElement) : input.parentElement);
     anchor.parentElement.insertBefore(log, anchor);
     return log;
@@ -88,12 +96,12 @@
     var div = document.createElement("div");
     var isUser = role === "user";
     var bg = isUser ? "#f5f0e6" : "#fff";
-    div.style.cssText = "margin:12px 0;padding:14px 18px;border-radius:6px;background:" + bg + ";border:1px solid #e8dfd0;";
-    var html = '<div style="font-size:11px;letter-spacing:0.12em;color:#a8927a;margin-bottom:6px;">' + (isUser ? "YOU" : "AUESHAH") + '</div>';
+    div.style.cssText = "max-width:88%;align-self:" + (isUser ? "flex-end" : "flex-start") + ";margin:0;padding:12px 16px;border-radius:" + (isUser ? "14px 14px 4px 14px" : "14px 14px 14px 4px") + ";background:" + bg + ";border:1px solid " + (isUser ? "#d8c8b0" : "#e8dfd0") + ";box-shadow:0 1px 2px rgba(58,47,36,0.05);";
+    var html = '<div style="font-size:10px;letter-spacing:0.16em;font-weight:600;color:#a8927a;margin-bottom:4px;text-transform:uppercase;">' + (isUser ? "YOU" : "AUESHAH") + '</div>';
     html += '<div class="msg-body" style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#3a2f24;">' + escHtml(text) + '</div>';
     div.innerHTML = html;
     log.appendChild(div);
-    div.scrollIntoView({ behavior: "smooth", block: "end" });
+    log.scrollTop = log.scrollHeight;
     return div.querySelector(".msg-body");
   }
 
@@ -104,9 +112,15 @@
     if (!message.trim()) return;
     if (!session) return;
     busy = true;
+    if (input) { input.disabled = true; input.style.opacity = "0.55"; input.style.cursor = "not-allowed"; }
     var log = ensureLog(input);
     append("user", message, log);
-    var reply = append("bot", "...", log);
+    var reply = append("bot", "", log);
+    reply.innerHTML = '<span style="display:inline-flex;gap:5px;align-items:center;height:14px;vertical-align:middle;">'
+      + '<span style="width:7px;height:7px;border-radius:50%;background:#a8927a;display:inline-block;animation:auDot 1.2s infinite ease-in-out;"></span>'
+      + '<span style="width:7px;height:7px;border-radius:50%;background:#a8927a;display:inline-block;animation:auDot 1.2s infinite ease-in-out;animation-delay:0.18s;"></span>'
+      + '<span style="width:7px;height:7px;border-radius:50%;background:#a8927a;display:inline-block;animation:auDot 1.2s infinite ease-in-out;animation-delay:0.36s;"></span>'
+      + '</span>';
     try {
       var r = await fetch(BACKEND + "/chat", {
         method: "POST",
@@ -121,7 +135,7 @@
       reply.textContent = data.reply || data.detail || "No response received.";
     } catch (e) {
       reply.textContent = "[error: " + e.message + "]";
-    } finally { busy = false; }
+    } finally { busy = false; if (input) { input.disabled = false; input.style.opacity = ""; input.style.cursor = ""; try { input.focus(); } catch (e) {} } if (typeof log !== "undefined" && log) { log.scrollTop = log.scrollHeight; } }
   }
 
   function cloneNode(el) {

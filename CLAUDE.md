@@ -323,7 +323,7 @@ Before submitting any code/changes:
 See `.specify/memory/constitution.md` (v1.0.0) for authoritative principles. This CLAUDE.md enforces them operationally.
 
 ## Active Technologies
-- Python 3.11+ + FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, SendGrid SDK (or AWS SES), `slack_sdk` (async webhook). (001-concierge-chat-api)
+- Python 3.11+ + FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, Resend SDK, `slack_sdk` (async webhook). (001-concierge-chat-api)
 
 ## Recent Changes
-- 001-concierge-chat-api: Added Python 3.11+ + FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, SendGrid SDK (or AWS SES), `slack_sdk` (async webhook).
+- 001-concierge-chat-api: Added Python 3.11+ + FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, Resend SDK, `slack_sdk` (async webhook).

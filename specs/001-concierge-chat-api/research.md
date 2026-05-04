@@ -89,15 +89,15 @@ if count > 5:
 
 ## §3. Notification provider
 
-**Decision**: **SendGrid** for email + **Slack Incoming Webhooks** for team alerts.
+**Decision**: **Resend** for email + **Slack Incoming Webhooks** for team alerts. (Updated 2026-04-30 — initially SendGrid; swapped to Resend for the simpler signup flow and a single API-key onboarding for the client.)
 
-**Email — SendGrid**:
-- Free tier: 100 emails/day, sufficient for current volume (expected <10 appointments/day + <5 Noor requests/day at launch)
-- Python SDK: `sendgrid` package, works with `httpx.AsyncClient` wrapper for true async
-- Templates stored as dynamic templates in SendGrid UI (concierge team can edit copy without code deploy)
-- Two templates required:
-  1. `client-confirmation` — sent to client after appointment/Noor request (variables: `name`, `reference_id`, `request_type`)
-  2. `concierge-alert` — sent to `concierge@aueshah.com` with full request payload (variables: `user_profile_json`, `request_details`, `admin_link`)
+**Email — Resend**:
+- Free tier: 3,000 emails/month, well above current volume (expected <10 appointments/day + <5 Noor requests/day at launch).
+- Python SDK: `resend` package — synchronous; we wrap `resend.Emails.send` in `asyncio.to_thread` from `app/services/notifications/email.py` to keep the request path async.
+- Single-key signup: client copies one `re_...` API key out of the dashboard. Until `aueshah.com` is verified in Resend, the sandbox sender `onboarding@resend.dev` is used; once DNS is verified, swap `RESEND_FROM_EMAIL` to a real `concierge@aueshah.com`-style address. No Single Sender Verification dance.
+- Templates: HTML rendered inline by our higher-level `send_client_*` / `send_concierge_*` helpers (Resend has no provider-side dynamic templates — we build the HTML in Python). The two flows we cover:
+  1. `client-confirmation` — sent to client after appointment / Noor request (`reference_id`, `appointment_type` or `full_name`).
+  2. `concierge-alert` — sent to `CONCIERGE_ALERT_EMAIL` with the full request payload.
 
 **Slack — Incoming Webhooks**:
 - Two channels: `#noor-requests` (critical — every Noor request) and `#appointments` (every appointment)
@@ -106,9 +106,9 @@ if count > 5:
 - Message format: Block Kit with approve/decline buttons (v2) — MVP ships with plain text + link to admin panel
 
 **Alternatives considered**:
+- **SendGrid**: Free tier (100/day) and rich dynamic templates, but Single Sender Verification + per-domain DKIM walkthrough adds onboarding friction for a one-person client team; rejected for v1 (was the original choice, swapped 2026-04-30).
 - **AWS SES**: Cheaper at scale (~$0.10/1k emails), but setup overhead (domain verification, DKIM, sandbox exit review) slows v1; revisit at 10k+ emails/month.
 - **Postmark**: Best deliverability reputation, but paid from day 1 (~$15/month); overkill for launch volume.
-- **Resend**: Good DX, free tier (3k/month) but relatively new; keep as fallback option.
 
 **Failure mode**: Notifications are fire-and-forget via `asyncio.create_task()` — they never block the client response. Failed sends are logged and written to a `notification_failures` table (deferred to Phase 3 if volume warrants) or surfaced via Sentry.
 
@@ -211,7 +211,7 @@ Each slice is independently revertable. No slice blocks the existing `/chat` end
 | WP auth | WP JWT plugin (RS256) + JWKS verify + re-mint our JWT | Decoupled identity, safe key handling |
 | Rate limit | Upstash Redis + sliding-window log, 5/min/IP | Exact enforcement, serverless symmetry |
 | Timeout | `asyncio.wait_for(15s)` on /chat only | Simple, proven, matches client spec |
-| Notifications | SendGrid (email) + Slack webhooks | Free tier sufficient, async-friendly |
+| Notifications | Resend (email) + Slack webhooks | Free tier sufficient, async-friendly, one-key signup |
 | Noor cooldown | 90 days post-approval, immediate block on pending | Matches heirloom purchase cycle |
 | Admin surface | Token-protected endpoints + 1-page Next.js UI | MVP scope discipline |
 | Stateless + history | Caller context (capped 15) + server-side summary injection | Preserves stateless contract |

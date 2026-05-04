@@ -18,9 +18,10 @@ from app.config.prompts import SKILL_PROMPTS, SYSTEM_PROMPT
 from app.config.settings import settings
 from app.db.session import get_session_factory
 from app.db.repositories import noor_requests as noor_repo
+from app.services.appointment_workflow import create_appointment
 from app.services.noor_catalog import find_best_noor_pieces
 from app.services.rag_service import RAGService
-from app.utils.metrics import NOOR_REQUESTS_TOTAL
+from app.utils.metrics import APPOINTMENT_REQUESTS_TOTAL, NOOR_REQUESTS_TOTAL
 from app.utils.validators import injection_guardrail, off_topic_guardrail
 
 logger = logging.getLogger(__name__)
@@ -212,6 +213,67 @@ async def submit_noor_request(
         return "(An error occurred while submitting the request. Please ask the client to contact service@aueshah.com directly.)"
 
 
+@function_tool
+async def submit_appointment(
+    email: str,
+    appointment_type: str,
+    phone: str | None = None,
+    preferred_date: str | None = None,
+    notes: str | None = None,
+) -> str:
+    """Submit an appointment request to the Aueshah concierge team.
+
+    Call this ONLY after you have collected the client's email and the type of
+    appointment they want (virtual, in-person, bespoke consultation, or
+    general). Phone, preferred date, and notes are optional — pass them only if
+    the client mentioned them. The backend persists the request and emails the
+    concierge team. Use the returned reference ID in your reply to the client.
+
+    Args:
+        email: Client email address (required).
+        appointment_type: "virtual", "in-person", "bespoke", or "general".
+        phone: Optional phone number, if the client offered one.
+        preferred_date: Optional free-form preferred time
+            (e.g. "next Tuesday afternoon", "between 22 and 24 May").
+        notes: Optional extra context the client shared
+            (occasion, piece of interest, party size, etc.).
+
+    Returns a confirmation with reference ID, or an error message.
+    """
+    if "@" not in email or "." not in email:
+        return "(That email looks malformed — ask the client to repeat it before submitting.)"
+
+    factory = get_session_factory()
+    if factory is None:
+        return "(Appointment submission unavailable — database not configured. Ask the client to email service@aueshah.com directly.)"
+
+    from app.core.agents_context import get_current_user_id
+
+    user_id = get_current_user_id()
+
+    try:
+        async with factory() as session:
+            row = await create_appointment(
+                session,
+                email=email.strip().lower(),
+                appointment_type=appointment_type,
+                user_id=user_id,
+                phone=phone,
+                preferred_date=preferred_date,
+                notes=notes,
+            )
+
+        APPOINTMENT_REQUESTS_TOTAL.labels(appointment_type=appointment_type).inc()
+        return (
+            f"Appointment request submitted. Reference: {row.reference_id}. "
+            f"Our concierge team will reach out within 24 hours to confirm."
+        )
+
+    except Exception as e:
+        logger.error(f"submit_appointment tool error: {e}", exc_info=True)
+        return "(An error occurred while submitting the appointment. Please ask the client to email service@aueshah.com directly.)"
+
+
 # ---------- Instruction helpers ----------
 
 def _specialist_instructions(skill_key: str) -> str:
@@ -266,6 +328,7 @@ def build_triage_agent() -> Agent:
         instructions=_specialist_instructions("bespoke"),
         model=model,
         model_settings=model_settings,
+        tools=[submit_appointment],
     )
 
     general_agent = Agent(
@@ -274,6 +337,7 @@ def build_triage_agent() -> Agent:
         instructions=_specialist_instructions("general"),
         model=model,
         model_settings=model_settings,
+        tools=[submit_appointment],
     )
 
     triage_agent = Agent(

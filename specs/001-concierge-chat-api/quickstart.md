@@ -11,7 +11,7 @@
 - Docker (for local Qdrant; optional if using managed Qdrant)
 - A Neon account (free tier — https://neon.tech)
 - An Upstash account for Redis (free tier — https://upstash.com)
-- A SendGrid account (free tier, 100 emails/day)
+- A Resend account (free tier, 3,000 emails/month — https://resend.com)
 - A Slack workspace with permission to create incoming webhooks
 - A WordPress sandbox with the `jwt-authentication-for-wp-rest-api` plugin installed (or use the local mock shipped in `app/scripts/wp_mock.py`)
 
@@ -36,7 +36,7 @@ alembic==1.13.*
 redis==5.*
 python-jose[cryptography]==3.3.*
 httpx==0.27.*
-sendgrid==6.*
+resend>=2.0.0
 slack_sdk==3.*
 ```
 
@@ -113,11 +113,10 @@ JWT_EXPIRES_SECONDS=86400
 ADMIN_API_TOKEN=<generate with: openssl rand -hex 24>
 
 # Notifications (Phase 2)
-SENDGRID_API_KEY=SG....
-SENDGRID_FROM_EMAIL=concierge@aueshah.com
-SENDGRID_FROM_NAME=Aueshah Concierge
-SENDGRID_CLIENT_CONFIRMATION_TEMPLATE_ID=d-xxxxxxxxxxxx
-SENDGRID_CONCIERGE_ALERT_TEMPLATE_ID=d-xxxxxxxxxxxx
+RESEND_API_KEY=re_...
+# Until aueshah.com is verified in Resend, use the sandbox sender below.
+RESEND_FROM_EMAIL=Aueshah Concierge <onboarding@resend.dev>
+CONCIERGE_ALERT_EMAIL=husnainxebad@gmail.com
 SLACK_WEBHOOK_NOOR=https://hooks.slack.com/services/...
 SLACK_WEBHOOK_APPOINTMENTS=https://hooks.slack.com/services/...
 

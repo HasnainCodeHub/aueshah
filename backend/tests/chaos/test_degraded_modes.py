@@ -96,11 +96,11 @@ async def test_openai_timeout_returns_brand_safe_fallback():
     assert "Traceback" not in body["error"]
 
 
-# ─── 4. SendGrid 500 → noor request still succeeds ────────────────
+# ─── 4. Resend 500 → noor request still succeeds ────────────────
 
 @pytest.mark.asyncio
-async def test_sendgrid_failure_does_not_break_noor_submission():
-    """Notification fan-out is fire-and-forget. SendGrid failure must not 500."""
+async def test_resend_failure_does_not_break_noor_submission():
+    """Notification fan-out is fire-and-forget. Resend failure must not 500."""
     import uuid as _uuid
     from datetime import datetime, timezone
     from app.auth.dependencies import get_current_user
@@ -143,10 +143,10 @@ async def test_sendgrid_failure_does_not_break_noor_submission():
             return_value=inserted,
         ), patch(
             "app.services.noor_workflow.email_notifier.send_client_noor_confirmation",
-            new=AsyncMock(side_effect=Exception("SendGrid 500")),
+            new=AsyncMock(side_effect=Exception("Resend 500")),
         ), patch(
             "app.services.noor_workflow.email_notifier.send_concierge_noor_alert",
-            new=AsyncMock(side_effect=Exception("SendGrid 500")),
+            new=AsyncMock(side_effect=Exception("Resend 500")),
         ), patch(
             "app.services.noor_workflow.log_activity",
             new=AsyncMock(),
@@ -172,10 +172,10 @@ async def test_sendgrid_failure_does_not_break_noor_submission():
     assert resp.json()["reference_id"] == "NOR-CHAOS001"
 
 
-# ─── 5. SendGrid 500 on appointment → still succeeds ─────────────
+# ─── 5. Resend 500 on appointment → still succeeds ─────────────
 
 @pytest.mark.asyncio
-async def test_sendgrid_failure_does_not_break_appointment():
+async def test_resend_failure_does_not_break_appointment():
     from app.db.session import get_session
     from app.main import app
     from datetime import datetime, timezone
@@ -205,10 +205,10 @@ async def test_sendgrid_failure_does_not_break_appointment():
             return_value=inserted,
         ), patch(
             "app.services.appointment_workflow.email_notifier.send_client_appointment_confirmation",
-            new=AsyncMock(side_effect=Exception("SendGrid 500")),
+            new=AsyncMock(side_effect=Exception("Resend 500")),
         ), patch(
             "app.services.appointment_workflow.email_notifier.send_concierge_appointment_alert",
-            new=AsyncMock(side_effect=Exception("SendGrid 500")),
+            new=AsyncMock(side_effect=Exception("Resend 500")),
         ):
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as ac:

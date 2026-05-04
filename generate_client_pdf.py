@@ -66,19 +66,18 @@ steps = [
 story.append(ListFlowable([ListItem(Paragraph(s, step)) for s in steps], bulletType="1"))
 story.append(Paragraph("<b>Send me:</b> the Cluster URL and API Key.", send))
 
-# 4. SENDGRID (single easy method — Single Sender Verification)
-story.append(Paragraph("4. SendGrid (Email)", h2))
+# 4. RESEND (single API-key signup — no Single Sender Verification needed at this stage)
+story.append(Paragraph("4. Resend (Email)", h2))
 steps = [
-    "Go to https://signup.sendgrid.com and sign up on the <b>Free plan</b>.",
-    "Verify your email from the inbox link SendGrid sends you.",
-    "In the dashboard: <b>Settings → Sender Authentication → Single Sender Verification → Create New Sender</b>.",
-    "Fill the form using a real email you own (e.g. <b>concierge@aueshah.com</b>). Click <b>Create</b>.",
-    "Open the email SendGrid sends and click <b>Verify Single Sender</b>.",
-    "Go to <b>Settings → API Keys → Create API Key</b>. Name: <b>aueshah-concierge</b>. Permission: <b>Full Access</b>.",
-    "Copy the API key immediately (starts with <b>SG.</b>) — it is shown only once.",
+    "Go to https://resend.com and sign up (Google login works).",
+    "Verify your email from the inbox link Resend sends you.",
+    "In the dashboard: <b>API Keys → Create API Key</b>.",
+    "Name: <b>aueshah-concierge</b>. Permission: <b>Full access</b>. Domain: leave default.",
+    "Copy the API key immediately (starts with <b>re_</b>) — it is shown only once.",
+    "(Optional, later) <b>Domains → Add Domain</b> → enter <b>aueshah.com</b>, follow the DNS steps. Until that's done, emails send from the sandbox sender <b>onboarding@resend.dev</b>.",
 ]
 story.append(ListFlowable([ListItem(Paragraph(s, step)) for s in steps], bulletType="1"))
-story.append(Paragraph("<b>Send me:</b> the API key and the verified sender email address.", send))
+story.append(Paragraph("<b>Send me:</b> the API key (starts with <b>re_</b>).", send))
 
 story.append(Spacer(1, 10))
 
@@ -88,7 +87,7 @@ checklist = [
     "Neon connection string",
     "Upstash Redis URL",
     "Qdrant Cluster URL + API key",
-    "SendGrid API key + verified sender email",
+    "Resend API key (starts with re_)",
     "Concierge team email(s) for appointment / Noor alerts",
 ]
 for c in checklist:

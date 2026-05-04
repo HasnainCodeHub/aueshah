@@ -24,7 +24,7 @@ the spec are satisfied. 122/122 tests passing.
 | Cache / rate limit | Redis (Upstash) — sliding-window, fail-open |
 | Auth | WordPress RS256 JWT (JWKS) → our HS256 session JWT |
 | Package manager | `uv` |
-| Notifications | SendGrid (email) |
+| Notifications | Resend (email) |
 | Observability | Prometheus metrics, JSON structured logging with request IDs |
 | Deployment | Docker (`Dockerfile.prod`), targets Koyeb |
 
@@ -86,7 +86,7 @@ Recommended for production:
 | `JWT_SIGNING_KEY` | HS256 session JWT signing (`python -c "import secrets; print(secrets.token_urlsafe(64))"`) |
 | `ADMIN_API_TOKEN` | shared secret for `X-Admin-Token` gated routes |
 | `WP_JWKS_URL` / `WP_ISSUER` | WordPress JWT verification |
-| `SENDGRID_API_KEY` | email notifications |
+| `RESEND_API_KEY` | email notifications (Resend) |
 
 Full list with defaults: `app/config/settings.py`.
 
@@ -170,7 +170,7 @@ backend/
 │   │   ├── noor_workflow.py        # Eligibility + persistence + notifications
 │   │   ├── appointment_workflow.py
 │   │   ├── persistence_writer.py   # Fire-and-forget chat persistence
-│   │   ├── notifications/          # email (SendGrid)
+│   │   ├── notifications/          # email (Resend)
 │   │   ├── summary_cache.py        # In-process LRU per-user
 │   │   ├── profile_extractor.py
 │   │   └── failure_handler.py

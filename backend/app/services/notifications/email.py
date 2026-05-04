@@ -1,7 +1,7 @@
-"""T178: SendGrid email notifier — best-effort, never raises into the caller.
+"""Resend email notifier — best-effort, never raises into the caller.
 
-The SendGrid Python SDK is synchronous, so we run it via a thread executor.
-When `SENDGRID_API_KEY` is unset (dev/test) calls become no-ops and log at debug.
+The Resend Python SDK is synchronous, so we run it via a thread executor.
+When `RESEND_API_KEY` is unset (dev/test) calls become no-ops and log at debug.
 """
 from __future__ import annotations
 
@@ -14,42 +14,44 @@ from app.config.settings import settings
 logger = logging.getLogger(__name__)
 
 
-def _build_message(*, to_email: str, subject: str, html: str, text: Optional[str] = None) -> Any:
-    """Lazy import — SendGrid SDK is heavy and we want test environments to skip it."""
-    from sendgrid.helpers.mail import Mail  # type: ignore[import-not-found]
+def _send_sync(*, to_email: str, subject: str, html: str) -> Optional[str]:
+    """Synchronous Resend send. Returns the message id on success."""
+    import resend  # type: ignore[import-not-found]
 
-    return Mail(
-        from_email=(settings.sendgrid_from_email, settings.sendgrid_from_name),
-        to_emails=to_email,
-        subject=subject,
-        plain_text_content=text or "",
-        html_content=html,
-    )
-
-
-def _send_sync(message: Any) -> Optional[int]:
-    from sendgrid import SendGridAPIClient  # type: ignore[import-not-found]
-
-    client = SendGridAPIClient(settings.sendgrid_api_key)
-    response = client.send(message)
-    return getattr(response, "status_code", None)
+    resend.api_key = settings.resend_api_key
+    params: dict[str, Any] = {
+        "from": settings.resend_from_email,
+        "to": [to_email],
+        "subject": subject,
+        "html": html,
+    }
+    response = resend.Emails.send(params)
+    if isinstance(response, dict):
+        return response.get("id")
+    return getattr(response, "id", None)
 
 
 async def send_email(*, to_email: str, subject: str, html: str, text: Optional[str] = None) -> bool:
-    """Best-effort email send. Returns True if the API accepted the message."""
-    if not settings.sendgrid_api_key:
-        logger.debug("SendGrid not configured — skipping email", extra={"to": to_email, "subject": subject})
+    """Best-effort email send. Returns True if Resend accepted the message.
+
+    `text` is accepted for signature compatibility but currently unused —
+    Resend renders HTML directly.
+    """
+    if not settings.resend_api_key:
+        logger.debug("Resend not configured — skipping email", extra={"to": to_email, "subject": subject})
         return False
 
     try:
-        message = _build_message(to_email=to_email, subject=subject, html=html, text=text)
-        status = await asyncio.to_thread(_send_sync, message)
-        accepted = status is not None and 200 <= status < 300
-        if not accepted:
-            logger.warning("SendGrid returned non-2xx", extra={"status": status, "to": to_email})
-        return accepted
+        message_id = await asyncio.to_thread(
+            _send_sync, to_email=to_email, subject=subject, html=html
+        )
+        if not message_id:
+            logger.warning("Resend returned no message id", extra={"to": to_email})
+            return False
+        logger.info("Resend accepted email", extra={"to": to_email, "message_id": message_id})
+        return True
     except Exception:
-        logger.warning("SendGrid send failed", exc_info=True)
+        logger.warning("Resend send failed", exc_info=True)
         return False
 
 

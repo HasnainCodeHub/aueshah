@@ -2,7 +2,7 @@
 
 Sits between routes and the appointments repository. Mirrors noor_workflow:
   - Insert the row.
-  - Fire SendGrid notifications fire-and-forget so the request path
+  - Fire Resend notifications fire-and-forget so the request path
     doesn't pay for them.
   - Optionally log a user_activity row when the requester is authenticated.
 """

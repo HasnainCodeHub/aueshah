@@ -257,7 +257,7 @@ async def request_appointment(
     """
     POST /appointment-request endpoint.
 
-    Persists the request to the appointments table and fires SendGrid
+    Persists the request to the appointments table and fires Resend
     notifications fire-and-forget. Falls back to a logged-only flow if the
     database is unavailable so the chat surface never hard-fails.
     """

@@ -372,8 +372,8 @@ Delivers:
 
 **Goal**: Add all new packages and external service credentials before any Group begins.
 
-- [ ] T100 Update `backend/requirements.txt` with Phase 2 deps: `sqlalchemy[asyncio]==2.0.*`, `asyncpg==0.29.*`, `alembic==1.13.*`, `redis==5.*`, `python-jose[cryptography]==3.3.*`, `sendgrid==6.*`, `slack_sdk==3.*`, `fakeredis[aioredis]` (dev)
-- [ ] T101 [P] Extend `backend/.env.example` with all Phase 2 variables per quickstart.md §4 (NEON_DATABASE_URL, REDIS_URL, WP_*, JWT_*, SENDGRID_*, SLACK_WEBHOOK_*, NOOR_COOLDOWN_DAYS, RATE_LIMIT_PER_MIN, REQUEST_TIMEOUT_SECONDS, ENABLE_RATE_LIMIT)
+- [ ] T100 Update `backend/requirements.txt` with Phase 2 deps: `sqlalchemy[asyncio]==2.0.*`, `asyncpg==0.29.*`, `alembic==1.13.*`, `redis==5.*`, `python-jose[cryptography]==3.3.*`, `resend>=2.0.0`, `slack_sdk==3.*`, `fakeredis[aioredis]` (dev)
+- [ ] T101 [P] Extend `backend/.env.example` with all Phase 2 variables per quickstart.md §4 (NEON_DATABASE_URL, REDIS_URL, WP_*, JWT_*, RESEND_API_KEY, RESEND_FROM_EMAIL, CONCIERGE_ALERT_EMAIL, SLACK_WEBHOOK_*, NOOR_COOLDOWN_DAYS, RATE_LIMIT_PER_MIN, REQUEST_TIMEOUT_SECONDS, ENABLE_RATE_LIMIT)
 - [ ] T102 [P] Extend `backend/app/config/settings.py` with new Pydantic settings fields, with safe defaults and `ENABLE_RATE_LIMIT=False` default
 - [ ] T103 [P] Create `backend/alembic.ini` and `backend/alembic/env.py` wired to `NEON_DATABASE_URL` via async engine
 - [ ] T104 Provision Neon project + copy pooled DSN into local `.env`; provision Upstash Redis + copy `rediss://` URL into local `.env`; verify both via `python -c "import asyncio; from app.db.session import engine; asyncio.run(engine.connect())"` and a Redis PING
@@ -524,16 +524,16 @@ Delivers:
 ### Implementation for Group E
 
 - [ ] T177 [P] [E] Create `backend/app/db/repositories/noor_requests.py` — `create(session, user_id, payload)`, `user_has_active(session, user_id) -> bool` (cooldown + pending check), `get(id)`, `list(status, limit)`, `review(id, status, notes, reviewer)`
-- [ ] T178 [P] [E] Create `backend/app/services/notifications/email.py` — SendGrid wrapper, `send_client_confirmation(to, template_vars)`, `send_concierge_alert(to, template_vars)`, async via httpx
+- [ ] T178 [P] [E] Create `backend/app/services/notifications/email.py` — Resend wrapper, `send_client_confirmation(to, template_vars)`, `send_concierge_alert(to, template_vars)`, sync `resend.Emails.send` wrapped via `asyncio.to_thread`
 - [ ] T179 [P] [E] Create `backend/app/services/notifications/slack.py` — async webhook client, `notify_noor_request(request, user)`, `notify_appointment(appointment)`
 - [ ] T180 [E] Create `backend/app/services/noor_workflow.py` — `create_noor_request(session, user, payload)` (checks cooldown, generates `NOR-XXXXXXXX` ref_id, inserts row, fires email + Slack tasks), `review_request(session, id, decision, reviewer)` (updates status, sets cooldown, fires notifications)
 - [ ] T181 [E] Create `backend/app/api/noor_routes.py` — POST `/v1/noor-requests` (Bearer), GET `/v1/noor-requests/me` (Bearer)
 - [ ] T182 [E] Create `backend/app/api/admin_routes.py` — GET `/v1/admin/noor-requests`, GET `/v1/admin/noor-requests/{id}`, PATCH `/v1/admin/noor-requests/{id}` — all gated on `X-Admin-Token` == `ADMIN_API_TOKEN`
 - [ ] T183 [E] Wire noor_routes + admin_routes into `backend/app/main.py`
 - [ ] T184 [E] Update `backend/app/skills/noor.py` — when user's intent is to request Noor, the skill prompts the bot to collect the 5 fields (full_name, purpose, timeline, delivery_location, contact_method+details) conversationally, then call `POST /v1/noor-requests` internally or return a structured payload the orchestrator submits
-- [ ] T185 [P] [E] Seed SendGrid with 2 dynamic templates (`client-confirmation`, `concierge-alert`) and 2 Slack channels (`#noor-requests`, `#appointments`); document template variable schema in `backend/README.md`
+- [ ] T185 [P] [E] Build the 2 inline HTML templates in `email.py` (`client-confirmation`, `concierge-alert`) and 2 Slack channels (`#noor-requests`, `#appointments`); document template variable schema in `backend/README.md` (Resend has no provider-side dynamic templates — we render HTML in Python)
 
-**Group E Checkpoint**: Run full flow end-to-end with real SendGrid + Slack sandbox, verify: (a) client gets confirmation email in <30s, (b) `#noor-requests` message in <10s, (c) approve from admin panel → client gets approval email + cooldown set + `user_activity` row for `noor_request_approved`.
+**Group E Checkpoint**: Run full flow end-to-end with real Resend + Slack sandbox, verify: (a) client gets confirmation email in <30s, (b) `#noor-requests` message in <10s, (c) approve from admin panel → client gets approval email + cooldown set + `user_activity` row for `noor_request_approved`.
 
 ---
 
@@ -568,7 +568,7 @@ Delivers:
 ### Tests for Group G
 
 - [ ] T200 [P] [G] Load test `tests/load/test_rate_limit_under_load.py` using `locust` — 100 simulated IPs, 1 req/sec each over 5 min; assert (a) each IP capped at 5/min, (b) backend p95 stays ≤3s for allowed requests
-- [ ] T201 [P] [G] Chaos test `tests/chaos/test_degraded_modes.py` — simulate (1) Redis down, (2) Neon down, (3) OpenAI timeout, (4) Qdrant timeout, (5) SendGrid 500; assert system returns brand-safe fallback in each case and does not crash
+- [ ] T201 [P] [G] Chaos test `tests/chaos/test_degraded_modes.py` — simulate (1) Redis down, (2) Neon down, (3) OpenAI timeout, (4) Qdrant timeout, (5) Resend 500; assert system returns brand-safe fallback in each case and does not crash
 - [ ] T202 [P] [G] End-to-end journey test `tests/e2e/test_full_user_journey.py` — anonymous → chat → profile question → login → Noor request → admin approve → second chat session → personalized greeting
 - [ ] T203 [P] [G] Security test `tests/security/test_no_leaks.py` — 50 known prompt-injection payloads + 10 error-triggering requests; assert: no API key, no stack trace, no system prompt fragment, no admin token in any response body
 - [ ] T204 [P] [G] Data privacy check `tests/security/test_pii_handling.py` — user deletion test: set `users.status='deleted'`, assert logs contain no raw PII after deletion; verify `chat_messages.user_id` is soft-nulled
@@ -658,5 +658,5 @@ Each group is an independently deployable slice. Stop after any group to:
 - ✅ Security test T203 passes: zero leaks across 50+ payloads
 - ✅ Staging soak test: 24h continuous light traffic, no memory leaks
 - ✅ Client walkthrough: concierge team exercises admin flow end-to-end and signs off
-- ✅ Runbook documented: how to respond to (a) rate limit false positive, (b) Neon outage, (c) WP auth outage, (d) SendGrid quota exceeded
+- ✅ Runbook documented: how to respond to (a) rate limit false positive, (b) Neon outage, (c) WP auth outage, (d) Resend quota exceeded
 

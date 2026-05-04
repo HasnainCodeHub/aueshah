@@ -18,7 +18,7 @@ redis==5.2.1
 python-jose[cryptography]==3.3.0
 
 # Phase 2: Notifications
-sendgrid==6.11.0
+resend>=2.0.0
 
 # Phase 2: Dev/Test
 fakeredis==2.26.2

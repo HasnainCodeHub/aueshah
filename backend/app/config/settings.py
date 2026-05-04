@@ -58,11 +58,12 @@ class Settings(BaseSettings):
     # Phase 2: Admin
     admin_api_token: str = ""
 
-    # Phase 2: SendGrid
-    sendgrid_api_key: str = ""
-    sendgrid_from_email: str = "concierge@aueshah.com"
-    sendgrid_from_name: str = "Aueshah Concierge"
-    concierge_alert_email: str = "concierge@aueshah.com"
+    # Phase 2: Resend (email)
+    resend_api_key: str = ""
+    # Until aueshah.com is verified in Resend, use the sandbox sender
+    # `onboarding@resend.dev`. Swap to a verified address when ready.
+    resend_from_email: str = "Aueshah Concierge <onboarding@resend.dev>"
+    concierge_alert_email: str = "husnainxebad@gmail.com"
 
     # Phase 2: Business logic
     noor_cooldown_days: int = 365

@@ -23,7 +23,7 @@ Phase 1 delivered a stateless FastAPI concierge with hybrid skill routing, RAG g
 ## Technical Context
 
 **Language/Version**: Python 3.11+
-**Primary Dependencies**: FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, SendGrid SDK (or AWS SES), `slack_sdk` (async webhook).
+**Primary Dependencies**: FastAPI (async), OpenAI Agents SDK + Responses API (`gpt-4.1`), Qdrant client, Pydantic v2, SQLAlchemy 2.0 (async) + asyncpg, Alembic (migrations), `python-jose` (JWT verification), `httpx` (WP REST calls), `slowapi` or custom Redis-backed limiter, `redis.asyncio`, Resend SDK, `slack_sdk` (async webhook).
 **Storage**:
   - **Neon Serverless Postgres** (primary OLTP — users, chat_history, appointments, noor_allocation_requests, user_activity)
   - **Qdrant** (vector store, unchanged from Phase 1)
@@ -47,7 +47,7 @@ Phase 1 delivered a stateless FastAPI concierge with hybrid skill routing, RAG g
 ### NEEDS CLARIFICATION (resolved in Phase 0 research.md)
 
 - WP auth mechanism (JWT plugin vs Application Passwords vs Cookie-shared) → see research.md §1
-- Notification provider (SendGrid vs AWS SES vs Postmark) → see research.md §3
+- Notification provider (Resend vs SendGrid vs AWS SES vs Postmark) → see research.md §3
 - Redis provider (Upstash serverless vs self-hosted) → see research.md §2
 - Cooldown duration default for Noor re-requests → see research.md §4
 - Concierge admin surface (separate Next.js admin vs WP admin plugin) → see research.md §5
@@ -140,7 +140,7 @@ backend/
 │   │   ├── failure_handler.py         # Existing
 │   │   ├── embedding_client.py        # Existing
 │   │   ├── notifications/             # NEW
-│   │   │   ├── email.py               # SendGrid wrapper (concierge alert + client confirmation)
+│   │   │   ├── email.py               # Resend wrapper (concierge alert + client confirmation)
 │   │   │   └── slack.py               # Async webhook → #noor-requests / #appointments
 │   │   ├── noor_workflow.py           # NEW — create_request, check_cooldown, approve, decline
 │   │   └── appointment_workflow.py    # NEW — create + notify (replaces inline /appointment-request)
@@ -149,7 +149,7 @@ backend/
 │   │   ├── schemas.py                 # Extended — add WPLoginRequest, NoorAllocationRequest schemas, AppointmentRequest already exists
 │   │   └── errors.py                  # Existing + AuthFailure, RateLimited, CooldownActive
 │   ├── config/
-│   │   ├── settings.py                # + NEON_DATABASE_URL, REDIS_URL, WP_BASE_URL, WP_JWKS_URL, SENDGRID_API_KEY, SLACK_WEBHOOK_*
+│   │   ├── settings.py                # + NEON_DATABASE_URL, REDIS_URL, WP_BASE_URL, WP_JWKS_URL, RESEND_API_KEY, RESEND_FROM_EMAIL, CONCIERGE_ALERT_EMAIL, SLACK_WEBHOOK_*
 │   │   ├── prompts.py                 # Existing (already optimized)
 │   │   └── routing_rules.yaml         # Existing
 │   └── main.py                        # Existing — register new middleware + routers
@@ -167,7 +167,7 @@ backend/
 │   └── unit/
 │       ├── test_personalization.py    # NEW
 │       └── test_history_capping.py    # NEW
-├── requirements.txt                   # + sqlalchemy[asyncio], asyncpg, alembic, redis, python-jose, httpx, sendgrid, slack_sdk
+├── requirements.txt                   # + sqlalchemy[asyncio], asyncpg, alembic, redis, python-jose, httpx, resend, slack_sdk
 ├── alembic.ini                        # NEW
 └── .env.example                       # Updated with new vars
 ```
@@ -189,7 +189,7 @@ To be resolved in `research.md`:
    - Sliding window vs fixed window vs token bucket — pick sliding window log for fairness at low limits (5/min)
 
 3. **Notification provider**
-   - SendGrid (free 100/day) vs AWS SES (cheaper at scale, more setup) vs Postmark (best deliverability, paid)
+   - Resend (free 3k/month, single-key signup — chosen) vs SendGrid (Single Sender Verification overhead) vs AWS SES (cheaper at scale, heavier setup) vs Postmark (best deliverability, paid)
    - Slack: incoming webhook URL per channel (#noor-requests, #appointments)
 
 4. **Noor cooldown policy**
@@ -243,7 +243,8 @@ All responses follow stable error envelope: `{ "error": "string", "code": int }`
 # 1. Provision Neon (free tier) → copy connection string
 cp backend/.env.example backend/.env
 # Set NEON_DATABASE_URL, REDIS_URL (Upstash), WP_BASE_URL, WP_JWKS_URL,
-#     SENDGRID_API_KEY, SLACK_WEBHOOK_NOOR, SLACK_WEBHOOK_APPOINTMENTS,
+#     RESEND_API_KEY, RESEND_FROM_EMAIL, CONCIERGE_ALERT_EMAIL,
+#     SLACK_WEBHOOK_NOOR, SLACK_WEBHOOK_APPOINTMENTS,
 #     ADMIN_API_TOKEN, JWT_SIGNING_KEY
 
 # 2. Run migrations
@@ -261,7 +262,7 @@ python -m app.scripts.wp_mock --port 8080
 
 ### Agent context update
 
-Run `.specify/scripts/bash/update-agent-context.sh claude` to add new tech (Neon, asyncpg, SQLAlchemy 2.0 async, Alembic, Redis, python-jose, SendGrid, slack_sdk) to `CLAUDE.md` between markers — preserving manual additions.
+Run `.specify/scripts/bash/update-agent-context.sh claude` to add new tech (Neon, asyncpg, SQLAlchemy 2.0 async, Alembic, Redis, python-jose, Resend, slack_sdk) to `CLAUDE.md` between markers — preserving manual additions.
 
 ---
 
