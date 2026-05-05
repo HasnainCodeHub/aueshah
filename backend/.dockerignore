@@ -1,0 +1,58 @@
+# Keep the Docker build context lean — only ship what Dockerfile.prod actually copies.
+# (`pyproject.toml`, `uv.lock`, `app/`)
+
+# Python caches & local venvs
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+
+# Tests, coverage, type-checking caches (not shipped in prod image)
+tests/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Migrations + scripts — needed for ops tasks, not the runtime image.
+# Dockerfile.prod doesn't copy these anyway; excluded for faster builds.
+alembic/
+alembic.ini
+scripts/
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets — never bake into image
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Working files from local sessions
+.bespoke-*.json
+.rev*.json
+*.log
+
+# Docker / git
+.dockerignore
+Dockerfile
+Dockerfile.*
+!Dockerfile.prod
+.git/
+.gitignore
+.gitattributes

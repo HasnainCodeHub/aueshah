@@ -1,6 +1,6 @@
 <script>
 (function () {
-  var BACKEND = "https://top-endorsement-frost-become.trycloudflare.com";
+  var BACKEND = "https://prayer-makeup-identity-respond.trycloudflare.com";
   var WP_MINT = "/wp-json/aueshah/v1/mint-token";
   var LOGIN_URL = "/my-account/?redirect_to=" + encodeURIComponent(location.pathname);
   var TOKEN_KEY = "aueshah_token";
@@ -23,6 +23,15 @@
 
   var session = null;
   var busy = false;
+  var userDisplayName = "You";
+  var userInitials = "U";
+
+  function getInitials(name) {
+    if (!name) return "U";
+    var parts = String(name).trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
 
   async function ensureSession() {
     // Always check who is currently logged into WP (truth source = the cookie)
@@ -97,7 +106,11 @@
     var isUser = role === "user";
     var bg = isUser ? "#f5f0e6" : "#fff";
     div.style.cssText = "max-width:88%;align-self:" + (isUser ? "flex-end" : "flex-start") + ";margin:0;padding:12px 16px;border-radius:" + (isUser ? "14px 14px 4px 14px" : "14px 14px 14px 4px") + ";background:" + bg + ";border:1px solid " + (isUser ? "#d8c8b0" : "#e8dfd0") + ";box-shadow:0 1px 2px rgba(58,47,36,0.05);";
-    var html = '<div style="font-size:10px;letter-spacing:0.16em;font-weight:600;color:#a8927a;margin-bottom:4px;text-transform:uppercase;">' + (isUser ? "YOU" : "AUESHAH") + '</div>';
+    var initials = isUser ? userInitials : "Au";
+    var avatarBg = isUser ? "#a8927a" : "#3a2f24";
+    var html = '<div style="display:flex;align-items:center;margin-bottom:6px;' + (isUser ? "justify-content:flex-end;" : "justify-content:flex-start;") + '">'
+      + '<span style="width:26px;height:26px;border-radius:50%;background:' + avatarBg + ';color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:Arial,sans-serif;flex-shrink:0;letter-spacing:0;">' + escHtml(initials) + '</span>'
+      + '</div>';
     html += '<div class="msg-body" style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#3a2f24;">' + escHtml(text) + '</div>';
     div.innerHTML = html;
     log.appendChild(div);
@@ -206,6 +219,8 @@
 
     console.log("[aueshah] signed in as", sess.user.display_name || sess.user.email);
     showChatState(sess.user.display_name || sess.user.email);
+    userDisplayName = sess.user.display_name || (sess.user.email ? sess.user.email.split("@")[0] : "You");
+    userInitials = getInitials(userDisplayName);
     input.placeholder = "Ask me anything about these pieces...";
 
     function fire() {

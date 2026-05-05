@@ -25,10 +25,19 @@ async def upsert_from_wp_claims(
     email: str,
     display_name: str,
 ) -> User:
-    """Find-or-create a local user from WordPress claims. Updates profile on every login."""
+    """Find-or-create a local user from WordPress claims. Updates profile on every login.
+
+    Looks up by wp_user_id first, then falls back to email — handles cases where
+    a WP user was deleted + recreated (new wp_user_id, same email) or where a
+    legacy row has a stale/missing wp_user_id. On email match we reconcile
+    wp_user_id rather than INSERTing and tripping the email unique constraint.
+    """
     stmt = select(User).where(User.wp_user_id == wp_user_id)
-    result = await session.execute(stmt)
-    user = result.scalar_one_or_none()
+    user = (await session.execute(stmt)).scalar_one_or_none()
+
+    if user is None:
+        stmt = select(User).where(User.email == email)
+        user = (await session.execute(stmt)).scalar_one_or_none()
 
     if user is None:
         user = User(
@@ -41,6 +50,7 @@ async def upsert_from_wp_claims(
         await session.refresh(user)
         logger.info("New user created from WP login", extra={"wp_user_id": wp_user_id})
     else:
+        user.wp_user_id = wp_user_id
         user.email = email
         user.display_name = display_name
         user.last_seen_at = datetime.now(timezone.utc)
