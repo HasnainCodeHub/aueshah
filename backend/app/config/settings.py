@@ -63,7 +63,15 @@ class Settings(BaseSettings):
     # Until aueshah.com is verified in Resend, use the sandbox sender
     # `onboarding@resend.dev`. Swap to a verified address when ready.
     resend_from_email: str = "Aueshah Concierge <onboarding@resend.dev>"
-    concierge_alert_email: str = "husnainxebad@gmail.com"
+    # Comma-separated for multiple inboxes — workflows fan out one Resend send
+    # per recipient. Sandbox-only Resend accounts will silently 403 on any
+    # address except the registered one until a domain is verified.
+    concierge_alert_email: str = "shahs.jewel@gmail.com,service@aueshah.com"
+
+    @property
+    def concierge_alert_recipients(self) -> list[str]:
+        """Split concierge_alert_email on commas; trim; drop empties."""
+        return [e.strip() for e in self.concierge_alert_email.split(",") if e.strip()]
 
     # Phase 2: Business logic
     noor_cooldown_days: int = 365

@@ -33,16 +33,19 @@ async def _fire_notifications(row: Appointment, *, user_id: Optional[uuid.UUID])
             appointment_type=row.appointment_type,
             preferred_date=row.preferred_date,
         ),
-        email_notifier.send_concierge_appointment_alert(
-            to_email=settings.concierge_alert_email,
-            reference_id=row.reference_id,
-            client_email=row.email,
-            appointment_type=row.appointment_type,
-            phone=row.phone,
-            preferred_date=row.preferred_date,
-            notes=row.notes,
-        ),
     ]
+    for alert_email in settings.concierge_alert_recipients:
+        coros.append(
+            email_notifier.send_concierge_appointment_alert(
+                to_email=alert_email,
+                reference_id=row.reference_id,
+                client_email=row.email,
+                appointment_type=row.appointment_type,
+                phone=row.phone,
+                preferred_date=row.preferred_date,
+                notes=row.notes,
+            )
+        )
     if user_id is not None:
         coros.append(
             log_activity(

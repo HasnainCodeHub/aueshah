@@ -29,28 +29,31 @@ logger = logging.getLogger(__name__)
 
 async def _fire_notifications_on_create(row: NoorAllocationRequest, user: User) -> None:
     """Run notifications + activity log without holding the request path open."""
-    await asyncio.gather(
+    coros = [
         email_notifier.send_client_noor_confirmation(
             to_email=user.email,
             full_name=row.full_name,
             reference_id=row.reference_id,
-        ),
-        email_notifier.send_concierge_noor_alert(
-            to_email=settings.concierge_alert_email,
-            reference_id=row.reference_id,
-            full_name=row.full_name,
-            purpose=row.purpose,
-            timeline=row.timeline,
-            contact_method=row.contact_method,
-            contact_details=row.contact_details,
         ),
         log_activity(
             user_id=user.id,
             activity_type="noor_request_submitted",
             details={"reference_id": row.reference_id, "timeline": row.timeline},
         ),
-        return_exceptions=True,
-    )
+    ]
+    for alert_email in settings.concierge_alert_recipients:
+        coros.append(
+            email_notifier.send_concierge_noor_alert(
+                to_email=alert_email,
+                reference_id=row.reference_id,
+                full_name=row.full_name,
+                purpose=row.purpose,
+                timeline=row.timeline,
+                contact_method=row.contact_method,
+                contact_details=row.contact_details,
+            )
+        )
+    await asyncio.gather(*coros, return_exceptions=True)
 
 
 async def _fire_notifications_on_review(row: NoorAllocationRequest, user: User) -> None:

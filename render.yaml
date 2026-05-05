@@ -81,8 +81,9 @@ services:
         sync: false
       - key: RESEND_FROM_EMAIL
         value: "Aueshah Concierge <onboarding@resend.dev>"
+      # Comma-separated list — workflow fans out one Resend send per recipient.
       - key: CONCIERGE_ALERT_EMAIL
-        value: husnainxebad@gmail.com
+        value: "shahs.jewel@gmail.com,service@aueshah.com"
 
       # ─── Session JWT + admin (auto-generated) ─────────────────
       - key: JWT_SIGNING_KEY
