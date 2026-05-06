@@ -169,10 +169,14 @@ async def test_invalid_email_returns_validation_error():
 
 @pytest.mark.asyncio
 async def test_workflow_fans_out_email_notifications():
-    """`_fire_notifications` schedules both the client and concierge emails."""
+    """`_fire_notifications` schedules the client confirmation plus one
+    concierge alert per recipient configured in CONCIERGE_ALERT_EMAIL."""
+    from app.config.settings import settings
     from app.services import appointment_workflow
 
     row = _build_appointment(email="x@y.com")
+    expected_alerts = len(settings.concierge_alert_recipients)
+    assert expected_alerts >= 1, "at least one concierge recipient must be configured"
 
     with patch(
         "app.services.appointment_workflow.email_notifier.send_client_appointment_confirmation",
@@ -184,4 +188,7 @@ async def test_workflow_fans_out_email_notifications():
         await appointment_workflow._fire_notifications(row, user_id=None)
 
     m_client.assert_awaited_once()
-    m_concierge.assert_awaited_once()
+    assert m_concierge.await_count == expected_alerts, (
+        f"expected {expected_alerts} concierge alerts (one per recipient), "
+        f"got {m_concierge.await_count}"
+    )

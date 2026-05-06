@@ -20,6 +20,7 @@ from app.db.session import get_session_factory
 from app.db.repositories import noor_requests as noor_repo
 from app.services.appointment_workflow import create_appointment
 from app.services.noor_catalog import find_best_noor_pieces
+from app.services.product_catalog import find_best_products
 from app.services.rag_service import RAGService
 from app.utils.metrics import APPOINTMENT_REQUESTS_TOTAL, NOOR_REQUESTS_TOTAL
 from app.utils.validators import injection_guardrail, off_topic_guardrail
@@ -82,6 +83,67 @@ async def noor_recommend(
             f"- {p['name']} ({p['category']}, {p['metal']}, {p['style']}): "
             f"{p['description']} — {p['narrative']}"
         )
+    return "\n".join(lines)
+
+
+@function_tool
+async def recommend_pieces(
+    age: int | None = None,
+    skin_tone: str | None = None,
+    style_preference: str | None = None,
+    occasion: str | None = None,
+    category: str | None = None,
+) -> str:
+    """Return three Aueshah pieces matched to the client profile, structured as
+    PRIMARY (perfect match), SECONDARY (slight variation), STATEMENT (bolder
+    evolution). Use this as your only fact source when presenting non-Noor
+    pieces — never invent details.
+
+    Call this AFTER you have the client's skin tone and style preference
+    (age is helpful but optional). Optional refinements:
+      - category: "ring", "bracelet", "earrings", "pendant", "necklace",
+        "tiara", or "waist_adornment".
+      - occasion: "love", "anniversary", "gift", "self_reward", "legacy",
+        "status", "milestone", "everyday", "celebration".
+
+    The tool implements the v2.0 intelligence spec — skin_tone -> metal,
+    style -> form, occasion -> narrative — and returns three layered picks so
+    you can present a primary recommendation, a slight variation, and a
+    statement upgrade.
+    """
+    picks = find_best_products(
+        age=age,
+        skin_tone=skin_tone,
+        style_preference=style_preference,
+        occasion=occasion,
+        category=category,
+    )
+    if not any(picks.values()):
+        return "(no matches available — offer to connect the client with our private concierge)"
+
+    layers = [
+        ("PRIMARY (perfect match)", picks.get("primary")),
+        ("SECONDARY (slight variation)", picks.get("secondary")),
+        ("STATEMENT (bolder evolution)", picks.get("statement")),
+    ]
+    lines = []
+    for label, p in layers:
+        if not p:
+            continue
+        stones = p.get("stones") or []
+        stones_str = ", ".join(stones) if isinstance(stones, list) else str(stones)
+        bits = [
+            f"{label}: {p['name']} ({p.get('category','')}, {p.get('metal','')}, {p.get('style','')})",
+        ]
+        if stones_str:
+            bits.append(f"stones: {stones_str}")
+        if p.get("description"):
+            bits.append(p["description"])
+        if p.get("narrative"):
+            bits.append(f"Narrative: {p['narrative']}")
+        if p.get("url"):
+            bits.append(f"Link: {p['url']}")
+        lines.append(" | ".join(bits))
     return "\n".join(lines)
 
 
@@ -297,11 +359,11 @@ def build_triage_agent() -> Agent:
 
     product_agent = Agent(
         name="product",
-        handoff_description="Present a specific Aueshah piece or recommend pieces from our collections (rings, bracelets, earrings, pendants, necklaces, tiaras, waist adornments).",
+        handoff_description="Consult and recommend Aueshah pieces from our collections (rings, bracelets, earrings, pendants, necklaces, tiaras, waist adornments). Default surface — handles category interest, style questions, 'what suits me'.",
         instructions=_specialist_instructions("product"),
         model=model,
         model_settings=model_settings,
-        tools=[search_catalog],
+        tools=[recommend_pieces, search_catalog, submit_appointment],
     )
 
     compare_agent = Agent(
@@ -346,13 +408,20 @@ def build_triage_agent() -> Agent:
             "You are the silent routing layer of the Aueshah Concierge.\n"
             "Your ONLY job is to read the client's latest message and hand off "
             "to the most appropriate specialist. You do not write replies yourself.\n\n"
-            "HANDOFF RULES (apply in order):\n"
+            "HANDOFF RULES (apply in order — first match wins):\n"
             "1. If the message mentions the Noor Collection by name → hand off to `noor`.\n"
-            "2. If the message is about custom/bespoke/made-to-order design → hand off to `bespoke`.\n"
+            "2. If the message is about custom / bespoke / made-to-order / one-of-a-kind design → hand off to `bespoke`.\n"
             "3. If the message compares two or more specific pieces → hand off to `compare`.\n"
-            "4. If the message asks about a specific piece, collection, material, or recommendation → hand off to `product`.\n"
-            "5. Otherwise (greetings, brand questions, appointments, policies, care, heritage, anything unclear) → hand off to `general`.\n\n"
-            "When in doubt, prefer `general`. Never reply directly — always hand off."
+            "4. If the message expresses ANY of the following, hand off to `product`:\n"
+            "   - interest in a piece or collection ('I want', 'I'm looking for', 'show me', 'do you have')\n"
+            "   - mention of a category (ring, bracelet, earrings, pendant, necklace, tiara, waist adornment, jewelry, jewellery, piece)\n"
+            "   - a style or aesthetic question (minimalist, statement, heritage, modern, what suits me)\n"
+            "   - request for advice or recommendation ('what do you recommend', 'something for [occasion]', 'help me choose')\n"
+            "   - profile information offered without context (age, skin tone, style answer)\n"
+            "5. Otherwise (pure greetings with no other intent, heritage / brand / philosophy questions, "
+            "policies, care, warranty, repair, sizing, explicit appointment requests, anything unclear) → hand off to `general`.\n\n"
+            "When in doubt between `product` and `general`, prefer `product` — the client experience "
+            "is consultative, not transactional. Never reply directly — always hand off."
         ),
         model=model,
         model_settings=ModelSettings(temperature=0.0),
