@@ -1,6 +1,6 @@
 <script>
 (function () {
-  var BACKEND = "https://prayer-makeup-identity-respond.trycloudflare.com";
+  var BACKEND = "https://aueshah.onrender.com";
   var WP_MINT = "/wp-json/aueshah/v1/mint-token";
   var LOGIN_URL = "/my-account/?redirect_to=" + encodeURIComponent(location.pathname);
   var TOKEN_KEY = "aueshah_token";
@@ -81,6 +81,59 @@
       session = { token: out.access_token, user: out.user };
       return session;
     } catch (e) { return null; }
+  }
+
+  function injectKeyframes() {
+    if (document.getElementById("au-chat-styles")) return;
+    try {
+      var st = document.createElement("style");
+      st.id = "au-chat-styles";
+      st.textContent = "@keyframes auDot{0%,80%,100%{opacity:0.3;transform:scale(0.85)}40%{opacity:1;transform:scale(1.1)}}";
+      (document.head || document.body).appendChild(st);
+    } catch (e) {}
+  }
+
+  function showAuthLoader() {
+    // Hide both panels so neither flashes before auth resolves.
+    var panel = document.getElementById("au-chat-panel");
+    var locked = document.getElementById("au-chat-locked");
+    if (panel) panel.style.display = "none";
+    if (locked) locked.style.display = "none";
+
+    if (document.getElementById("au-auth-loader")) return;
+    injectKeyframes();
+
+    var loader = document.createElement("div");
+    loader.id = "au-auth-loader";
+    loader.style.cssText = "max-width:760px;width:100%;margin:24px auto;padding:56px 32px;background:#fbf8f1;border:1px solid #e8dfd0;border-radius:10px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;font-family:Georgia,serif;text-align:center;box-shadow:0 1px 2px rgba(58,47,36,0.05);";
+    loader.innerHTML = '<div style="width:52px;height:52px;border-radius:50%;background:#3a2f24;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:Arial,sans-serif;margin-bottom:22px;letter-spacing:0.02em;">Au</div>'
+      + '<div style="font-size:15px;color:#3a2f24;margin-bottom:18px;letter-spacing:0.04em;">Authenticating</div>'
+      + '<span style="display:inline-flex;gap:6px;align-items:center;">'
+        + '<span style="width:8px;height:8px;border-radius:50%;background:#a8927a;animation:auDot 1.2s infinite ease-in-out;"></span>'
+        + '<span style="width:8px;height:8px;border-radius:50%;background:#a8927a;animation:auDot 1.2s infinite ease-in-out;animation-delay:0.18s;"></span>'
+        + '<span style="width:8px;height:8px;border-radius:50%;background:#a8927a;animation:auDot 1.2s infinite ease-in-out;animation-delay:0.36s;"></span>'
+      + '</span>'
+      + '<div style="font-size:11px;color:#a8927a;margin-top:20px;letter-spacing:0.18em;text-transform:uppercase;">Preparing your concierge</div>';
+
+    var anchor = panel || locked;
+    if (anchor && anchor.parentNode) {
+      anchor.parentNode.insertBefore(loader, anchor);
+      return;
+    }
+    var input = document.getElementById("au-chat-input") || document.querySelector("textarea");
+    if (input) {
+      var section = input.closest ? (input.closest("section") || input.closest("form") || input.parentElement) : input.parentElement;
+      if (section && section.parentElement) {
+        section.parentElement.insertBefore(loader, section);
+        return;
+      }
+    }
+    if (document.body) document.body.appendChild(loader);
+  }
+
+  function hideAuthLoader() {
+    var loader = document.getElementById("au-auth-loader");
+    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
   }
 
   function ensureLog(input) {
@@ -180,6 +233,10 @@
   }
 
   async function wire() {
+    // Show the auth loader the moment we have a DOM to insert into. Re-runs
+    // are harmless — showAuthLoader is idempotent.
+    showAuthLoader();
+
     var input = document.getElementById("au-chat-input");
     if (!input) input = document.querySelector("textarea");
     if (!input) { setTimeout(wire, 400); return; }
@@ -203,6 +260,7 @@
     };
 
     var sess = await ensureSession();
+    hideAuthLoader();
     if (!sess) {
       showLockedState();
       input.disabled = true;
