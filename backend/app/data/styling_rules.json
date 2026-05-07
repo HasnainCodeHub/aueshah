@@ -1,0 +1,385 @@
+{
+  "version": "3.0",
+  "source": "updated.pdf — Complete Luxury Jewelry Styling & Compatibility Reference Guide (24 pages, 16 sections)",
+  "_doc": "Single source of truth for the styling axes. styling_engine.derive_expectations reads from this. Do not hand-edit without updating Data.txt v3.0 and the engine tests.",
+
+  "undertone_to_metal": {
+    "cool": {
+      "best": ["white_gold", "platinum"],
+      "secondary": ["silver", "rhodium"],
+      "avoid": ["yellow_gold"],
+      "luxury_effect": "modern luxury, clean elegance, contemporary sophistication"
+    },
+    "warm": {
+      "best": ["yellow_gold", "rose_gold"],
+      "secondary": ["champagne_gold", "copper"],
+      "avoid": ["icy_silver"],
+      "luxury_effect": "royal warmth and traditional luxury"
+    },
+    "neutral": {
+      "best": ["white_gold", "yellow_gold", "rose_gold", "platinum"],
+      "secondary": [],
+      "avoid": [],
+      "luxury_effect": "highest flexibility — mixed-metal styling shines"
+    }
+  },
+
+  "surface_tone_to_gem": {
+    "fair": {
+      "best": ["sapphire", "morganite", "diamond", "tanzanite", "opal", "pink_sapphire", "aquamarine"],
+      "metals": ["platinum", "white_gold", "rose_gold"],
+      "notes": "soft elegant metals; delicate contrast"
+    },
+    "light": {
+      "best": ["diamond", "morganite", "sapphire", "pearl", "white_gold"],
+      "metals": ["white_gold", "rose_gold", "platinum"],
+      "notes": "balanced metals; bright stones; layered luxury"
+    },
+    "medium": {
+      "best": ["emerald", "ruby", "champagne_diamond", "yellow_gold"],
+      "metals": ["yellow_gold", "rose_gold"],
+      "notes": "rich warm metals; high-contrast luxury"
+    },
+    "olive": {
+      "best": ["emerald", "ruby", "black_diamond", "yellow_gold", "champagne_diamond"],
+      "metals": ["yellow_gold", "rose_gold"],
+      "notes": "saturated gemstones; bold golds; dramatic contrast"
+    },
+    "tan": {
+      "best": ["emerald", "ruby", "black_diamond", "yellow_gold", "champagne_diamond"],
+      "metals": ["yellow_gold", "rose_gold"],
+      "notes": "saturated gemstones; bold golds"
+    },
+    "deep": {
+      "best": ["white_diamond", "yellow_gold", "ruby", "emerald", "black_pearl", "tanzanite"],
+      "metals": ["yellow_gold", "platinum"],
+      "notes": "high-brilliance stones; white diamonds pop strongly; yellow gold becomes extremely luxurious"
+    }
+  },
+
+  "face_shape_to_form": {
+    "oval": {
+      "earrings": ["stud", "hoop_medium", "drop"],
+      "necklaces": ["choker", "layered", "princess"],
+      "avoid": [],
+      "goal": "almost any style works — most versatile face shape"
+    },
+    "round": {
+      "earrings": ["long_drop", "vertical", "angular"],
+      "necklaces": ["v_shape", "long_pendant"],
+      "avoid": ["large_circular_hoops", "round_clustered"],
+      "goal": "create elongation"
+    },
+    "square": {
+      "earrings": ["rounded", "oval", "teardrop", "curved"],
+      "necklaces": ["curved", "soft_pendant"],
+      "avoid": ["harsh_geometric_square"],
+      "goal": "soften facial structure"
+    },
+    "heart": {
+      "earrings": ["teardrop", "bottom_heavy", "pear"],
+      "necklaces": ["curved"],
+      "avoid": [],
+      "goal": "balance upper face width"
+    },
+    "diamond": {
+      "earrings": ["stud", "curved_drop"],
+      "necklaces": ["choker", "rounded"],
+      "avoid": [],
+      "goal": "soften cheekbone prominence"
+    },
+    "long": {
+      "earrings": ["wide_chandelier", "circular", "chunky"],
+      "necklaces": ["chunky", "wide"],
+      "avoid": ["very_long_thin_earrings"],
+      "goal": "create width balance"
+    }
+  },
+
+  "body_to_scale": {
+    "petite": {
+      "scale": ["delicate", "thin", "small"],
+      "keywords": ["delicate", "petite", "minimal", "thin", "slim"],
+      "avoid": ["oversized", "heavy"],
+      "reason": "large pieces overpower proportions"
+    },
+    "tall_slim": {
+      "scale": ["statement", "long", "large"],
+      "keywords": ["statement", "long", "layered", "editorial", "large", "bold"],
+      "avoid": [],
+      "reason": "can carry editorial high-fashion jewelry"
+    },
+    "curvy": {
+      "scale": ["medium", "bold", "rounded"],
+      "keywords": ["rounded", "structured", "medium", "bold"],
+      "avoid": ["extremely_tiny"],
+      "reason": "tiny pieces visually disappear"
+    },
+    "athletic": {
+      "scale": ["geometric", "structured", "modern"],
+      "keywords": ["geometric", "modern", "structured", "clean"],
+      "avoid": [],
+      "reason": "structured metalwork reads as contemporary elegance"
+    }
+  },
+
+  "height_to_size": {
+    "short": {
+      "scale": ["small", "medium"],
+      "preferred": ["vertical_necklaces", "thin_bracelets"],
+      "avoid": ["massive_chokers", "oversized_earrings"]
+    },
+    "medium": {
+      "scale": ["small", "medium", "large"],
+      "preferred": [],
+      "avoid": []
+    },
+    "tall": {
+      "scale": ["medium", "large", "statement"],
+      "preferred": ["statement_pieces", "layered_necklaces", "long_earrings", "bold_gemstones"],
+      "avoid": []
+    }
+  },
+
+  "finger_to_cut": {
+    "long": {
+      "cuts": ["emerald", "princess", "marquise", "large_statement"],
+      "rationale": "long fingers carry elongated and bold cuts"
+    },
+    "short": {
+      "cuts": ["oval", "pear", "round"],
+      "bands": ["slim_band"],
+      "avoid": ["wide_thick_bands", "marquise"],
+      "rationale": "oval/pear elongate visually; slim bands keep proportion"
+    },
+    "balanced": {
+      "cuts": ["round", "cushion", "oval"],
+      "rationale": "balanced fingers suit classic universal cuts"
+    },
+    "small_hands": {
+      "scale": ["thin", "petite", "minimalist"],
+      "rationale": "elegant minimalism on smaller hands"
+    }
+  },
+
+  "birth_month_to_stone": {
+    "1": {"primary": "garnet", "meaning": "protection and loyalty"},
+    "2": {"primary": "amethyst", "meaning": "wisdom and calmness"},
+    "3": {"primary": "aquamarine", "meaning": "serenity and clarity"},
+    "4": {"primary": "diamond", "meaning": "strength and eternal love"},
+    "5": {"primary": "emerald", "meaning": "growth and royalty"},
+    "6": {"primary": "pearl", "alternate": "alexandrite", "meaning": "purity and transformation"},
+    "7": {"primary": "ruby", "meaning": "passion and power"},
+    "8": {"primary": "peridot", "meaning": "energy and prosperity"},
+    "9": {"primary": "sapphire", "meaning": "wisdom and loyalty"},
+    "10": {"primary": "opal", "alternate": "tourmaline", "meaning": "creativity and emotion"},
+    "11": {"primary": "citrine", "alternate": "topaz", "meaning": "wealth and positivity"},
+    "12": {"primary": "tanzanite", "alternate": "turquoise", "meaning": "protection and luxury"}
+  },
+
+  "culture_to_aesthetic": {
+    "middle_eastern": {
+      "metals": ["yellow_gold"],
+      "stones": ["emerald", "ruby"],
+      "style_keywords": ["heritage", "statement", "layered", "royal", "opulent"],
+      "energy": "opulence and prestige"
+    },
+    "south_asian": {
+      "metals": ["yellow_gold"],
+      "stones": ["emerald", "ruby", "pearl"],
+      "style_keywords": ["heritage", "bridal", "polki", "kundan", "traditional"],
+      "energy": "heritage and grandeur"
+    },
+    "east_asian": {
+      "metals": ["white_gold", "platinum"],
+      "stones": ["pearl", "jade", "diamond"],
+      "style_keywords": ["minimalist", "delicate", "refined"],
+      "energy": "refined precision"
+    },
+    "european": {
+      "metals": ["white_gold", "platinum"],
+      "stones": ["diamond"],
+      "style_keywords": ["minimalist", "understated", "modern"],
+      "energy": "quiet luxury"
+    },
+    "african": {
+      "metals": ["yellow_gold"],
+      "stones": ["ruby", "emerald", "sapphire", "diamond"],
+      "style_keywords": ["statement", "sculptural", "bold"],
+      "energy": "power and identity"
+    },
+    "american": {
+      "metals": ["white_gold", "yellow_gold", "rose_gold"],
+      "stones": ["diamond"],
+      "style_keywords": ["minimalist", "modern", "layered", "personalized", "tennis"],
+      "energy": "lifestyle luxury"
+    }
+  },
+
+  "personality_to_energy": {
+    "minimalist": {
+      "metals": ["white_gold", "platinum"],
+      "stones": ["diamond"],
+      "style_keywords": ["minimalist", "thin", "solitaire", "delicate"],
+      "energy": "quiet confidence"
+    },
+    "romantic": {
+      "metals": ["rose_gold"],
+      "stones": ["morganite", "pearl", "pink_sapphire", "diamond"],
+      "style_keywords": ["floral", "heart", "soft", "feminine"],
+      "energy": "soft emotional elegance"
+    },
+    "powerful": {
+      "metals": ["platinum", "white_gold", "yellow_gold"],
+      "stones": ["emerald", "black_diamond", "diamond"],
+      "style_keywords": ["statement", "structured", "bold", "executive", "emerald_cut"],
+      "energy": "authority and status"
+    },
+    "executive": {
+      "metals": ["platinum", "white_gold"],
+      "stones": ["diamond", "emerald"],
+      "style_keywords": ["structured", "emerald_cut", "modern", "clean"],
+      "energy": "authority and status"
+    },
+    "artistic": {
+      "metals": ["white_gold", "yellow_gold", "mixed"],
+      "stones": ["opal", "tanzanite", "tourmaline", "mixed"],
+      "style_keywords": ["sculptural", "unique", "mixed", "creative"],
+      "energy": "creative exclusivity"
+    }
+  },
+
+  "cut_to_persona": {
+    "round": {"persona": "classic", "energy": "classic brilliance", "fingers": ["balanced", "any"]},
+    "emerald": {"persona": "executive", "energy": "quiet wealth", "fingers": ["long"]},
+    "oval": {"persona": "romantic", "energy": "soft luxury", "fingers": ["short", "any"]},
+    "pear": {"persona": "feminine_graceful", "energy": "graceful sophistication", "fingers": ["short"], "face_shapes": ["heart"]},
+    "cushion": {"persona": "vintage_warm", "energy": "warm elegance", "fingers": ["balanced"]},
+    "princess": {"persona": "modern_sharp", "energy": "sharp brilliance", "fingers": ["long"]},
+    "marquise": {"persona": "dramatic_royal", "energy": "royal theatrical luxury", "fingers": ["short"]}
+  },
+
+  "necklace_length_to_fit": {
+    "choker": {"best_for": ["long_neck", "oval_face"]},
+    "princess": {"best_for": ["universal"]},
+    "matinee": {"best_for": ["professional_elegance"]},
+    "opera": {"best_for": ["tall_body"]},
+    "rope": {"best_for": ["editorial_styling", "tall_body"]}
+  },
+
+  "psychology_categories": {
+    "high_contrast": {
+      "examples": ["white_diamond + deep_skin", "emerald + olive_skin", "black_diamond + warm_skin"],
+      "framing": "bold, elite, unforgettable",
+      "upsell_tone": "rarity_trigger"
+    },
+    "harmony": {
+      "examples": ["rose_gold + warm_fair_skin", "champagne_diamond + tan_skin"],
+      "framing": "soft sophistication and elegance",
+      "upsell_tone": "emotional_binding"
+    },
+    "royal": {
+      "examples": ["yellow_gold + emerald", "yellow_gold + ruby", "yellow_gold + pearl"],
+      "framing": "wealth, heritage, power",
+      "upsell_tone": "comparison_upgrade"
+    },
+    "quiet": {
+      "examples": ["platinum + white_diamond", "minimal_silhouettes"],
+      "framing": "old-money sophistication",
+      "upsell_tone": "pairing_suggestion"
+    }
+  },
+
+  "universal_safe_combinations": [
+    {"metal": "white_gold", "stone": "diamond"},
+    {"metal": "yellow_gold", "stone": "emerald"},
+    {"metal": "platinum", "stone": "pearl"},
+    {"metal": "white_gold", "stone": "sapphire"},
+    {"metal": "rose_gold", "stone": "morganite"},
+    {"metal": "yellow_gold", "stone": "black_diamond"}
+  ],
+
+  "occasion_playbook": {
+    "engagement": {
+      "opening_question": "Tell me about her — what suits her hands? Long fingers, short, or balanced? And does she lean classic or modern?",
+      "key_dimensions": ["finger_length", "personality", "style_preference", "undertone"],
+      "depth": "single_primary_plus_one_alt",
+      "psychology": "harmony",
+      "category": "ring",
+      "upsell_hook": "comparison_upgrade"
+    },
+    "anniversary": {
+      "opening_question": "Is this a milestone year? And does she lean quiet luxury or royal luxury at heart?",
+      "key_dimensions": ["personality", "occasion", "birth_month"],
+      "depth": "three_tier",
+      "psychology": "royal",
+      "upsell_hook": "rarity_trigger"
+    },
+    "gift_for_partner": {
+      "opening_question": "What does she usually wear day to day, and what kind of moment is this for her?",
+      "key_dimensions": ["personality", "style_preference", "occasion"],
+      "depth": "three_tier",
+      "psychology": "harmony",
+      "upsell_hook": "emotional_binding"
+    },
+    "gift_for_mother": {
+      "opening_question": "What does she usually wear, and is there a stone she's drawn to — perhaps her birthstone?",
+      "key_dimensions": ["personality", "birth_month", "cultural_background"],
+      "depth": "primary_plus_sentimental_alt",
+      "psychology": "harmony",
+      "upsell_hook": "emotional_binding"
+    },
+    "gift_for_friend": {
+      "opening_question": "Tell me about her style — minimalist, romantic, bold, or artistic?",
+      "key_dimensions": ["personality", "style_preference"],
+      "depth": "three_tier",
+      "psychology": "harmony",
+      "upsell_hook": "pairing_suggestion"
+    },
+    "self_purchase": {
+      "opening_question": "What's the moment you'd wear it for first?",
+      "key_dimensions": ["occasion", "style_preference", "personality"],
+      "depth": "three_tier",
+      "psychology": "quiet",
+      "upsell_hook": "comparison_upgrade"
+    },
+    "formal_event": {
+      "opening_question": "What are you wearing, and what's the venue feel — quiet salon or grand ballroom?",
+      "key_dimensions": ["occasion", "style_preference", "body_shape", "height_band"],
+      "depth": "three_tier",
+      "psychology": "high_contrast",
+      "upsell_hook": "comparison_upgrade"
+    },
+    "milestone_birthday": {
+      "opening_question": "Which birthday, and which stone speaks to her — perhaps her birthstone?",
+      "key_dimensions": ["birth_month", "personality", "style_preference"],
+      "depth": "primary_plus_sentimental_alt",
+      "psychology": "royal",
+      "upsell_hook": "emotional_binding"
+    },
+    "heritage_addition": {
+      "opening_question": "Is this for now, or for someone after you?",
+      "key_dimensions": ["cultural_background", "personality", "occasion"],
+      "depth": "single_primary_plus_one_alt",
+      "psychology": "royal",
+      "upsell_hook": "rarity_trigger"
+    }
+  },
+
+  "consultation_dimensions_priority": [
+    "occasion",
+    "category",
+    "personality",
+    "undertone",
+    "style_preference",
+    "finger_length",
+    "face_shape",
+    "birth_month",
+    "cultural_background",
+    "body_shape",
+    "height_band",
+    "surface_tone",
+    "budget_band",
+    "age"
+  ]
+}

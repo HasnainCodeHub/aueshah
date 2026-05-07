@@ -93,23 +93,54 @@ async def recommend_pieces(
     style_preference: str | None = None,
     occasion: str | None = None,
     category: str | None = None,
+    surface_tone: str | None = None,
+    face_shape: str | None = None,
+    body_shape: str | None = None,
+    height_band: str | None = None,
+    finger_length: str | None = None,
+    birth_month: int | None = None,
+    cultural_background: str | None = None,
+    personality: str | None = None,
+    budget_band: str | None = None,
 ) -> str:
     """Return three Aueshah pieces matched to the client profile, structured as
     PRIMARY (perfect match), SECONDARY (slight variation), STATEMENT (bolder
     evolution). Use this as your only fact source when presenting non-Noor
     pieces — never invent details.
 
-    Call this AFTER you have the client's skin tone and style preference
-    (age is helpful but optional). Optional refinements:
-      - category: "ring", "bracelet", "earrings", "pendant", "necklace",
-        "tiara", or "waist_adornment".
-      - occasion: "love", "anniversary", "gift", "self_reward", "legacy",
-        "status", "milestone", "everyday", "celebration".
+    ONLY pass the dimensions the client has actually expressed — never guess
+    or fill from the piece's name. Missing dimensions degrade gracefully.
 
-    The tool implements the v2.0 intelligence spec — skin_tone -> metal,
-    style -> form, occasion -> narrative — and returns three layered picks so
-    you can present a primary recommendation, a slight variation, and a
-    statement upgrade.
+    Required minimum: at least one of `skin_tone`, `style_preference`,
+    `occasion`, `personality`, `birth_month` (so the matcher has signal).
+
+    Args by axis (all optional):
+      - age: client age (int) or midpoint of a stated range.
+      - skin_tone (undertone): "cool" / "warm" / "neutral".
+      - surface_tone: "fair" / "light" / "medium" / "olive" / "tan" / "deep".
+      - style_preference: "minimalist" / "statement" / "heritage" / "modern".
+      - occasion: free-form — "engagement", "anniversary", "gift_for_partner",
+        "gift_for_mother", "gift_for_friend", "self_purchase", "formal_event",
+        "milestone_birthday", "heritage_addition", "love", "legacy", "status".
+      - category: "ring", "bracelet", "earrings", "pendant", "necklace",
+        "tiara", "waist_adornment".
+      - face_shape: relevant for earrings/necklaces — "oval" / "round" /
+        "square" / "heart" / "diamond" / "long".
+      - body_shape: "petite" / "tall_slim" / "curvy" / "athletic".
+      - height_band: "short" / "medium" / "tall".
+      - finger_length: relevant for rings — "long" / "short" / "balanced".
+      - birth_month: 1-12 (drives birthstone alignment).
+      - cultural_background: "middle_eastern" / "south_asian" / "east_asian" /
+        "european" / "african" / "american".
+      - personality: "minimalist" / "romantic" / "powerful" / "executive" /
+        "artistic".
+      - budget_band: "entry" / "mid" / "luxury" (gates statement tier).
+
+    Returns a structured PRIMARY / SECONDARY / STATEMENT block. Each pick
+    includes a `Reasons` line — short styling rationales (e.g. "warm
+    undertone → yellow gold", "long fingers → emerald cut", "May → emerald").
+    You may echo at most ONE reason per pick in the client's own voice;
+    never invent a reason that isn't listed.
     """
     picks = find_best_products(
         age=age,
@@ -117,6 +148,15 @@ async def recommend_pieces(
         style_preference=style_preference,
         occasion=occasion,
         category=category,
+        surface_tone=surface_tone,
+        face_shape=face_shape,
+        body_shape=body_shape,
+        height_band=height_band,
+        finger_length=finger_length,
+        birth_month=birth_month,
+        cultural_background=cultural_background,
+        personality=personality,
+        budget_band=budget_band,
     )
     if not any(picks.values()):
         return "(no matches available — offer to connect the client with our private concierge)"
@@ -135,12 +175,17 @@ async def recommend_pieces(
         bits = [
             f"{label}: {p['name']} ({p.get('category','')}, {p.get('metal','')}, {p.get('style','')})",
         ]
+        if p.get("cut"):
+            bits.append(f"cut: {p['cut']}")
         if stones_str:
             bits.append(f"stones: {stones_str}")
         if p.get("description"):
             bits.append(p["description"])
         if p.get("narrative"):
             bits.append(f"Narrative: {p['narrative']}")
+        reasons = p.get("reasons") or []
+        if reasons:
+            bits.append(f"Reasons: {'; '.join(reasons)}")
         if p.get("url"):
             bits.append(f"Link: {p['url']}")
         lines.append(" | ".join(bits))
@@ -417,7 +462,8 @@ def build_triage_agent() -> Agent:
             "   - mention of a category (ring, bracelet, earrings, pendant, necklace, tiara, waist adornment, jewelry, jewellery, piece)\n"
             "   - a style or aesthetic question (minimalist, statement, heritage, modern, what suits me)\n"
             "   - request for advice or recommendation ('what do you recommend', 'something for [occasion]', 'help me choose')\n"
-            "   - profile information offered without context (age, skin tone, style answer)\n"
+            "   - any STATED OCCASION even without a category — engagement, anniversary, gift for [partner/wife/mother/sister/friend], for myself, formal event / wedding / gala, milestone birthday, heirloom / heritage piece. The product skill runs the matching occasion playbook.\n"
+            "   - profile information offered without context (age, skin tone, style answer, finger length, personality, birth month)\n"
             "5. Otherwise (pure greetings with no other intent, heritage / brand / philosophy questions, "
             "policies, care, warranty, repair, sizing, explicit appointment requests, anything unclear) → hand off to `general`.\n\n"
             "When in doubt between `product` and `general`, prefer `product` — the client experience "

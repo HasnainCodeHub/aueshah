@@ -1,5 +1,6 @@
 {
-  "version": "Aueshah Concierge Intelligence v2.0 - Supreme Edition",
+  "version": "Aueshah Concierge Intelligence v3.0 - Styling Edition",
+  "_changelog_v3": "Expanded from 4 axes (age/skin tone/style/occasion) to 16 axes drawn from the Complete Luxury Jewelry Styling & Compatibility Reference Guide (updated.pdf, 24 pages, 16 sections). Structured rules now live in backend/app/data/styling_rules.json. Behavior lives in app/config/prompts.py. Data.txt remains the human-readable spec; not loaded into RAG. See sections 17-18 below for the v3 additions.",
 
   "system_layers": {
     "layer_1_client_analysis": "understand who the client is",
@@ -197,5 +198,151 @@
     "if_client_confused": "simplify without sounding basic",
     "if_client_hesitates": "shift from product to emotion",
     "if_price_sensitive": "redirect to value, not cost"
+  },
+
+  "section_17_styling_axes_v3": {
+    "_doc": "16-axis consultation derived from updated.pdf. The chatbot uses any subset; missing axes degrade gracefully. Authoritative encoding lives in backend/app/data/styling_rules.json.",
+
+    "axis_1_age_tier": "young (<30), established (30-50), mature (50+).",
+    "axis_2_undertone_to_metal": "cool: white gold/platinum. warm: yellow/rose gold. neutral: any.",
+    "axis_3_surface_tone_to_gem": "fair: sapphire/morganite/aquamarine. medium-olive: emerald/ruby. tan-deep: yellow gold + white diamonds pop.",
+    "axis_4_style_to_form": "minimalist: thin/clean. statement: large/bold. heritage: intricate/royal/Mughal. modern: geometric.",
+    "axis_5_face_shape_to_form": {
+      "oval": "almost any",
+      "round": "vertical drop, angular",
+      "square": "rounded, oval, teardrop",
+      "heart": "teardrop, bottom-heavy",
+      "diamond": "stud, curved drop, choker",
+      "long": "wide chandelier, circular"
+    },
+    "axis_6_body_to_scale": {
+      "petite": "delicate / thin / small",
+      "tall_slim": "statement / long / large",
+      "curvy": "medium-bold / rounded / structured",
+      "athletic": "geometric / structured / modern"
+    },
+    "axis_7_height_to_size": "short: small-medium. tall: statement-layered.",
+    "axis_8_finger_to_cut": {
+      "long": "emerald, princess, marquise",
+      "short": "oval, pear, round (avoid wide bands, marquise)",
+      "balanced": "round, cushion"
+    },
+    "axis_9_birth_month_to_stone": {
+      "1": "garnet", "2": "amethyst", "3": "aquamarine", "4": "diamond",
+      "5": "emerald", "6": "pearl/alexandrite", "7": "ruby", "8": "peridot",
+      "9": "sapphire", "10": "opal/tourmaline", "11": "citrine/topaz", "12": "tanzanite/turquoise"
+    },
+    "axis_10_culture_to_aesthetic": {
+      "middle_eastern": "yellow gold + emerald/ruby, opulent layered",
+      "south_asian": "22k bridal kundan/polki, heritage grandeur",
+      "east_asian": "white gold/platinum + pearl/jade, refined precision",
+      "european": "platinum + diamond, quiet luxury",
+      "african": "bold gold + sculptural, power and identity",
+      "american": "mixed metals, modern lifestyle, layered"
+    },
+    "axis_11_personality_to_energy": {
+      "minimalist": "thin/solitaire/diamond, quiet confidence",
+      "romantic": "rose gold/morganite/floral, soft elegance",
+      "powerful": "platinum/emerald cut/structured, authority",
+      "executive": "platinum/emerald cut, quiet wealth",
+      "artistic": "opal/sculptural/mixed, creative exclusivity"
+    },
+    "axis_12_emotional_intent": "love, status, self-reward, legacy.",
+    "axis_13_cut_to_persona": {
+      "round": "classic brilliance",
+      "emerald": "executive / quiet wealth",
+      "oval": "romantic soft luxury",
+      "pear": "feminine grace (heart faces)",
+      "cushion": "vintage warm",
+      "princess": "modern sharp",
+      "marquise": "dramatic royal"
+    },
+    "axis_14_necklace_length_to_fit": {
+      "choker": "long necks, oval faces",
+      "princess": "universal",
+      "matinee": "professional elegance",
+      "opera": "tall body",
+      "rope": "editorial styling"
+    },
+    "axis_15_visual_psychology": {
+      "high_contrast": "white diamond on deep skin, emerald on olive — bold, elite, unforgettable",
+      "harmony": "rose gold on warm fair, champagne diamond on tan — soft sophistication",
+      "royal": "yellow gold + emerald + ruby — wealth, heritage, power",
+      "quiet": "platinum + white diamond + minimal silhouettes — old-money sophistication"
+    },
+    "axis_16_wealth_signal": "inferred only, never named: quiet exclusivity vs visible status vs aspirational shine.",
+
+    "universal_safe_combinations": [
+      "white diamond + white gold",
+      "emerald + yellow gold",
+      "pearl + platinum",
+      "sapphire + white gold",
+      "rose gold + morganite",
+      "black diamond + yellow gold"
+    ]
+  },
+
+  "section_18_occasion_playbook": {
+    "_doc": "Each playbook tells the bot the warm opening question, the 1-2 axes that matter for that occasion, and the recommendation depth. Behavior is implemented in backend/app/config/prompts.py SKILL_PROMPTS['product']. Triggers are detected by the triage layer.",
+
+    "engagement": {
+      "open": "Tell me about her — does she lean classic or modern? And what suits her hands — long fingers, short, or balanced?",
+      "key_axes": ["finger_length", "personality", "undertone"],
+      "depth": "primary + one harmony alternative",
+      "category": "ring",
+      "psychology": "harmony"
+    },
+    "anniversary": {
+      "open": "Is this a milestone year? And does she lean quiet luxury or royal luxury at heart?",
+      "key_axes": ["personality", "occasion", "birth_month"],
+      "depth": "three_tier",
+      "psychology": "royal"
+    },
+    "gift_for_partner": {
+      "open": "What does she usually wear day to day, and what kind of moment is this for her?",
+      "key_axes": ["personality", "style_preference", "occasion"],
+      "depth": "three_tier",
+      "psychology": "harmony"
+    },
+    "gift_for_mother": {
+      "open": "What does she usually wear, and is there a stone she's drawn to — perhaps her birthstone?",
+      "key_axes": ["personality", "birth_month", "cultural_background"],
+      "depth": "primary + sentimental alternative",
+      "psychology": "harmony"
+    },
+    "gift_for_friend": {
+      "open": "Tell me about her style — minimalist, romantic, bold, or artistic?",
+      "key_axes": ["personality", "style_preference"],
+      "depth": "three_tier"
+    },
+    "self_purchase": {
+      "open": "What's the moment you'd wear it for first?",
+      "key_axes": ["occasion", "style_preference", "personality"],
+      "depth": "three_tier",
+      "psychology": "quiet"
+    },
+    "formal_event": {
+      "open": "What are you wearing, and what's the venue feel — quiet salon or grand ballroom?",
+      "key_axes": ["occasion", "style_preference", "body_shape", "height_band"],
+      "depth": "three_tier (frame STATEMENT as 'for the entrance')",
+      "psychology": "high_contrast"
+    },
+    "milestone_birthday": {
+      "open": "Which birthday, and which stone speaks to her — perhaps her birthstone?",
+      "key_axes": ["birth_month", "personality", "style_preference"],
+      "depth": "primary + sentimental alternative",
+      "psychology": "royal"
+    },
+    "heritage_addition": {
+      "open": "Is this for now, or for someone after you?",
+      "key_axes": ["cultural_background", "personality"],
+      "depth": "primary + one alternative",
+      "psychology": "royal"
+    },
+    "neutral_no_occasion": {
+      "open": "Lovely — to point you to the right piece, may I ask: do you lean cool tones, warm tones, or both? And what feels more like you — minimalist, statement, heritage, or modern?",
+      "key_axes": ["undertone", "style_preference"],
+      "depth": "three_tier"
+    }
   }
 }

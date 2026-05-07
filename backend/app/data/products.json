@@ -8,71 +8,1311 @@
   },
   "currency": "EUR",
   "pieces": [
-    {"name": "Ecliptia", "category": "ring", "url": "https://aueshah.com/product/ecliptia/", "price": 3251, "metal": "18k white and rose gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds", "blue sapphires"], "style": "minimalist", "description": "Two-tone silhouette with double-band architecture in white and rose gold, adorned with diamonds and sapphires offering disciplined contrast.", "narrative": "Two tones, one orbit. The intersection of sapphire and light.", "design_notes": ["Double-band geometric architecture", "18k white and rose gold combination", "Minimalist sculptural presence"]},
-    {"name": "Enchanted Bloom", "category": "ring", "url": "https://aueshah.com/product/enchanted-bloom/", "price": 4162, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["opal", "jade", "diamonds"], "style": "statement", "description": "Set in 18k rose gold, the architecture centers the iridescent depth of opal against the structural clarity of jade. Brilliant-cut diamonds frame this rare pairing.", "narrative": "Botanical prestige. A rare alignment of opal and jade.", "design_notes": ["Interprets botanical motifs through minimalist lens", "Exercise in textural contrast", "Engineered for unconventional rarity collectors"]},
-    {"name": "Eternal Wave", "category": "ring", "url": "https://aueshah.com/product/eternal-wave/", "price": 1818, "metal": "18k gold", "metal_tone": "neutral", "stones": ["heart-cut diamond", "brilliant-cut diamonds"], "style": "minimalist", "description": "Minimalist wave architecture in 18k gold, culminating in a precision-set heart-shaped diamond with brilliant-cut diamond accents.", "narrative": "Translates connection complexities into disciplined gold silhouette; wave design serves as structural metaphor for resilience and enduring commitment.", "design_notes": ["Wave architecture with clean lines", "Heart-cut center stone focal point", "Modern interpretation of commitment"]},
-    {"name": "Luxura Statement Ring", "category": "ring", "url": "https://aueshah.com/product/luxura-statement-ring/", "price": 4315, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "statement", "description": "Solid 18k white gold creates a heavy, unisex silhouette that commands attention through disciplined geometry. Precision-set diamonds accentuate polished surfaces.", "narrative": "A manifestation of architectural authority within the Luxora series, engineered for the collector who values structural integrity and silent power.", "design_notes": ["Heavy architectural unisex silhouette", "Disciplined geometric construction", "Cold brilliance signifying absolute confidence"]},
-    {"name": "Pulse Ring", "category": "ring", "url": "https://aueshah.com/product/pulse-ring/", "price": 2240, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "Crafted in 18k white gold with precision-set diamonds following the band's silhouette, offering constant play of light.", "narrative": "The rhythm of modern luxury. A singular, enduring beat.", "design_notes": ["Lightweight everyday profile engineered for daily endurance", "Part of the Luxora Series collection", "Functional elegance with architectural integrity"]},
-    {"name": "Royal Opulence", "category": "ring", "url": "https://aueshah.com/product/royal-opulence/", "price": 5329, "metal": "18k gold", "metal_tone": "warm", "stones": ["ruby", "emerald", "diamond"], "style": "heritage", "description": "Precision-set in 18k gold, this ring integrates deep saturation of rubies and emeralds within a framework of brilliant diamonds, prioritizing structural authority over ornamentation.", "narrative": "Sovereign prestige. A disciplined convergence of ruby and emerald offering a modern interpretation of regal heritage.", "design_notes": ["Architectural signet profile", "High-grade gemstone assembly", "Strategic modern-regal fusion"]},
-    {"name": "Sovereign Crown Ring", "category": "ring", "url": "https://aueshah.com/product/sovereign-crown-ring/", "price": 10056, "metal": "platinum", "metal_tone": "cool", "stones": ["emerald", "ruby", "diamond"], "style": "heritage", "description": "Architectural hybrid of traditional signet and royal crest. Cast in solid platinum with raised profile, precision-cut emerald or ruby center, and diamond accents.", "narrative": "Definitive signifier of heritage and status for the global elite. Substantial, commanding piece engineered for those inhabiting highest tiers of influence.", "design_notes": ["Raised crest signet hybrid design", "High-grade center stone options", "Brilliant-cut diamond accents"]},
-    {"name": "Trinity Luxe Ring", "category": "ring", "url": "https://aueshah.com/product/trinity-luxe-ring/", "price": 8461, "metal": "18k yellow, white, and rose gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "Tri-tone composition forged from 18k yellow, white, and rose gold with precision-set diamonds, representing a convergence of form and light.", "narrative": "Mirrors disciplined architecture, engineered for collectors demanding cohesive and rigorous aesthetic through interlocking design.", "design_notes": ["Interlocking tri-tone structure", "Precision-set diamond accents", "Architectural companion piece"]},
-    {"name": "Vera Forma", "category": "ring", "url": "https://aueshah.com/product/vera-forma/", "price": 3259, "metal": "18k gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "Triple-band precision. An architectural alignment of 18k gold.", "narrative": "A rigorous exploration of asymmetric balance engineered in 18k gold with deliberate, unequal diamond setting.", "design_notes": ["Asymmetric triple-band architecture challenges traditional symmetry", "Avant-garde form prioritizes technical precision over excess", "Modern minimalist profile"]},
-    {"name": "Whisper Ring", "category": "ring", "url": "https://aueshah.com/product/whisper-ring/", "price": 3562, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["peach-pink morganites", "diamonds"], "style": "minimalist", "description": "Cast in 18k rose gold, this ring balances brilliant diamonds and peach-pink morganites with a soft, serene aesthetic prioritizing understated luxury.", "narrative": "A quiet intimacy. The soft glow of Velvet in rose gold.", "design_notes": ["Minimalist slim band profile", "Part of the Velvet Collection", "Engineered for calm, sophisticated presence"]},
-
-    {"name": "Axis Bracelet", "category": "bracelet", "url": "https://aueshah.com/product/axis-bracelet/", "price": 9810, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "Solid 18k white gold bracelet with sharp geometry and disciplined luxury. Strategic diamonds offer subtle contrast to polished surfaces.", "narrative": "Interprets the LX series through architectural precision and absolute authority — a modern status signifier with clean angles and commanding presence.", "design_notes": ["Geometric unisex profile with clean angles", "Strategic diamond placement for subtle contrast", "LX Series collection piece"]},
-    {"name": "Braids Luxe", "category": "bracelet", "url": "https://aueshah.com/product/braids-luxe/", "price": 14951, "metal": "18k yellow, white, and rose gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "statement", "description": "Crafted from 18k yellow, white, and rose gold with equal-width bands engineered into intense, deliberate twists. Precision-set diamonds create a substantial statement of high luxury.", "narrative": "A rigorous study in tri-tone architecture representing a definitive intersection of modern art and technical jewelry mastery.", "design_notes": ["Equal-width braided tri-tone construction", "Sculptural statement profile", "Precision-set diamond accents"]},
-    {"name": "Elora Vine", "category": "bracelet", "url": "https://aueshah.com/product/elora-vine/", "price": 8608, "metal": "18k gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "statement", "description": "Art Nouveau bracelet translating organic fluidity into substantial 18k gold. Organic silhouette evokes nature through disciplined, structural lens with brilliant diamonds.", "narrative": "Balance of organic peace and sculptural authority for the modern collector seeking natural architecture refined into geological gold.", "design_notes": ["Winding vine motif with diamond emphasis", "Heavy profile expected of high luxury", "Art Nouveau aesthetic with architectural influence"]},
-    {"name": "Embress Bracelet", "category": "bracelet", "url": "https://aueshah.com/product/embress-bracelet/", "price": 9915, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["peach-pink morganites", "diamonds"], "style": "statement", "description": "Wrap-style bracelet with solid 18k rose gold curving around the wrist, anchoring peach-pink morganites and brilliant diamonds in a sculptural grip.", "narrative": "A circular embrace symbolizing enduring connection and protection, translating intimacy into tangible high-jewelry form.", "design_notes": ["Wrap silhouette architecture for security", "Part of the Velvet Line collection", "Pear-cut morganite gemstones"]},
-    {"name": "Enchanted Pearls", "category": "bracelet", "url": "https://aueshah.com/product/enchanted-pearls/", "price": 7104, "metal": "18k white gold", "metal_tone": "cool", "stones": ["round white pearls", "diamonds"], "style": "minimalist", "description": "Precision-set 18k white gold anchors a sequence of perfectly round white pearls, punctuated by brilliant-cut diamonds.", "narrative": "Translates classical elegance into a disciplined, modern narrative prioritizing structural luminosity for the discerning minimalist.", "design_notes": ["Linear sequence architecture", "High-polish white gold finish", "Weightless yet substantial composition"]},
-    {"name": "Eternal Thread Bracelet", "category": "bracelet", "url": "https://aueshah.com/product/eternal-thread-bracelet/", "price": 6760, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["peach-pink morganites", "diamonds"], "style": "minimalist", "description": "Ultra-thin 18k rose gold filament bracelet balancing warmth of rose gold with clarity of peach-pink morganites and brilliant diamonds.", "narrative": "A singular line of gold. An invisible connection representing an unbreakable bond through minimalist elegance.", "design_notes": ["Ultra-thin thread silhouette prioritizes lightness", "Part of Velvet Collection with refined restraint", "Peach-pink morganite and diamond accents"]},
-    {"name": "Icon Cuff", "category": "bracelet", "url": "https://aueshah.com/product/icon-cuff/", "price": 8680, "metal": "18k white gold", "metal_tone": "cool", "stones": ["diamonds"], "style": "modern", "description": "Sculptural bracelet featuring a raised central spine with precision-set diamonds. Hand-finished 18k white gold with geometric architecture merging depth and disciplined brilliance.", "narrative": "Centers on a raised spine motif representing absolute equilibrium. LX series staple dictating clear directional aesthetics.", "design_notes": ["Triple-band open frame with central baguette diamond", "Geometric pav\u00e9-set diamond accents", "Raised spine axis providing structural clarity"]},
-    {"name": "Lustre Line", "category": "bracelet", "url": "https://aueshah.com/product/lustre-line/", "price": 9627, "metal": "18k gold", "metal_tone": "warm", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "Solid 18k gold bracelet with brilliant diamonds integrated seamlessly into the architecture to capture light at every angle. Engineered as a foundational element of the modern wardrobe.", "narrative": "A continuous line of gold. The essential anchor of light.", "design_notes": ["Solid gold link construction for daily wear durability", "Transitions effortlessly between contexts", "Available in three sizes: Large, Medium, Small"]},
-    {"name": "Naturaleza", "category": "bracelet", "url": "https://aueshah.com/product/naturaleza/", "price": 3371, "metal": "18k gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "Bracelet distills botanical complexity into restrained, versatile silhouette. Crafted in 18k gold with precision-set diamonds, emphasizing soft anatomical fit and natural forms.", "narrative": "Delicate echo of the Elora Vine collection. Refined staple for the collector valuing understated luxury with organic design language.", "design_notes": ["Part of Elora Vine Series", "Available in three sizes", "Delicate organic minimalist profile"]},
-    {"name": "Oasis of Elegance", "category": "bracelet", "url": "https://aueshah.com/product/oasis-of-elegance/", "price": 8372, "metal": "18k white gold", "metal_tone": "cool", "stones": ["round white pearls", "diamonds"], "style": "minimalist", "description": "A serene alignment of pearl and diamond. Pure luxury in white gold.", "narrative": "A study in delicate balance and structural restraint, prioritizing clean silhouette through subtle brilliance.", "design_notes": ["18k white gold construction with polished high-sheen finish", "Minimalist linear design integrating round white pearls with precision-set diamonds", "Commands attention through refined serenity rather than ornate detailing"]},
-    {"name": "Solstice", "category": "bracelet", "url": "https://aueshah.com/product/solstice/", "price": 3801, "metal": "18k gold (yellow/white/rose options)", "metal_tone": "neutral", "stones": ["diamonds"], "style": "minimalist", "description": "An exercise in extreme minimalism engineered for lightweight feel and permanent aesthetic. Available in 18k yellow, white, or rose gold with precision-finished surfaces capturing light and subtle diamond accents.", "narrative": "Absolute light. A timeless alignment of form.", "design_notes": ["Hand-polished mirror finish with precision-set diamonds", "Foundational luxury essential with disciplined silhouette", "Transcends seasonal shifts through extreme minimalism"]},
-    {"name": "The Trilogy Braid", "category": "bracelet", "url": "https://aueshah.com/product/the-trilogy-braid/", "price": 24014, "metal": "18k yellow, white, and rose gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "statement", "description": "The definitive peak of the Aueshah tri-tone series engineered with an uncompromising volume of 18k yellow, white, and rose gold — the heaviest iteration in the collection.", "narrative": "A physical manifestation of authority reserved for those who demand the highest tier of structural luxury, utilizing dense braided geometry and precision-set diamonds.", "design_notes": ["Ultra-heavy architectural braid profile", "Trilogy Signature series", "Precision-set diamonds for command presence"]},
-    {"name": "Trinity Luxe", "category": "bracelet", "url": "https://aueshah.com/product/trinity-luxe/", "price": 18742, "metal": "18k gold (tri-tone)", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "Unites 18k yellow, white, and rose gold in interlocking architecture elevated by meticulously set diamonds, presenting a sculptural statement.", "narrative": "Three golds, one singular form. The harmony of interlocking light.", "design_notes": ["Tri-tone composition functions as study in balance and geometric precision", "Interlocking tri-tone with architectural geometry profile", "Designed for collector demanding both complexity and restraint"]},
-
-    {"name": "Celestigma", "category": "earrings", "url": "https://aueshah.com/product/celestigma/", "price": 2617, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["brilliant diamonds", "blue sapphires"], "style": "minimalist", "description": "Bespoke 18k gold earrings with diamonds and sapphires representing celestial coordinates, customizable to individual astrological profiles.", "narrative": "A disciplined fusion of astrological symbolism and modern high jewelry, engineered as a definitive personal landmark.", "design_notes": ["18k yellow gold construction", "Customizable astrological gemstone mapping", "High-jewelry classification with drop earring format"]},
-    {"name": "Eclipse Earrings", "category": "earrings", "url": "https://aueshah.com/product/eclipse-earrings/", "price": 2591, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "High-jewelry studs in solid 18k white gold featuring brilliant-cut diamonds selected for superior light refraction, designed for seamless transition between daily and high-profile occasions.", "narrative": "Celestial restraint through signature alignment of 18k white gold and brilliant diamonds, prioritizing structural comfort and mathematical symmetry.", "design_notes": ["High-grade diamonds chosen for superior light refraction properties", "Engineered for secure balance and daily wearability", "Part of the Luxura Collection high-jewelry series"]},
-    {"name": "Emerald Whisper", "category": "earrings", "url": "https://aueshah.com/product/emerald-whisper/", "price": 4215, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["emerald"], "style": "minimalist", "description": "Two golden leaves suspended by a sequence of emeralds in a botanical equilibrium design.", "narrative": "A rigorous study in natural symmetry and minimalist high jewelry featuring dual-leaf silhouette with precision-cut emeralds.", "design_notes": ["Forged in solid 18k yellow gold", "Botanical leaf motif with organic textures", "Connected by disciplined strand of precision-cut emeralds"]},
-    {"name": "Empress Earrings", "category": "earrings", "url": "https://aueshah.com/product/empress-earrings/", "price": 14089, "metal": "platinum", "metal_tone": "cool", "stones": ["emerald", "ruby", "diamond"], "style": "statement", "description": "Platinum chandelier earrings featuring precision-cut emeralds, rubies, and brilliant-cut diamonds, balancing historic royal motifs with modern minimalism.", "narrative": "Imperial poise achieved through a platinum convergence of emerald, ruby, and light, engineered to project authority and structural grace.", "design_notes": ["Solid platinum construction with high-grade gemstones", "Part of the Empire Allegiance high-jewelry series", "Combines classical royal aesthetics with contemporary restraint"]},
-    {"name": "Gilded Elegance", "category": "earrings", "url": "https://aueshah.com/product/gilded-elegance/", "price": 2420, "metal": "18k gold", "metal_tone": "warm", "stones": [], "style": "minimalist", "description": "Forged in solid 18k gold, the architecture centers on a sophisticated twisted ring silhouette, anchored by a hand-textured headpiece.", "narrative": "A rigorous exploration of metalwork as art prioritizing raw integrity of gold and interplay of light across varying surfaces.", "design_notes": ["Hand-textured twisted ring silhouette", "Pure metalwork with no gemstones", "Architectural minimalist profile"]},
-    {"name": "Golden Twirl", "category": "earrings", "url": "https://aueshah.com/product/golden-twirl/", "price": 2420, "metal": "18k yellow gold", "metal_tone": "warm", "stones": [], "style": "minimalist", "description": "Art Deco spiral earrings in solid 18k gold with architectural design relying on structural precision and light interplay across polished surfaces.", "narrative": "A rigorous Art Deco interpretation balancing historical symmetry with modern minimalist restraint.", "design_notes": ["Pure metalwork without gemstones", "Precise spiral form with architectural minimalism", "Focuses on structural precision and polished surfaces"]},
-    {"name": "Lullaby Studs", "category": "earrings", "url": "https://aueshah.com/product/lullaby-studs/", "price": 2624, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["teardrop-cut peach pink morganite", "brilliant diamonds"], "style": "minimalist", "description": "Teardrop-cut peach morganite haloed by brilliant diamonds in 18k rose gold, prioritizing structural balance and tonal warmth for understated luxury.", "narrative": "A disciplined exploration of form and color within the Velvet line, serving as a subtle yet definitive statement of affection.", "design_notes": ["Lightweight construction emphasizes structural balance", "Central teardrop morganite precisely framed by diamond halo", "Part of Velvet Collection with minimalist teardrop profile"]},
-    {"name": "Lunaria Nocturne", "category": "earrings", "url": "https://aueshah.com/product/lunaria-nocturne/", "price": 3240, "metal": "18k rose and white gold", "metal_tone": "neutral", "stones": ["brilliant-cut diamonds", "fine pearls"], "style": "minimalist", "description": "18k rose and white gold earrings featuring two interlocking half-moons with brilliant-cut diamonds and pearls for celestial sophistication.", "narrative": "Rigorous exploration of lunar geometry engineered for collectors valuing celestial symbolism and modern minimalist refinement.", "design_notes": ["Two-tone interlocking lunar phases", "Sharp metalwork contrasted with soft organic gemstones", "High-jewelry classification"]},
-    {"name": "Silk Drop Earrings", "category": "earrings", "url": "https://aueshah.com/product/silk-drop-earrings/", "price": 3400, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["peach-pink morganite", "brilliant diamond"], "style": "modern", "description": "18k rose gold earrings featuring peach-pink morganites and diamonds in a linear drop architecture, prioritizing vertical symmetry and refined elegance.", "narrative": "A rigorous study in architectural fluidity and disciplined elongation, engineered for the global elite as a versatile high-jewelry centerpiece.", "design_notes": ["Linear drop silhouette emphasizes vertical symmetry", "High-grade diamonds paired with rare morganites for tonal warmth", "Engineered for structural durability with weightless presence"]},
-    {"name": "Victorian Glow", "category": "earrings", "url": "https://aueshah.com/product/victorian-glow/", "price": 5310, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds", "pear-cut emeralds"], "style": "statement", "description": "Seven tiers of precision-set diamonds culminating in significant pear-shaped emeralds, forged in solid 18k white gold with engineered structural stability.", "narrative": "A disciplined modernization of the classic chandelier silhouette, designed as a definitive statement of status for the global elite.", "design_notes": ["Seven-tier chandelier architecture", "Vertical tiers maintain rhythmic, fluid motion", "High-jewelry statement earrings classification"]},
-
-    {"name": "Azure Majesty", "category": "pendant", "url": "https://aueshah.com/product/azure-majesty/", "price": 9101, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["deep blue sapphire", "brilliant-cut diamonds"], "style": "heritage", "description": "Cast in 18k gold with a central sapphire of exceptional saturation, framed by brilliant-cut diamonds in an intricate pattern.", "narrative": "A study in royal geometry and tonal depth for the modern collector demanding balance of historic prestige and contemporary restraint.", "design_notes": ["Royal patterned filigree architecture", "Heritage statement profile", "Technically superior and visually arresting finish"]},
-    {"name": "Eterna Lotus Royale", "category": "pendant", "url": "https://aueshah.com/product/eterna-lotus-royale/", "price": 4516, "metal": "18k gold", "metal_tone": "neutral", "stones": ["luminous pearl", "brilliant-cut diamonds"], "style": "minimalist", "description": "Cast in 18k gold, the design centers a luminous pearl framed by precision-set diamonds, streamlining organic complexity into a disciplined statement of modern grace.", "narrative": "Botanical symmetry. A lotus silhouette of gold, pearl, and light.", "design_notes": ["Architectural interpretation of bloomed lotus", "Functions as sculptural centerpiece", "Engineered for discerning collectors valuing structural refinement"]},
-    {"name": "Monarch Pendant", "category": "pendant", "url": "https://aueshah.com/product/monarch-pendant/", "price": 24204, "metal": "22k yellow gold", "metal_tone": "warm", "stones": ["ruby", "diamond"], "style": "heritage", "description": "A 22k gold icon defined by deep ruby and light. Engineered with precision-set diamonds and high-grade rubies, the pendant maintains a disciplined silhouette while asserting bold, royal presence.", "narrative": "Strategic departure from Empire Allegiance series, substituting signature platinum for saturated warmth of 22k gold — a rebellious icon, definitive statement of heritage and status.", "design_notes": ["22k yellow gold construction", "High-grade ruby with brilliant-cut diamonds", "Iconic Sovereign motif from Empire Allegiance series"]},
-    {"name": "Monogram Plate Pendant", "category": "pendant", "url": "https://aueshah.com/product/monogram-plate-pendant/", "price": 15124, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "Forged in solid 18k white gold, the architecture features the signature series insignia encrusted with precision-set diamonds, engineered for a recognizable yet sophisticated luxury signature.", "narrative": "The signature of the LX series. A definitive plate of 18k white gold and light.", "design_notes": ["Geometric monogram plate silhouette", "Precision-set diamond encrustation", "Part of LX Collection series"]},
-    {"name": "Noir Pendant", "category": "pendant", "url": "https://aueshah.com/product/noir-pendant/", "price": 4515, "metal": "18k white gold", "metal_tone": "cool", "stones": ["black agate", "brilliant-cut diamonds"], "style": "minimalist", "description": "Cast in 18k white gold, this piece centers a polished black agate punctuated by precision-set diamonds, engineered for durability and daily wear.", "narrative": "A study in monochromatic contrast offering disciplined expression of luxury and geometric clarity for the modern professional.", "design_notes": ["Emerald-cut black agate as focal point", "Unisex architectural aesthetic from Luxura Series", "Precision-set diamonds with refined minimalist balance"]},
-    {"name": "Secret Locket", "category": "pendant", "url": "https://aueshah.com/product/secret-locket/", "price": 7416, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["heart-cut peach-pink morganite", "diamonds"], "style": "modern", "description": "Cast in 18k rose gold, the locket centers a rare heart-cut peach-pink morganite framed by brilliant diamonds with bespoke interior engraving.", "narrative": "Hidden devotion. A rare morganite heart suspended in 18k rose gold.", "design_notes": ["Centered hinge alignment mechanism maintains structural symmetry", "Features bespoke internal engraving for personalization", "Balances technical innovation with minimalist elegance"]},
-
-    {"name": "Caress Choker", "category": "necklace", "url": "https://aueshah.com/product/caress-choker/", "price": 5629, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["peach-pink morganites", "brilliant-cut diamonds"], "style": "modern", "description": "Rose gold choker merging traditional romanticism with architectural edge, balancing soft peach-pink morganites against structural precision of brilliant-cut diamonds.", "narrative": "Defiant shift in the Velvet line capturing playful tension within intimate connection — fluid and subversive for luxury with modern, rebellious spirit.", "design_notes": ["18k rose gold construction", "Architectural choker profile with geometric precision", "Blends romantic gemstones with structural diamond elements"]},
-    {"name": "Chain of Command", "category": "necklace", "url": "https://aueshah.com/product/chain-of-command/", "price": 13412, "metal": "22k yellow gold", "metal_tone": "warm", "stones": ["diamonds"], "style": "statement", "description": "Forged in high-purity 22k gold, the architecture features substantial, diamond-encrusted links anchored by a central royal motif.", "narrative": "A definitive departure within the LX series, transitioning from understated elegance to a command of power, engineered for those who demand visible status.", "design_notes": ["Heavy link construction with royal motif centerpiece", "Hand-set brilliant diamonds throughout", "Part of Luxura Series high-jewelry collection"]},
-    {"name": "Dynasty Necklace", "category": "necklace", "url": "https://aueshah.com/product/dynasty-necklace/", "price": 237465, "metal": "platinum", "metal_tone": "cool", "stones": ["emeralds", "diamonds"], "style": "heritage", "description": "Architectural masterwork in solid platinum integrating precision-cut emeralds and brilliant diamonds within a disciplined high-jewelry framework.", "narrative": "Sovereign geometry in platinum. A legacy of emerald light.", "design_notes": ["Balances royal authority with minimalist restraint", "Part of Empire Allegiance series", "Commands absolute presence as status signifier"]},
-    {"name": "Enchanted Opal Bloom", "category": "necklace", "url": "https://aueshah.com/product/enchanted-opal-bloom/", "price": 9154, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["iridescent opal", "brilliant-cut diamonds"], "style": "statement", "description": "A sculptural floral necklace featuring an iridescent opal framed by precision-set diamonds in 18k rose gold, balancing nature's complexity with refined minimalism.", "narrative": "A singular floral masterpiece representing botanical fluidity and wearable art for collectors seeking rarity and structural elegance.", "design_notes": ["Sculptural floral motif centered on iridescent opal", "Precision-set diamonds capture living flower essence", "One-of-a-kind fine jewelry acquisition"]},
-    {"name": "Heartline Necklace", "category": "necklace", "url": "https://aueshah.com/product/heartline-necklace/", "price": 8159, "metal": "18k rose gold", "metal_tone": "warm", "stones": ["heart-cut peach-pink morganite", "diamonds"], "style": "minimalist", "description": "Cast in 18k rose gold, the design centers a rare, heart-cut peach-pink morganite that radiates soft, structural warmth.", "narrative": "Linear devotion. A rare heart-cut morganite in disciplined rose gold.", "design_notes": ["Velvet Collection cornerstone", "Precision-set diamond accents", "Architectural romantic silhouette"]},
-    {"name": "Kismet Constell\u00e9", "category": "necklace", "url": "https://aueshah.com/product/kismet-constelle/", "price": 4315, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["emeralds", "diamonds"], "style": "heritage", "description": "Neo-classical necklace reinterpreting Egyptian architectural motifs through minimalist design, forged in 18k gold with geometric precision featuring vivid emeralds and brilliant diamonds.", "narrative": "Modernizes antiquity by blending cultural significance with contemporary sophistication, offering a unique silhouette for collectors valuing heritage refined by modern aesthetics.", "design_notes": ["Geometric celestial arrangement with disciplined structure", "18k yellow gold construction", "High-grade emeralds and diamonds with architectural inspiration"]},
-    {"name": "Luminous Harmony", "category": "necklace", "url": "https://aueshah.com/product/luminous-harmony/", "price": 3792, "metal": "18k white gold", "metal_tone": "cool", "stones": ["deep blue sapphires", "brilliant diamonds"], "style": "modern", "description": "Forged in 18k white gold with deep blue sapphires and precision-set diamonds, this necklace presents avant-garde geometric complexity.", "narrative": "A rigorous exercise in avant-garde minimalism functioning as fine art for collectors prioritizing intellectual design and elegance.", "design_notes": ["Abstract geometric architecture", "18k white gold construction", "Structural tension between sapphires and diamonds"]},
-    {"name": "Skyline Necklace", "category": "necklace", "url": "https://aueshah.com/product/skyline-necklace/", "price": 4214, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "18k white gold necklace with precision-set diamonds in linear arrangement. Engineered for corporate and daily wear with ergonomic unisex design.", "narrative": "Urban precision. A seamless horizon of white gold and diamonds — functional luxury for the modern global professional.", "design_notes": ["Disciplined silhouette with linear diamond path", "Ergonomic comfort prioritized for everyday wear", "Architectural minimalism for corporate environments"]},
-
-    {"name": "Imperial Tiara", "category": "tiara", "url": "https://aueshah.com/product/imperial-tiara/", "price": 475924, "metal": "platinum", "metal_tone": "cool", "stones": ["emeralds", "rubies", "brilliant-cut diamonds"], "style": "heritage", "description": "Forged in solid platinum, this architectural crown features significant, precision-cut emeralds and rubies anchored by brilliant-cut diamonds.", "narrative": "Sovereign architecture. A summit of emeralds, rubies, and light.", "design_notes": ["Empire Allegiance signature piece", "Prioritizes structural authority and historic resonance", "Engineered for global elite demanding high-jewelry excellence"]},
-    {"name": "Sultana Tiara", "category": "tiara", "url": "https://aueshah.com/product/sultana-tiara/", "price": 292048, "metal": "22k yellow gold", "metal_tone": "warm", "stones": ["ruby", "black agate"], "style": "statement", "description": "A 22k gold crown featuring significant rubies with rare black agate backdrop, emphasizing geometric forms and tonal contrast.", "narrative": "An assertive departure from traditional high jewelry, engineered for elite individuals prioritizing structural dominance and rare material contrast.", "design_notes": ["Saturated 22k gold construction", "High-contrast geometric architecture", "Uneven forms create unrivaled global silhouette"]},
-    {"name": "The Ayla Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-ayla-tiara/", "price": 144980, "metal": "platinum", "metal_tone": "cool", "stones": ["brilliant-cut diamonds", "natural pearls"], "style": "minimalist", "description": "Raw platinum silhouette anchored by singular natural pearls. Explores subversive beauty balancing fantasy-inspired aesthetics with modern minimalism precision.", "narrative": "Nocturnal grace — a rigorous exploration where no two pieces are identical, reflecting authentic variations of nature.", "design_notes": ["Solid platinum construction", "Natural pearl geometry and tone vary by piece", "High-grade diamonds integrated with organic pearls"]},
-    {"name": "The Celeste Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-celeste-tiara/", "price": 18710, "metal": "platinum", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "Platinum crown featuring disciplined arrangement of brilliant diamonds in clean, linear path. Prioritizes structural purity and light over ornamentation.", "narrative": "Celestial alignment. A platinum horizon defined by brilliant diamonds — redefining the traditional crown through rigorous minimalism.", "design_notes": ["Linear minimalist architecture with geometric precision", "Solid platinum construction with modern high-jewelry classification", "Functional artwork emphasizing structural purity over embellishment"]},
-    {"name": "The \u00c9lan Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-elan-tiara/", "price": 117201, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "Forged in solid 18k white gold, this tiara features precision-set diamonds engineered to maximize light refraction from every angle.", "narrative": "A definitive study in high-jewelry light prioritizing modern, assertive silhouette while maintaining minimalist design restraint.", "design_notes": ["Continuous diamond surface for maximum light refraction", "Modern iced silhouette with disciplined elegance", "Signature high-jewelry classification"]},
-    {"name": "The Isla Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-isla-tiara/", "price": 91523, "metal": "18k white gold", "metal_tone": "cool", "stones": ["sapphire", "diamond"], "style": "modern", "description": "Oceanic motion. A tidal sequence of white gold, sapphire, and light. Forged in 18k white gold with wave-inspired architecture integrating dual-toned sapphires and brilliant-cut diamonds.", "narrative": "A structural homage to the rhythmic motion of the sea — a refined symbol of natural authority for collectors valuing botanical fluidity and minimalist elegance.", "design_notes": ["Wave-inspired silhouette capturing oceanic depth and translucency", "Two distinct sapphire shades with precision-set diamonds at curve peaks", "High-jewelry classification with disciplined play of light"]},
-    {"name": "The Maharani Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-maharani-tiara/", "price": 242056, "metal": "22k yellow gold", "metal_tone": "warm", "stones": ["emeralds", "rubies", "diamonds"], "style": "heritage", "description": "A 22k gold convergence of Kundan artistry and royal gems. A rigorous interpretation of traditional Kundan craftsmanship adapted for the modern elite with precise arrangement of emeralds, rubies, and diamonds.", "narrative": "Bridge between historical Indian heritage and contemporary minimalist restraint, engineered for collectors valuing absolute craftsmanship and timeless sovereign charm.", "design_notes": ["22k yellow gold construction with high-purity material", "Modernized Kundan artistry balancing mathematical proportion", "Emeralds, rubies, and diamonds arranged with historical high-jewelry profile"]},
-    {"name": "The Rose Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-rose-tiara/", "price": 84051, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "A sculptural rose silhouette forged in solid 18k gold, prioritizing form over ornamentation with diamonds strategically placed to highlight petal edges.", "narrative": "Botanical gold interpreted with technical precision for the collector valuing organic grace and minimalist botanical beauty.", "design_notes": ["Metal creates depth and shadow through sculptural form", "Diamonds strategically integrated for disciplined light play", "Art Nouveau botanical design with engineered structure"]},
-    {"name": "The Shalimar Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-shalimar-tiara/", "price": 47864, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["pink spinel", "green sapphire", "brilliant-cut diamonds"], "style": "minimalist", "description": "Forged in 18k gold, the architecture mimics a rhythmic vine, meticulously engineered to hold petals of pink spinel and green sapphire.", "narrative": "A structural homage to nature, reimagined through a lens of modern minimalism with mathematical accuracy to ensure balanced silhouette.", "design_notes": ["Botanical vine architecture in 18k yellow gold", "Pink spinel and green sapphire positioned with mathematical precision", "Nature-inspired minimalist profile"]},
-    {"name": "The Zenith Tiara", "category": "tiara", "url": "https://aueshah.com/product/the-zenith-tiara/", "price": 122014, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant-cut diamonds"], "style": "modern", "description": "18k white gold tiara featuring a seamless, diamond-iced surface engineered for maximum refraction with a modern, streamlined silhouette.", "narrative": "Supreme radiance expressed through continuous horizon of diamonds and white gold, prioritizing light and structural clarity for high-profile events.", "design_notes": ["Continuous iced silhouette with maximum refraction capability", "Modern minimalist profile designed as versatile centerpiece", "Rigorous expression of luxury for assertive yet disciplined presence"]},
-
-    {"name": "Cleopatra", "category": "waist_adornment", "url": "https://aueshah.com/product/cleopatra/", "price": 13000, "metal": "18k yellow gold", "metal_tone": "warm", "stones": ["brilliant-cut diamonds"], "style": "minimalist", "description": "Ancient symmetry. A disciplined golden line adorned with diamonds.", "narrative": "Waist chain redefining historical grandeur through modern minimalism with precise, rhythmic pattern punctuated by brilliant diamonds.", "design_notes": ["Patterned linear links architecture", "Seamless transition from private luxury to public statement", "Structural clarity with timeless prestige"]},
-    {"name": "Heirloom Waist Chain", "category": "waist_adornment", "url": "https://aueshah.com/product/heirloom-waist-chain/", "price": 25237, "metal": "platinum", "metal_tone": "cool", "stones": ["diamonds", "emeralds", "rubies"], "style": "heritage", "description": "Platinum architectural waist chain integrating high-grade diamonds, emeralds, and rubies, balancing royal heritage with disciplined minimalist framework.", "narrative": "Zenith of Empire Allegiance series, designed for global elite demanding unrivaled craftsmanship and status.", "design_notes": ["Solid platinum construction", "Triad gemstone integration", "Royal heritage meets modern minimalism"]},
-    {"name": "Lumina Serpentis", "category": "waist_adornment", "url": "https://aueshah.com/product/lumina-serpentis/", "price_low": 2713410, "price_high": 2913410, "price": null, "metal": "18k white gold", "metal_tone": "cool", "stones": ["brilliant diamonds"], "style": "statement", "description": "Custom-fit serpentine waist chain featuring fixed-link architecture in 18k white gold with diamond accents, designed for precise body contouring.", "narrative": "A fusion of modern art and high jewelry that maintains an uninterrupted silhouette with mathematical accuracy for the exclusive collector.", "design_notes": ["Fixed-link construction requires custom measurements", "Sculptural fluidity with architectural precision", "Rigorous structural integrity and exclusivity"]}
+    {
+      "name": "Ecliptia",
+      "category": "ring",
+      "url": "https://aueshah.com/product/ecliptia/",
+      "price": 3251,
+      "metal": "18k white and rose gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds",
+        "blue sapphires"
+      ],
+      "style": "minimalist",
+      "description": "Two-tone silhouette with double-band architecture in white and rose gold, adorned with diamonds and sapphires offering disciplined contrast.",
+      "narrative": "Two tones, one orbit. The intersection of sapphire and light.",
+      "design_notes": [
+        "Double-band geometric architecture",
+        "18k white and rose gold combination",
+        "Minimalist sculptural presence"
+      ],
+      "birth_month_alignment": "sapphire",
+      "birth_month": 9,
+      "cut": "round"
+    },
+    {
+      "name": "Enchanted Bloom",
+      "category": "ring",
+      "url": "https://aueshah.com/product/enchanted-bloom/",
+      "price": 4162,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "opal",
+        "jade",
+        "diamonds"
+      ],
+      "style": "statement",
+      "description": "Set in 18k rose gold, the architecture centers the iridescent depth of opal against the structural clarity of jade. Brilliant-cut diamonds frame this rare pairing.",
+      "narrative": "Botanical prestige. A rare alignment of opal and jade.",
+      "design_notes": [
+        "Interprets botanical motifs through minimalist lens",
+        "Exercise in textural contrast",
+        "Engineered for unconventional rarity collectors"
+      ],
+      "birth_month_alignment": "opal",
+      "birth_month": 10,
+      "cut": "oval"
+    },
+    {
+      "name": "Eternal Wave",
+      "category": "ring",
+      "url": "https://aueshah.com/product/eternal-wave/",
+      "price": 1818,
+      "metal": "18k gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "heart-cut diamond",
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Minimalist wave architecture in 18k gold, culminating in a precision-set heart-shaped diamond with brilliant-cut diamond accents.",
+      "narrative": "Translates connection complexities into disciplined gold silhouette; wave design serves as structural metaphor for resilience and enduring commitment.",
+      "design_notes": [
+        "Wave architecture with clean lines",
+        "Heart-cut center stone focal point",
+        "Modern interpretation of commitment"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4,
+      "cut": "heart"
+    },
+    {
+      "name": "Luxura Statement Ring",
+      "category": "ring",
+      "url": "https://aueshah.com/product/luxura-statement-ring/",
+      "price": 4315,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "statement",
+      "description": "Solid 18k white gold creates a heavy, unisex silhouette that commands attention through disciplined geometry. Precision-set diamonds accentuate polished surfaces.",
+      "narrative": "A manifestation of architectural authority within the Luxora series, engineered for the collector who values structural integrity and silent power.",
+      "design_notes": [
+        "Heavy architectural unisex silhouette",
+        "Disciplined geometric construction",
+        "Cold brilliance signifying absolute confidence"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4,
+      "cut": "princess"
+    },
+    {
+      "name": "Pulse Ring",
+      "category": "ring",
+      "url": "https://aueshah.com/product/pulse-ring/",
+      "price": 2240,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Crafted in 18k white gold with precision-set diamonds following the band's silhouette, offering constant play of light.",
+      "narrative": "The rhythm of modern luxury. A singular, enduring beat.",
+      "design_notes": [
+        "Lightweight everyday profile engineered for daily endurance",
+        "Part of the Luxora Series collection",
+        "Functional elegance with architectural integrity"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4,
+      "cut": "round"
+    },
+    {
+      "name": "Royal Opulence",
+      "category": "ring",
+      "url": "https://aueshah.com/product/royal-opulence/",
+      "price": 5329,
+      "metal": "18k gold",
+      "metal_tone": "warm",
+      "stones": [
+        "ruby",
+        "emerald",
+        "diamond"
+      ],
+      "style": "heritage",
+      "description": "Precision-set in 18k gold, this ring integrates deep saturation of rubies and emeralds within a framework of brilliant diamonds, prioritizing structural authority over ornamentation.",
+      "narrative": "Sovereign prestige. A disciplined convergence of ruby and emerald offering a modern interpretation of regal heritage.",
+      "design_notes": [
+        "Architectural signet profile",
+        "High-grade gemstone assembly",
+        "Strategic modern-regal fusion"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5,
+      "cut": "cushion"
+    },
+    {
+      "name": "Sovereign Crown Ring",
+      "category": "ring",
+      "url": "https://aueshah.com/product/sovereign-crown-ring/",
+      "price": 10056,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "emerald",
+        "ruby",
+        "diamond"
+      ],
+      "style": "heritage",
+      "description": "Architectural hybrid of traditional signet and royal crest. Cast in solid platinum with raised profile, precision-cut emerald or ruby center, and diamond accents.",
+      "narrative": "Definitive signifier of heritage and status for the global elite. Substantial, commanding piece engineered for those inhabiting highest tiers of influence.",
+      "design_notes": [
+        "Raised crest signet hybrid design",
+        "High-grade center stone options",
+        "Brilliant-cut diamond accents"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5,
+      "cut": "emerald"
+    },
+    {
+      "name": "Trinity Luxe Ring",
+      "category": "ring",
+      "url": "https://aueshah.com/product/trinity-luxe-ring/",
+      "price": 8461,
+      "metal": "18k yellow, white, and rose gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Tri-tone composition forged from 18k yellow, white, and rose gold with precision-set diamonds, representing a convergence of form and light.",
+      "narrative": "Mirrors disciplined architecture, engineered for collectors demanding cohesive and rigorous aesthetic through interlocking design.",
+      "design_notes": [
+        "Interlocking tri-tone structure",
+        "Precision-set diamond accents",
+        "Architectural companion piece"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4,
+      "cut": "round"
+    },
+    {
+      "name": "Vera Forma",
+      "category": "ring",
+      "url": "https://aueshah.com/product/vera-forma/",
+      "price": 3259,
+      "metal": "18k gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Triple-band precision. An architectural alignment of 18k gold.",
+      "narrative": "A rigorous exploration of asymmetric balance engineered in 18k gold with deliberate, unequal diamond setting.",
+      "design_notes": [
+        "Asymmetric triple-band architecture challenges traditional symmetry",
+        "Avant-garde form prioritizes technical precision over excess",
+        "Modern minimalist profile"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4,
+      "cut": "princess"
+    },
+    {
+      "name": "Whisper Ring",
+      "category": "ring",
+      "url": "https://aueshah.com/product/whisper-ring/",
+      "price": 3562,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "peach-pink morganites",
+        "diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Cast in 18k rose gold, this ring balances brilliant diamonds and peach-pink morganites with a soft, serene aesthetic prioritizing understated luxury.",
+      "narrative": "A quiet intimacy. The soft glow of Velvet in rose gold.",
+      "design_notes": [
+        "Minimalist slim band profile",
+        "Part of the Velvet Collection",
+        "Engineered for calm, sophisticated presence"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4,
+      "cut": "oval"
+    },
+    {
+      "name": "Axis Bracelet",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/axis-bracelet/",
+      "price": 9810,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Solid 18k white gold bracelet with sharp geometry and disciplined luxury. Strategic diamonds offer subtle contrast to polished surfaces.",
+      "narrative": "Interprets the LX series through architectural precision and absolute authority — a modern status signifier with clean angles and commanding presence.",
+      "design_notes": [
+        "Geometric unisex profile with clean angles",
+        "Strategic diamond placement for subtle contrast",
+        "LX Series collection piece"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Braids Luxe",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/braids-luxe/",
+      "price": 14951,
+      "metal": "18k yellow, white, and rose gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "statement",
+      "description": "Crafted from 18k yellow, white, and rose gold with equal-width bands engineered into intense, deliberate twists. Precision-set diamonds create a substantial statement of high luxury.",
+      "narrative": "A rigorous study in tri-tone architecture representing a definitive intersection of modern art and technical jewelry mastery.",
+      "design_notes": [
+        "Equal-width braided tri-tone construction",
+        "Sculptural statement profile",
+        "Precision-set diamond accents"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Elora Vine",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/elora-vine/",
+      "price": 8608,
+      "metal": "18k gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "statement",
+      "description": "Art Nouveau bracelet translating organic fluidity into substantial 18k gold. Organic silhouette evokes nature through disciplined, structural lens with brilliant diamonds.",
+      "narrative": "Balance of organic peace and sculptural authority for the modern collector seeking natural architecture refined into geological gold.",
+      "design_notes": [
+        "Winding vine motif with diamond emphasis",
+        "Heavy profile expected of high luxury",
+        "Art Nouveau aesthetic with architectural influence"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Embress Bracelet",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/embress-bracelet/",
+      "price": 9915,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "peach-pink morganites",
+        "diamonds"
+      ],
+      "style": "statement",
+      "description": "Wrap-style bracelet with solid 18k rose gold curving around the wrist, anchoring peach-pink morganites and brilliant diamonds in a sculptural grip.",
+      "narrative": "A circular embrace symbolizing enduring connection and protection, translating intimacy into tangible high-jewelry form.",
+      "design_notes": [
+        "Wrap silhouette architecture for security",
+        "Part of the Velvet Line collection",
+        "Pear-cut morganite gemstones"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Enchanted Pearls",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/enchanted-pearls/",
+      "price": 7104,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "round white pearls",
+        "diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Precision-set 18k white gold anchors a sequence of perfectly round white pearls, punctuated by brilliant-cut diamonds.",
+      "narrative": "Translates classical elegance into a disciplined, modern narrative prioritizing structural luminosity for the discerning minimalist.",
+      "design_notes": [
+        "Linear sequence architecture",
+        "High-polish white gold finish",
+        "Weightless yet substantial composition"
+      ],
+      "birth_month_alignment": "pearl",
+      "birth_month": 6
+    },
+    {
+      "name": "Eternal Thread Bracelet",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/eternal-thread-bracelet/",
+      "price": 6760,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "peach-pink morganites",
+        "diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Ultra-thin 18k rose gold filament bracelet balancing warmth of rose gold with clarity of peach-pink morganites and brilliant diamonds.",
+      "narrative": "A singular line of gold. An invisible connection representing an unbreakable bond through minimalist elegance.",
+      "design_notes": [
+        "Ultra-thin thread silhouette prioritizes lightness",
+        "Part of Velvet Collection with refined restraint",
+        "Peach-pink morganite and diamond accents"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Icon Cuff",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/icon-cuff/",
+      "price": 8680,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "diamonds"
+      ],
+      "style": "modern",
+      "description": "Sculptural bracelet featuring a raised central spine with precision-set diamonds. Hand-finished 18k white gold with geometric architecture merging depth and disciplined brilliance.",
+      "narrative": "Centers on a raised spine motif representing absolute equilibrium. LX series staple dictating clear directional aesthetics.",
+      "design_notes": [
+        "Triple-band open frame with central baguette diamond",
+        "Geometric pavé-set diamond accents",
+        "Raised spine axis providing structural clarity"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Lustre Line",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/lustre-line/",
+      "price": 9627,
+      "metal": "18k gold",
+      "metal_tone": "warm",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Solid 18k gold bracelet with brilliant diamonds integrated seamlessly into the architecture to capture light at every angle. Engineered as a foundational element of the modern wardrobe.",
+      "narrative": "A continuous line of gold. The essential anchor of light.",
+      "design_notes": [
+        "Solid gold link construction for daily wear durability",
+        "Transitions effortlessly between contexts",
+        "Available in three sizes: Large, Medium, Small"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Naturaleza",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/naturaleza/",
+      "price": 3371,
+      "metal": "18k gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Bracelet distills botanical complexity into restrained, versatile silhouette. Crafted in 18k gold with precision-set diamonds, emphasizing soft anatomical fit and natural forms.",
+      "narrative": "Delicate echo of the Elora Vine collection. Refined staple for the collector valuing understated luxury with organic design language.",
+      "design_notes": [
+        "Part of Elora Vine Series",
+        "Available in three sizes",
+        "Delicate organic minimalist profile"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Oasis of Elegance",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/oasis-of-elegance/",
+      "price": 8372,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "round white pearls",
+        "diamonds"
+      ],
+      "style": "minimalist",
+      "description": "A serene alignment of pearl and diamond. Pure luxury in white gold.",
+      "narrative": "A study in delicate balance and structural restraint, prioritizing clean silhouette through subtle brilliance.",
+      "design_notes": [
+        "18k white gold construction with polished high-sheen finish",
+        "Minimalist linear design integrating round white pearls with precision-set diamonds",
+        "Commands attention through refined serenity rather than ornate detailing"
+      ],
+      "birth_month_alignment": "pearl",
+      "birth_month": 6
+    },
+    {
+      "name": "Solstice",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/solstice/",
+      "price": 3801,
+      "metal": "18k gold (yellow/white/rose options)",
+      "metal_tone": "neutral",
+      "stones": [
+        "diamonds"
+      ],
+      "style": "minimalist",
+      "description": "An exercise in extreme minimalism engineered for lightweight feel and permanent aesthetic. Available in 18k yellow, white, or rose gold with precision-finished surfaces capturing light and subtle diamond accents.",
+      "narrative": "Absolute light. A timeless alignment of form.",
+      "design_notes": [
+        "Hand-polished mirror finish with precision-set diamonds",
+        "Foundational luxury essential with disciplined silhouette",
+        "Transcends seasonal shifts through extreme minimalism"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "The Trilogy Braid",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/the-trilogy-braid/",
+      "price": 24014,
+      "metal": "18k yellow, white, and rose gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "statement",
+      "description": "The definitive peak of the Aueshah tri-tone series engineered with an uncompromising volume of 18k yellow, white, and rose gold — the heaviest iteration in the collection.",
+      "narrative": "A physical manifestation of authority reserved for those who demand the highest tier of structural luxury, utilizing dense braided geometry and precision-set diamonds.",
+      "design_notes": [
+        "Ultra-heavy architectural braid profile",
+        "Trilogy Signature series",
+        "Precision-set diamonds for command presence"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Trinity Luxe",
+      "category": "bracelet",
+      "url": "https://aueshah.com/product/trinity-luxe/",
+      "price": 18742,
+      "metal": "18k gold (tri-tone)",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Unites 18k yellow, white, and rose gold in interlocking architecture elevated by meticulously set diamonds, presenting a sculptural statement.",
+      "narrative": "Three golds, one singular form. The harmony of interlocking light.",
+      "design_notes": [
+        "Tri-tone composition functions as study in balance and geometric precision",
+        "Interlocking tri-tone with architectural geometry profile",
+        "Designed for collector demanding both complexity and restraint"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Celestigma",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/celestigma/",
+      "price": 2617,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "brilliant diamonds",
+        "blue sapphires"
+      ],
+      "style": "minimalist",
+      "description": "Bespoke 18k gold earrings with diamonds and sapphires representing celestial coordinates, customizable to individual astrological profiles.",
+      "narrative": "A disciplined fusion of astrological symbolism and modern high jewelry, engineered as a definitive personal landmark.",
+      "design_notes": [
+        "18k yellow gold construction",
+        "Customizable astrological gemstone mapping",
+        "High-jewelry classification with drop earring format"
+      ],
+      "birth_month_alignment": "sapphire",
+      "birth_month": 9
+    },
+    {
+      "name": "Eclipse Earrings",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/eclipse-earrings/",
+      "price": 2591,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "High-jewelry studs in solid 18k white gold featuring brilliant-cut diamonds selected for superior light refraction, designed for seamless transition between daily and high-profile occasions.",
+      "narrative": "Celestial restraint through signature alignment of 18k white gold and brilliant diamonds, prioritizing structural comfort and mathematical symmetry.",
+      "design_notes": [
+        "High-grade diamonds chosen for superior light refraction properties",
+        "Engineered for secure balance and daily wearability",
+        "Part of the Luxura Collection high-jewelry series"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Emerald Whisper",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/emerald-whisper/",
+      "price": 4215,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "emerald"
+      ],
+      "style": "minimalist",
+      "description": "Two golden leaves suspended by a sequence of emeralds in a botanical equilibrium design.",
+      "narrative": "A rigorous study in natural symmetry and minimalist high jewelry featuring dual-leaf silhouette with precision-cut emeralds.",
+      "design_notes": [
+        "Forged in solid 18k yellow gold",
+        "Botanical leaf motif with organic textures",
+        "Connected by disciplined strand of precision-cut emeralds"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Empress Earrings",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/empress-earrings/",
+      "price": 14089,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "emerald",
+        "ruby",
+        "diamond"
+      ],
+      "style": "statement",
+      "description": "Platinum chandelier earrings featuring precision-cut emeralds, rubies, and brilliant-cut diamonds, balancing historic royal motifs with modern minimalism.",
+      "narrative": "Imperial poise achieved through a platinum convergence of emerald, ruby, and light, engineered to project authority and structural grace.",
+      "design_notes": [
+        "Solid platinum construction with high-grade gemstones",
+        "Part of the Empire Allegiance high-jewelry series",
+        "Combines classical royal aesthetics with contemporary restraint"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Gilded Elegance",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/gilded-elegance/",
+      "price": 2420,
+      "metal": "18k gold",
+      "metal_tone": "warm",
+      "stones": [],
+      "style": "minimalist",
+      "description": "Forged in solid 18k gold, the architecture centers on a sophisticated twisted ring silhouette, anchored by a hand-textured headpiece.",
+      "narrative": "A rigorous exploration of metalwork as art prioritizing raw integrity of gold and interplay of light across varying surfaces.",
+      "design_notes": [
+        "Hand-textured twisted ring silhouette",
+        "Pure metalwork with no gemstones",
+        "Architectural minimalist profile"
+      ]
+    },
+    {
+      "name": "Golden Twirl",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/golden-twirl/",
+      "price": 2420,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [],
+      "style": "minimalist",
+      "description": "Art Deco spiral earrings in solid 18k gold with architectural design relying on structural precision and light interplay across polished surfaces.",
+      "narrative": "A rigorous Art Deco interpretation balancing historical symmetry with modern minimalist restraint.",
+      "design_notes": [
+        "Pure metalwork without gemstones",
+        "Precise spiral form with architectural minimalism",
+        "Focuses on structural precision and polished surfaces"
+      ]
+    },
+    {
+      "name": "Lullaby Studs",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/lullaby-studs/",
+      "price": 2624,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "teardrop-cut peach pink morganite",
+        "brilliant diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Teardrop-cut peach morganite haloed by brilliant diamonds in 18k rose gold, prioritizing structural balance and tonal warmth for understated luxury.",
+      "narrative": "A disciplined exploration of form and color within the Velvet line, serving as a subtle yet definitive statement of affection.",
+      "design_notes": [
+        "Lightweight construction emphasizes structural balance",
+        "Central teardrop morganite precisely framed by diamond halo",
+        "Part of Velvet Collection with minimalist teardrop profile"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Lunaria Nocturne",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/lunaria-nocturne/",
+      "price": 3240,
+      "metal": "18k rose and white gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "brilliant-cut diamonds",
+        "fine pearls"
+      ],
+      "style": "minimalist",
+      "description": "18k rose and white gold earrings featuring two interlocking half-moons with brilliant-cut diamonds and pearls for celestial sophistication.",
+      "narrative": "Rigorous exploration of lunar geometry engineered for collectors valuing celestial symbolism and modern minimalist refinement.",
+      "design_notes": [
+        "Two-tone interlocking lunar phases",
+        "Sharp metalwork contrasted with soft organic gemstones",
+        "High-jewelry classification"
+      ],
+      "birth_month_alignment": "pearl",
+      "birth_month": 6
+    },
+    {
+      "name": "Silk Drop Earrings",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/silk-drop-earrings/",
+      "price": 3400,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "peach-pink morganite",
+        "brilliant diamond"
+      ],
+      "style": "modern",
+      "description": "18k rose gold earrings featuring peach-pink morganites and diamonds in a linear drop architecture, prioritizing vertical symmetry and refined elegance.",
+      "narrative": "A rigorous study in architectural fluidity and disciplined elongation, engineered for the global elite as a versatile high-jewelry centerpiece.",
+      "design_notes": [
+        "Linear drop silhouette emphasizes vertical symmetry",
+        "High-grade diamonds paired with rare morganites for tonal warmth",
+        "Engineered for structural durability with weightless presence"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Victorian Glow",
+      "category": "earrings",
+      "url": "https://aueshah.com/product/victorian-glow/",
+      "price": 5310,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds",
+        "pear-cut emeralds"
+      ],
+      "style": "statement",
+      "description": "Seven tiers of precision-set diamonds culminating in significant pear-shaped emeralds, forged in solid 18k white gold with engineered structural stability.",
+      "narrative": "A disciplined modernization of the classic chandelier silhouette, designed as a definitive statement of status for the global elite.",
+      "design_notes": [
+        "Seven-tier chandelier architecture",
+        "Vertical tiers maintain rhythmic, fluid motion",
+        "High-jewelry statement earrings classification"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Azure Majesty",
+      "category": "pendant",
+      "url": "https://aueshah.com/product/azure-majesty/",
+      "price": 9101,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "deep blue sapphire",
+        "brilliant-cut diamonds"
+      ],
+      "style": "heritage",
+      "description": "Cast in 18k gold with a central sapphire of exceptional saturation, framed by brilliant-cut diamonds in an intricate pattern.",
+      "narrative": "A study in royal geometry and tonal depth for the modern collector demanding balance of historic prestige and contemporary restraint.",
+      "design_notes": [
+        "Royal patterned filigree architecture",
+        "Heritage statement profile",
+        "Technically superior and visually arresting finish"
+      ],
+      "birth_month_alignment": "sapphire",
+      "birth_month": 9
+    },
+    {
+      "name": "Eterna Lotus Royale",
+      "category": "pendant",
+      "url": "https://aueshah.com/product/eterna-lotus-royale/",
+      "price": 4516,
+      "metal": "18k gold",
+      "metal_tone": "neutral",
+      "stones": [
+        "luminous pearl",
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Cast in 18k gold, the design centers a luminous pearl framed by precision-set diamonds, streamlining organic complexity into a disciplined statement of modern grace.",
+      "narrative": "Botanical symmetry. A lotus silhouette of gold, pearl, and light.",
+      "design_notes": [
+        "Architectural interpretation of bloomed lotus",
+        "Functions as sculptural centerpiece",
+        "Engineered for discerning collectors valuing structural refinement"
+      ],
+      "birth_month_alignment": "pearl",
+      "birth_month": 6
+    },
+    {
+      "name": "Monarch Pendant",
+      "category": "pendant",
+      "url": "https://aueshah.com/product/monarch-pendant/",
+      "price": 24204,
+      "metal": "22k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "ruby",
+        "diamond"
+      ],
+      "style": "heritage",
+      "description": "A 22k gold icon defined by deep ruby and light. Engineered with precision-set diamonds and high-grade rubies, the pendant maintains a disciplined silhouette while asserting bold, royal presence.",
+      "narrative": "Strategic departure from Empire Allegiance series, substituting signature platinum for saturated warmth of 22k gold — a rebellious icon, definitive statement of heritage and status.",
+      "design_notes": [
+        "22k yellow gold construction",
+        "High-grade ruby with brilliant-cut diamonds",
+        "Iconic Sovereign motif from Empire Allegiance series"
+      ],
+      "birth_month_alignment": "ruby",
+      "birth_month": 7
+    },
+    {
+      "name": "Monogram Plate Pendant",
+      "category": "pendant",
+      "url": "https://aueshah.com/product/monogram-plate-pendant/",
+      "price": 15124,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Forged in solid 18k white gold, the architecture features the signature series insignia encrusted with precision-set diamonds, engineered for a recognizable yet sophisticated luxury signature.",
+      "narrative": "The signature of the LX series. A definitive plate of 18k white gold and light.",
+      "design_notes": [
+        "Geometric monogram plate silhouette",
+        "Precision-set diamond encrustation",
+        "Part of LX Collection series"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Noir Pendant",
+      "category": "pendant",
+      "url": "https://aueshah.com/product/noir-pendant/",
+      "price": 4515,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "black agate",
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Cast in 18k white gold, this piece centers a polished black agate punctuated by precision-set diamonds, engineered for durability and daily wear.",
+      "narrative": "A study in monochromatic contrast offering disciplined expression of luxury and geometric clarity for the modern professional.",
+      "design_notes": [
+        "Emerald-cut black agate as focal point",
+        "Unisex architectural aesthetic from Luxura Series",
+        "Precision-set diamonds with refined minimalist balance"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Secret Locket",
+      "category": "pendant",
+      "url": "https://aueshah.com/product/secret-locket/",
+      "price": 7416,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "heart-cut peach-pink morganite",
+        "diamonds"
+      ],
+      "style": "modern",
+      "description": "Cast in 18k rose gold, the locket centers a rare heart-cut peach-pink morganite framed by brilliant diamonds with bespoke interior engraving.",
+      "narrative": "Hidden devotion. A rare morganite heart suspended in 18k rose gold.",
+      "design_notes": [
+        "Centered hinge alignment mechanism maintains structural symmetry",
+        "Features bespoke internal engraving for personalization",
+        "Balances technical innovation with minimalist elegance"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Caress Choker",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/caress-choker/",
+      "price": 5629,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "peach-pink morganites",
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Rose gold choker merging traditional romanticism with architectural edge, balancing soft peach-pink morganites against structural precision of brilliant-cut diamonds.",
+      "narrative": "Defiant shift in the Velvet line capturing playful tension within intimate connection — fluid and subversive for luxury with modern, rebellious spirit.",
+      "design_notes": [
+        "18k rose gold construction",
+        "Architectural choker profile with geometric precision",
+        "Blends romantic gemstones with structural diamond elements"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Chain of Command",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/chain-of-command/",
+      "price": 13412,
+      "metal": "22k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "diamonds"
+      ],
+      "style": "statement",
+      "description": "Forged in high-purity 22k gold, the architecture features substantial, diamond-encrusted links anchored by a central royal motif.",
+      "narrative": "A definitive departure within the LX series, transitioning from understated elegance to a command of power, engineered for those who demand visible status.",
+      "design_notes": [
+        "Heavy link construction with royal motif centerpiece",
+        "Hand-set brilliant diamonds throughout",
+        "Part of Luxura Series high-jewelry collection"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Dynasty Necklace",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/dynasty-necklace/",
+      "price": 237465,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "emeralds",
+        "diamonds"
+      ],
+      "style": "heritage",
+      "description": "Architectural masterwork in solid platinum integrating precision-cut emeralds and brilliant diamonds within a disciplined high-jewelry framework.",
+      "narrative": "Sovereign geometry in platinum. A legacy of emerald light.",
+      "design_notes": [
+        "Balances royal authority with minimalist restraint",
+        "Part of Empire Allegiance series",
+        "Commands absolute presence as status signifier"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Enchanted Opal Bloom",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/enchanted-opal-bloom/",
+      "price": 9154,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "iridescent opal",
+        "brilliant-cut diamonds"
+      ],
+      "style": "statement",
+      "description": "A sculptural floral necklace featuring an iridescent opal framed by precision-set diamonds in 18k rose gold, balancing nature's complexity with refined minimalism.",
+      "narrative": "A singular floral masterpiece representing botanical fluidity and wearable art for collectors seeking rarity and structural elegance.",
+      "design_notes": [
+        "Sculptural floral motif centered on iridescent opal",
+        "Precision-set diamonds capture living flower essence",
+        "One-of-a-kind fine jewelry acquisition"
+      ],
+      "birth_month_alignment": "opal",
+      "birth_month": 10
+    },
+    {
+      "name": "Heartline Necklace",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/heartline-necklace/",
+      "price": 8159,
+      "metal": "18k rose gold",
+      "metal_tone": "warm",
+      "stones": [
+        "heart-cut peach-pink morganite",
+        "diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Cast in 18k rose gold, the design centers a rare, heart-cut peach-pink morganite that radiates soft, structural warmth.",
+      "narrative": "Linear devotion. A rare heart-cut morganite in disciplined rose gold.",
+      "design_notes": [
+        "Velvet Collection cornerstone",
+        "Precision-set diamond accents",
+        "Architectural romantic silhouette"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Kismet Constellé",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/kismet-constelle/",
+      "price": 4315,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "emeralds",
+        "diamonds"
+      ],
+      "style": "heritage",
+      "description": "Neo-classical necklace reinterpreting Egyptian architectural motifs through minimalist design, forged in 18k gold with geometric precision featuring vivid emeralds and brilliant diamonds.",
+      "narrative": "Modernizes antiquity by blending cultural significance with contemporary sophistication, offering a unique silhouette for collectors valuing heritage refined by modern aesthetics.",
+      "design_notes": [
+        "Geometric celestial arrangement with disciplined structure",
+        "18k yellow gold construction",
+        "High-grade emeralds and diamonds with architectural inspiration"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Luminous Harmony",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/luminous-harmony/",
+      "price": 3792,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "deep blue sapphires",
+        "brilliant diamonds"
+      ],
+      "style": "modern",
+      "description": "Forged in 18k white gold with deep blue sapphires and precision-set diamonds, this necklace presents avant-garde geometric complexity.",
+      "narrative": "A rigorous exercise in avant-garde minimalism functioning as fine art for collectors prioritizing intellectual design and elegance.",
+      "design_notes": [
+        "Abstract geometric architecture",
+        "18k white gold construction",
+        "Structural tension between sapphires and diamonds"
+      ],
+      "birth_month_alignment": "sapphire",
+      "birth_month": 9
+    },
+    {
+      "name": "Skyline Necklace",
+      "category": "necklace",
+      "url": "https://aueshah.com/product/skyline-necklace/",
+      "price": 4214,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "18k white gold necklace with precision-set diamonds in linear arrangement. Engineered for corporate and daily wear with ergonomic unisex design.",
+      "narrative": "Urban precision. A seamless horizon of white gold and diamonds — functional luxury for the modern global professional.",
+      "design_notes": [
+        "Disciplined silhouette with linear diamond path",
+        "Ergonomic comfort prioritized for everyday wear",
+        "Architectural minimalism for corporate environments"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Imperial Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/imperial-tiara/",
+      "price": 475924,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "emeralds",
+        "rubies",
+        "brilliant-cut diamonds"
+      ],
+      "style": "heritage",
+      "description": "Forged in solid platinum, this architectural crown features significant, precision-cut emeralds and rubies anchored by brilliant-cut diamonds.",
+      "narrative": "Sovereign architecture. A summit of emeralds, rubies, and light.",
+      "design_notes": [
+        "Empire Allegiance signature piece",
+        "Prioritizes structural authority and historic resonance",
+        "Engineered for global elite demanding high-jewelry excellence"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Sultana Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/sultana-tiara/",
+      "price": 292048,
+      "metal": "22k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "ruby",
+        "black agate"
+      ],
+      "style": "statement",
+      "description": "A 22k gold crown featuring significant rubies with rare black agate backdrop, emphasizing geometric forms and tonal contrast.",
+      "narrative": "An assertive departure from traditional high jewelry, engineered for elite individuals prioritizing structural dominance and rare material contrast.",
+      "design_notes": [
+        "Saturated 22k gold construction",
+        "High-contrast geometric architecture",
+        "Uneven forms create unrivaled global silhouette"
+      ],
+      "birth_month_alignment": "ruby",
+      "birth_month": 7
+    },
+    {
+      "name": "The Ayla Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-ayla-tiara/",
+      "price": 144980,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds",
+        "natural pearls"
+      ],
+      "style": "minimalist",
+      "description": "Raw platinum silhouette anchored by singular natural pearls. Explores subversive beauty balancing fantasy-inspired aesthetics with modern minimalism precision.",
+      "narrative": "Nocturnal grace — a rigorous exploration where no two pieces are identical, reflecting authentic variations of nature.",
+      "design_notes": [
+        "Solid platinum construction",
+        "Natural pearl geometry and tone vary by piece",
+        "High-grade diamonds integrated with organic pearls"
+      ],
+      "birth_month_alignment": "pearl",
+      "birth_month": 6
+    },
+    {
+      "name": "The Celeste Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-celeste-tiara/",
+      "price": 18710,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Platinum crown featuring disciplined arrangement of brilliant diamonds in clean, linear path. Prioritizes structural purity and light over ornamentation.",
+      "narrative": "Celestial alignment. A platinum horizon defined by brilliant diamonds — redefining the traditional crown through rigorous minimalism.",
+      "design_notes": [
+        "Linear minimalist architecture with geometric precision",
+        "Solid platinum construction with modern high-jewelry classification",
+        "Functional artwork emphasizing structural purity over embellishment"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "The Élan Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-elan-tiara/",
+      "price": 117201,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "Forged in solid 18k white gold, this tiara features precision-set diamonds engineered to maximize light refraction from every angle.",
+      "narrative": "A definitive study in high-jewelry light prioritizing modern, assertive silhouette while maintaining minimalist design restraint.",
+      "design_notes": [
+        "Continuous diamond surface for maximum light refraction",
+        "Modern iced silhouette with disciplined elegance",
+        "Signature high-jewelry classification"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "The Isla Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-isla-tiara/",
+      "price": 91523,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "sapphire",
+        "diamond"
+      ],
+      "style": "modern",
+      "description": "Oceanic motion. A tidal sequence of white gold, sapphire, and light. Forged in 18k white gold with wave-inspired architecture integrating dual-toned sapphires and brilliant-cut diamonds.",
+      "narrative": "A structural homage to the rhythmic motion of the sea — a refined symbol of natural authority for collectors valuing botanical fluidity and minimalist elegance.",
+      "design_notes": [
+        "Wave-inspired silhouette capturing oceanic depth and translucency",
+        "Two distinct sapphire shades with precision-set diamonds at curve peaks",
+        "High-jewelry classification with disciplined play of light"
+      ],
+      "birth_month_alignment": "sapphire",
+      "birth_month": 9
+    },
+    {
+      "name": "The Maharani Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-maharani-tiara/",
+      "price": 242056,
+      "metal": "22k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "emeralds",
+        "rubies",
+        "diamonds"
+      ],
+      "style": "heritage",
+      "description": "A 22k gold convergence of Kundan artistry and royal gems. A rigorous interpretation of traditional Kundan craftsmanship adapted for the modern elite with precise arrangement of emeralds, rubies, and diamonds.",
+      "narrative": "Bridge between historical Indian heritage and contemporary minimalist restraint, engineered for collectors valuing absolute craftsmanship and timeless sovereign charm.",
+      "design_notes": [
+        "22k yellow gold construction with high-purity material",
+        "Modernized Kundan artistry balancing mathematical proportion",
+        "Emeralds, rubies, and diamonds arranged with historical high-jewelry profile"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "The Rose Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-rose-tiara/",
+      "price": 84051,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "A sculptural rose silhouette forged in solid 18k gold, prioritizing form over ornamentation with diamonds strategically placed to highlight petal edges.",
+      "narrative": "Botanical gold interpreted with technical precision for the collector valuing organic grace and minimalist botanical beauty.",
+      "design_notes": [
+        "Metal creates depth and shadow through sculptural form",
+        "Diamonds strategically integrated for disciplined light play",
+        "Art Nouveau botanical design with engineered structure"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "The Shalimar Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-shalimar-tiara/",
+      "price": 47864,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "pink spinel",
+        "green sapphire",
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Forged in 18k gold, the architecture mimics a rhythmic vine, meticulously engineered to hold petals of pink spinel and green sapphire.",
+      "narrative": "A structural homage to nature, reimagined through a lens of modern minimalism with mathematical accuracy to ensure balanced silhouette.",
+      "design_notes": [
+        "Botanical vine architecture in 18k yellow gold",
+        "Pink spinel and green sapphire positioned with mathematical precision",
+        "Nature-inspired minimalist profile"
+      ],
+      "birth_month_alignment": "sapphire",
+      "birth_month": 9
+    },
+    {
+      "name": "The Zenith Tiara",
+      "category": "tiara",
+      "url": "https://aueshah.com/product/the-zenith-tiara/",
+      "price": 122014,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "modern",
+      "description": "18k white gold tiara featuring a seamless, diamond-iced surface engineered for maximum refraction with a modern, streamlined silhouette.",
+      "narrative": "Supreme radiance expressed through continuous horizon of diamonds and white gold, prioritizing light and structural clarity for high-profile events.",
+      "design_notes": [
+        "Continuous iced silhouette with maximum refraction capability",
+        "Modern minimalist profile designed as versatile centerpiece",
+        "Rigorous expression of luxury for assertive yet disciplined presence"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Cleopatra",
+      "category": "waist_adornment",
+      "url": "https://aueshah.com/product/cleopatra/",
+      "price": 13000,
+      "metal": "18k yellow gold",
+      "metal_tone": "warm",
+      "stones": [
+        "brilliant-cut diamonds"
+      ],
+      "style": "minimalist",
+      "description": "Ancient symmetry. A disciplined golden line adorned with diamonds.",
+      "narrative": "Waist chain redefining historical grandeur through modern minimalism with precise, rhythmic pattern punctuated by brilliant diamonds.",
+      "design_notes": [
+        "Patterned linear links architecture",
+        "Seamless transition from private luxury to public statement",
+        "Structural clarity with timeless prestige"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    },
+    {
+      "name": "Heirloom Waist Chain",
+      "category": "waist_adornment",
+      "url": "https://aueshah.com/product/heirloom-waist-chain/",
+      "price": 25237,
+      "metal": "platinum",
+      "metal_tone": "cool",
+      "stones": [
+        "diamonds",
+        "emeralds",
+        "rubies"
+      ],
+      "style": "heritage",
+      "description": "Platinum architectural waist chain integrating high-grade diamonds, emeralds, and rubies, balancing royal heritage with disciplined minimalist framework.",
+      "narrative": "Zenith of Empire Allegiance series, designed for global elite demanding unrivaled craftsmanship and status.",
+      "design_notes": [
+        "Solid platinum construction",
+        "Triad gemstone integration",
+        "Royal heritage meets modern minimalism"
+      ],
+      "birth_month_alignment": "emerald",
+      "birth_month": 5
+    },
+    {
+      "name": "Lumina Serpentis",
+      "category": "waist_adornment",
+      "url": "https://aueshah.com/product/lumina-serpentis/",
+      "price_low": 2713410,
+      "price_high": 2913410,
+      "price": null,
+      "metal": "18k white gold",
+      "metal_tone": "cool",
+      "stones": [
+        "brilliant diamonds"
+      ],
+      "style": "statement",
+      "description": "Custom-fit serpentine waist chain featuring fixed-link architecture in 18k white gold with diamond accents, designed for precise body contouring.",
+      "narrative": "A fusion of modern art and high jewelry that maintains an uninterrupted silhouette with mathematical accuracy for the exclusive collector.",
+      "design_notes": [
+        "Fixed-link construction requires custom measurements",
+        "Sculptural fluidity with architectural precision",
+        "Rigorous structural integrity and exclusivity"
+      ],
+      "birth_month_alignment": "diamond",
+      "birth_month": 4
+    }
   ]
 }
