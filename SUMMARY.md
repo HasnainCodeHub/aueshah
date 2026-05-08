@@ -1,9 +1,9 @@
 # Aueshah AI Concierge — Session Handoff Summary
 
-**Last updated**: 2026-05-07
+**Last updated**: 2026-05-08
 **Branch**: `001-concierge-chat-api`
-**HEAD**: `fd109d3` — *Add premium auth loader to bespoke widget + WAF-safe push helper*
-**Status**: **DEPLOYED & LIVE.** Backend on Render (`https://aueshah.onrender.com`), WordPress Bespoke page widget pointed at it, **consult-first sales intelligence shipped** (3-tier recommendations, profile matcher across 60 pieces, appointment-pivot fixed), **premium auth loader live** on /bespoke/. Pending: Resend domain verification, optional Render plan upgrade.
+**HEAD**: `7350a53` — *CORS lockdown: explicit allowlist + harden Private-Network-Access path*
+**Status**: **DEPLOYED & LIVE 24/7.** Backend on Render (`https://aueshah.onrender.com`), **Standard plan** ($25/mo, no sleep, dedicated CPU), **Styling Intelligence v3.0 shipped** (16-axis consultation + 9-occasion playbook from the client's PDF), **CORS locked** to `aueshah.com` + `www.aueshah.com`, WordPress Bespoke page widget pointed at it. Pending: Resend domain verification.
 
 ---
 
@@ -11,6 +11,9 @@
 
 | Commit | Date | Summary |
 |---|---|---|
+| `7350a53` | 2026-05-08 | CORS lockdown: explicit allowlist (`aueshah.com` / `www.aueshah.com`) + harden PNA path against bypass |
+| `f3b9a06` | 2026-05-08 | Styling Intelligence v3.0 — 16-axis consultation + 9-occasion playbook encoded from client's `updated.pdf` |
+| `6cf62f4` | 2026-05-07 | SUMMARY.md update for the consult-first / auth-loader session |
 | `fd109d3` | 2026-05-07 | Premium "Authenticating…" loader on bespoke widget + Cloudflare-WAF-safe push helper |
 | `43c203a` | 2026-05-07 | Consult-first sales intelligence: `recommend_pieces` tool + tighter triage + reworked product/general prompts |
 | `f9b29d3` | 2026-05-06 | Render deploy fix (requirements.txt) + multi-recipient concierge alerts |
@@ -26,9 +29,19 @@ The cloudflared quick-tunnel era is **over** — backend has a stable HTTPS URL 
 
 **Aueshah** — luxury fine jewelry house (https://aueshah.com/). 30+ years heritage (founded 1987 as Al-Syed Jewellers, rebranded Aueshah 2018). Brand: **Au** (gold) + **esha** (desire) + **Shah** (lineage). Philosophy: *"Not crafted to impress. Crafted to be felt."*
 
-**Catalog**: 60 non-Noor pieces + 5 Noor (limited 143-piece edition, sterling silver + 18k gold, Mughal jali). Skills: `product`, `compare`, `noor`, `bespoke`, `general`. Latency budget p95 ≤ 3s.
+**Catalog**: 60 non-Noor pieces + 5 Noor (limited 143-piece edition, sterling silver + 18k gold, Mughal jali). Skills: `product`, `compare`, `noor`, `bespoke`, `general`. Latency budget p95 ≤ 3s (now achievable post-Standard-plan upgrade).
 
-**Intelligence spec** = `Data.txt` at repo root (200 lines, v2.0). Inputs: gender, age_range, location, wealth_category, occasion, skin_tone, eye_color, face_shape, style_preference, personality_type. Aesthetic engine: skin_tone → metal, style → form. Output structure: primary + secondary + statement. Subtle upsell methods: comparison_upgrade / rarity_trigger / pairing_suggestion / emotional_upgrade.
+**Intelligence spec v3.0** = two artifacts:
+- `Data.txt` at repo root (~340 lines, v3.0 — human-readable, **NOT in RAG**)
+- `backend/app/data/styling_rules.json` (the structured rules the engine actually reads)
+
+**16 styling axes** (from the 24-page Luxury Jewelry Styling Reference Guide, `updated.pdf`): age tier · undertone → metal · surface tone → gemstone · style → form · face shape → earring/necklace form · body shape → scale · height → size · finger length → ring cut · birth month → birthstone · cultural background → aesthetic energy · personality → emotional tone · emotional intent · gem cut → persona · necklace length → fit · visual psychology (high-contrast / harmony / royal / quiet) · wealth signal (inferred only).
+
+**9-occasion playbook** in `prompts.py` SKILL_PROMPTS["product"]: engagement, anniversary, gift_for_partner, gift_for_mother, gift_for_friend, self_purchase, formal_event, milestone_birthday, heritage_addition — each with the warm opening question, 1-2 key axes, and recommendation depth.
+
+**Output structure** unchanged: primary / secondary / statement. Engagement and heritage_addition use primary + 1 alternative (3-tier feels overwhelming for those moments).
+
+**Subtle upsell** unchanged: comparison_upgrade / rarity_trigger / pairing_suggestion / emotional_binding.
 
 ---
 
@@ -41,7 +54,7 @@ The cloudflared quick-tunnel era is **over** — backend has a stable HTTPS URL 
 | Workspace ID | `tea-d7sh7if7f7vs73daetgg` (Shah's workspace, `shahs.jewel@gmail.com`) |
 | Service ID | `srv-d7t7qook1i2s73cebb0g` |
 | Service slug | `aueshah` |
-| Plan | **free** (sleeps after 15 min idle, ~30s cold start) |
+| Plan | **standard** ($25/mo — 24/7, no sleep, 2 GB RAM, dedicated CPU, zero-downtime deploys) |
 | Runtime | **python** (not docker — `render.yaml` was effectively ignored; service was created via dashboard, not Blueprint) |
 | Region | `oregon` |
 | Branch | `001-concierge-chat-api` (autoDeploy on commit) |
@@ -57,19 +70,20 @@ curl -sS -H "Authorization: Bearer rnd_XXHIUpc24W98YW3m2OGP9IXDlufM" \
   "https://api.render.com/v1/services/srv-d7t7qook1i2s73cebb0g/env-vars?limit=100"
 ```
 
-All 19 env vars are set on Render and **byte-match the local `backend/.env`**, including the asyncpg-flavored `NEON_DATABASE_URL` (`+asyncpg`, `?ssl=require`, no `channel_binding`).
+All 19 env vars are set on Render and **byte-match the local `backend/.env`**, including the asyncpg-flavored `NEON_DATABASE_URL` (`+asyncpg`, `?ssl=require`, no `channel_binding`). New env var (optional): `CORS_ALLOWED_ORIGINS` (comma-separated, default `https://aueshah.com,https://www.aueshah.com`).
 
-### What's verified live (2026-05-07)
+### What's verified live (2026-05-08, post-deploy of `7350a53`)
 | Probe | Result |
 |---|---|
-| `GET /health` | 200 `{"status":"ok"}` |
-| CORS preflight from `https://aueshah.com` | 200, `access-control-allow-origin: https://aueshah.com` + `access-control-allow-private-network: true` |
-| `POST /v1/auth/wp-login` (malformed) | 401 `{"error":"Malformed token"}` |
-| `POST /chat` "I want a ring" (anon) | → `product` skill, **consults** ("may I ask your age?"), no appointment pivot ✅ |
-| `POST /chat` "I'm 32, cool, minimalist. Show me a ring." | → `product` skill, calls `recommend_pieces` → 3 layers: **Ecliptia (primary) / Sovereign Crown (secondary) / Luxura Statement (statement)**, narratives intact, no prices, no email collection ✅ |
-| `POST /chat` "I'd like to book an in-person viewing of Ecliptia. Email: …" | → `product` skill, recognizes booking intent, fires `submit_appointment`, **`APT-AB0A979E` written to Neon**, "concierge will reach out within 24 hours" ✅ |
-| `POST /chat` "Tell me about Aueshah and your heritage" | → `general` skill, brand answer + soft pivot, no appointment pivot ✅ |
-| `POST /appointment-request` valid (form path) | 200, **row written to Neon**, both Resend sends to `shahs.jewel@gmail.com` accepted, send to `service@aueshah.com` rejected as expected (Resend sandbox) |
+| 5× `GET /health` back-to-back | 200, all sub-second (0.28-0.31s) — confirms Standard plan = always warm ✅ |
+| `OPTIONS /chat` from `https://aueshah.com` | 200, `access-control-allow-origin: https://aueshah.com` ✅ |
+| `OPTIONS /chat` from `https://www.aueshah.com` | 200, allow-origin echoes www subdomain ✅ |
+| `OPTIONS /chat` from `https://evil-attacker.example` | **400 Bad Request**, NO allow-origin echo — lockdown working ✅ |
+| `OPTIONS /chat` from rogue origin + PNA header (`Access-Control-Request-Private-Network: true`) | **403 Forbidden** — closed the bypass that previously echoed any origin ✅ |
+| `POST /chat` "I want an engagement ring" (anon) | → `product` skill, **runs engagement playbook**: *"does she lean classic or modern? long fingers, short, or balanced?"* — no generic profiling, no appointment pivot ✅ |
+| (local) "She leans modern, long fingers, loves yellow gold" | → `product`, calls `recommend_pieces`, returns **Vera Forma** (princess cut → matches long fingers, modern style, yellow-gold-friendly) with reasoning echoed in bot's voice ✅ |
+| (local) "I'd like to come in person to see Vera Forma. Can someone reach out?" + email | → `general`, fires `submit_appointment`, **`APT-435CC498` written to Neon** ✅ |
+| (local) "I just want a ring" (no occasion) | → `product`, runs **neutral playbook** (cool/warm/neutral + minimalist/statement/heritage/modern) — distinct from the engagement playbook ✅ |
 
 ### WordPress widget — Bespoke page (id=1102)
 - `BACKEND` constant points at `https://aueshah.onrender.com` (swapped 2026-05-05).
@@ -103,16 +117,17 @@ uv run alembic upgrade head                                   # 0001 → 0002 �
 
 ---
 
-## 4. Repo structure (delta from 2026-05-06)
+## 4. Repo structure (delta from 2026-05-07)
 
 ```
 aueshah/
 ├── render.yaml                              committed but effectively unused — service is python runtime, not docker
 ├── SUMMARY.md                               (this file)
 ├── CLAUDE.md, LOCAL_CHANGES_RECOVERY.md     CLAUDE.md is operational rules; recovery doc is historical
-├── Data.txt                                 ★ v2.0 intelligence spec — distilled into system prompt operating-rules block (NOT loaded into RAG)
+├── Data.txt                                 ★ v3.0 intelligence spec — sections 17 (16 axes) + 18 (occasion playbook). Human-readable. NOT loaded into RAG.
+├── updated.pdf                              ★ NEW. Client's 24-page Luxury Jewelry Styling & Compatibility Reference Guide — source for v3.0.
 ├── specs/001-concierge-chat-api/            spec/plan/tasks
-├── history/adr/                             ADR-0001, 0002 (0003-0005 still pending)
+├── history/adr/                             ADR-0001, 0002 (0003-0006 still pending)
 ├── backend/
 │   ├── .env                                 gitignored — see §7
 │   ├── .env.backup                          gitignored — pre-migration credentials
@@ -120,66 +135,106 @@ aueshah/
 │   ├── alembic/versions/                    0001 + 0002 + 0003 (profile_facts JSONB)
 │   ├── Dockerfile (basic), Dockerfile.prod  Render uses NEITHER (python runtime). Both kept for portability.
 │   ├── app/
-│   │   ├── core/agents_factory.py           ★ triage with TIGHTENED rules, 5 specialists. Tools: search_catalog, recommend_pieces, noor_recommend, submit_noor_request, submit_appointment. product_agent now has [recommend_pieces, search_catalog, submit_appointment].
-│   │   ├── config/settings.py               concierge_alert_recipients property (splits comma-list)
-│   │   ├── config/prompts.py                ★ system prompt operating-rules block (Data.txt distilled inline, dead L1-L7 ref removed). Rewrites: product (consult-first, 3-layer presentation, never pivot to appointment) + general (appointment flow strictly gated behind trigger phrases).
-│   │   ├── services/product_catalog.py      ★ NEW. find_best_products(skin_tone, style, occasion, category, age) → {primary, secondary, statement}. Mirrors noor_catalog.py scoring across the 60-piece catalog.
+│   │   ├── main.py                          ★ CORS now reads settings.cors_origins (default-locked to aueshah.com / www.aueshah.com). PNA middleware tightened — won't echo unknown origins anymore.
+│   │   ├── core/agents_factory.py           ★ triage rule 4 explicitly catches stated occasions (engagement, anniversary, gift-for-mother…). recommend_pieces tool widened to 14 axes.
+│   │   ├── config/settings.py               concierge_alert_recipients + ★ NEW cors_allowed_origins / cors_origins property.
+│   │   ├── config/prompts.py                ★ v3.0 SYSTEM_PROMPT operating-intelligence block enumerates all 16 axes + 4 visual-psychology framings. SKILL_PROMPTS["product"] now contains the full 9-occasion playbook.
+│   │   ├── services/styling_engine.py       ★ NEW. derive_expectations() — pure-function: any subset of 16 axes → graded expectations. Sparse profile falls back to universal-safe combinations.
+│   │   ├── services/product_catalog.py      ★ find_best_products extended with 9 new optional dims. Each pick now carries a `reasons` array the agent echoes in its own voice.
 │   │   ├── services/noor_catalog.py         find_best_noor_pieces — unchanged
 │   │   ├── services/appointment_workflow.py fan-out one Resend per recipient under asyncio.gather(return_exceptions=True)
 │   │   ├── services/noor_workflow.py        same fan-out pattern
 │   │   ├── services/notifications/email.py  Resend (sync resend.Emails.send wrapped in asyncio.to_thread)
-│   │   ├── data/products.json               60 pieces · 7 categories · metal_tone + style + narrative tags
+│   │   ├── data/styling_rules.json          ★ NEW. The 16-axis rules + 9-occasion playbook encoded from updated.pdf. Single source of truth for the styling engine.
+│   │   ├── data/products.json               60 pieces. ★ Now also tagged with `birth_month_alignment` (58 pieces) and `cut` (10 rings: round/oval/heart/princess/cushion/emerald).
 │   │   ├── data/noor_catalog.json           5 Noor pieces · age_tier + occasion arrays
 │   │   └── db/repositories/users.py         defensive two-step upsert (wp_user_id → email fallback → reconcile)
-│   └── scripts/
-│       ├── widget3.html                     ★ WP chat widget — now with showAuthLoader/hideAuthLoader. Source-of-truth BACKEND const = https://aueshah.onrender.com.
-│       ├── push_widget.py                   ★ NEW. Surgical WP-page-1102 update helper. Builds JSON body with < / > unicode-escaped (< / >) so Cloudflare's WAF doesn't reject the POST on literal <script>.
-│       └── load_rag.py, smoke_rag.py
-└── ui/                                       Next.js test harness (dev only)
+│   ├── scripts/
+│   │   ├── widget3.html                     WP chat widget — showAuthLoader/hideAuthLoader. Source-of-truth BACKEND const = https://aueshah.onrender.com.
+│   │   ├── push_widget.py                   Surgical WP-page-1102 update helper (WAF-safe).
+│   │   ├── tag_birthstones.py               ★ NEW. Idempotent — auto-derives birth_month_alignment from each piece's stones array.
+│   │   ├── tag_cuts.py                      ★ NEW. Idempotent — applies hand-derived cut tag to all 10 rings.
+│   │   └── load_rag.py, smoke_rag.py
+│   └── tests/
+│       ├── unit/test_styling_engine.py        ★ NEW (28). Engine derivation across all 16 axes + sparse fallback.
+│       ├── unit/test_product_catalog_v3.py    ★ NEW (10). Matcher integration with new dims (engagement, birth-month, culture, backward compat).
+│       ├── unit/test_consultation_playbook.py ★ NEW (16). Asserts the playbook is wired into prompts + JSON consistently.
+│       └── integration/test_cors_lockdown.py  ★ NEW (8). Allowed/disallowed origin preflights, PNA bypass attempt, settings parser.
+└── ui/                                        Next.js test harness (dev only)
 ```
 
 ---
 
 ## 5. Client requirements
 
-All 17 sections of `requirements.docx` remain satisfied. **Tester complaint resolved 2026-05-07**: bot was pivoting to appointment collection on neutral messages — now consults first across all 7 categories, calls `recommend_pieces`, presents 3-layer output. Net behavior change confirmed via 4 live `/chat` tests on Render.
+All 17 sections of `requirements.docx` remain satisfied. **2026-05-08 update**: client supplied `updated.pdf` (Complete Luxury Jewelry Styling & Compatibility Reference Guide, 24 pages, 16 sections) asking for *"intelligence in chatbot like chatbot responsibility is to guide user for their requirements like a professional customer care … chatbot must consult … like in a real humanoid suggestions in a professional way."* Shipped as **Styling Intelligence v3.0** — the bot now consults across 16 axes via 9 occasion playbooks (engagement, anniversary, gift-for-partner, gift-for-mother, gift-for-friend, self-purchase, formal-event, milestone-birthday, heritage-addition) instead of running a generic age/skin-tone flow on every message. End-to-end engagement journey verified live (turns 1-5 → reference `APT-435CC498` written to Neon).
 
 ---
 
-## 6. What's done this session (2026-05-07)
+## 6. What's done this session (2026-05-08)
 
-### Consult-first sales intelligence (commit `43c203a`)
+### Styling Intelligence v3.0 (commit `f3b9a06`)
 
-**Diagnosed**: bot pivoted to appointment immediately on neutral messages. Three root causes:
-1. Data.txt's v2.0 intelligence (skin_tone → metal, style → form, 3-tier output, subtle upsell) was referenced by the system prompt but never actually loaded anywhere the model could see it (RAG load script doesn't embed it; `prompts.py:136` reference was dead).
-2. Triage rule 5 swept neutral messages into `general`, which had `submit_appointment` and a detailed appointment-collection flow → any "I want a ring" landed there.
-3. Profile-driven recommendation only existed for Noor — the 60 non-Noor pieces had no equivalent matcher; product agent fell back to raw RAG retrieval instead of curated picks.
+**Trigger**: client supplied `updated.pdf` — 24-page styling reference guide — and asked for the chatbot to consult like a "real humanoid" professional sales advisor across every dimension in the guide.
 
-**Implemented (4 surgical changes, 3 files, ~280 LoC net)**:
-- New `services/product_catalog.py` — `find_best_products(skin_tone, style_preference, occasion, category, age) → {primary, secondary, statement}`. Mirrors `noor_catalog.py` scoring (skin_tone → metal_tone, style → style match, occasion → narrative-keyword score) across all 60 non-Noor pieces. Returns layered picks per Data.txt's `recommendation_engine.output_structure`.
-- New `recommend_pieces` `@function_tool` in `agents_factory.py` — wraps the matcher, formats output as PRIMARY / SECONDARY / STATEMENT lines.
-- `product_agent.tools` now `[recommend_pieces, search_catalog, submit_appointment]` (last only for explicit-booking edge cases — prompt strictly gates).
-- Triage rules rewritten: rule 4 routes any category / style / recommendation / profile message to `product`. `general` only catches pure greetings, heritage, policies, or explicit booking. Tie-break favors `product`.
-- `product` skill prompt rewritten: **consult first via `recommend_pieces`, present 3 layers, never pivot to appointment unless client clearly asked.**
-- `general` skill prompt rewritten: **appointment flow STRICTLY GATED** behind trigger phrases ("book", "schedule", "see this in person", "viewing", "consultation", "can someone reach out"). Default = consultation + soft pivot to recommend.
-- System prompt's dead L1-L7 reference replaced with **concrete inline operating rules** distilled from Data.txt (read client across age/skin-tone/style/emotional-intent/wealth-signal; 3-layer presentation; subtle upsell methods; cross-category awareness; forbidden behaviors).
-- Updated `test_workflow_fans_out_email_notifications` to expect one concierge alert per configured recipient (was hardcoded to 1; broke after multi-recipient fan-out shipped).
+**Diagnosed gaps vs. v2.0**:
+1. v2.0 only consulted across 4 axes (age / skin tone / style / occasion). PDF needed 16.
+2. Engagement / anniversary / gift-for-mother / formal-event etc. all got the same generic profiling flow. PDF demanded occasion-specific consultation depth.
+3. Catalog pieces had no `cut` tag → finger-length matching for engagement was impossible.
+4. No birth-month alignment → couldn't surface a May-born client's emerald affinity.
 
-**Test status**: 122 → **123 / 127 passing**. The 4 remaining failures are pre-existing stale tests from Zaid's `eaa9cec` (no-gate personalization), unrelated.
+**Implemented (layered, backward-compatible, ~3300 LoC across 13 files)**:
 
-### Premium auth loader on Bespoke widget (commit `fd109d3`)
+**Knowledge layer**:
+- `backend/app/data/styling_rules.json` — single source of truth. 16 axes encoded: undertone→metal, surface tone→gemstone, face shape→form, body→scale, height→size, finger→cut, birth month→stone, culture→aesthetic, personality→energy, cut→persona, necklace length→fit, visual psychology, plus universal-safe combos.
+- `backend/app/services/styling_engine.py` — `derive_expectations(...)` pure function. Any subset of axes → graded `Expectations` bag (metal_tones / gem_categories / cuts / style_keywords / scale_keywords / avoid_metals / avoid_keywords / psychology_category / reasons). Sparse profile falls back to universal-safe combinations. No I/O beyond the one-time JSON load.
 
-**Problem**: on fresh registration → /bespoke/ redirect, the widget shows a 5-10s gap between page load and chat panel — the user sees a blank/flashing area while `ensureSession()` runs (WP cookie → mint-token → backend `/v1/auth/wp-login`, slowed further by Render free-tier cold starts).
+**Matcher integration**:
+- `services/product_catalog.py` — `find_best_products` extended with 9 new optional dims (`surface_tone`, `face_shape`, `body_shape`, `height_band`, `finger_length`, `birth_month`, `cultural_background`, `personality`, `budget_band`). Scores against engine expectations on top of v2 scoring. Each pick now carries a `reasons` array (e.g. `["warm undertone → yellow gold", "long fingers → emerald cut", "May → emerald"]`) the agent echoes verbatim — never invents.
+- `core/agents_factory.py` — `recommend_pieces` tool widened to 14 axes with full docstring stating "ONLY pass dims the client has actually expressed — never guess". Triage rule 4 explicitly catches stated occasions and routes to `product` (engagement, anniversary, gift-for-mother, etc.).
+
+**Catalog enrichment** (idempotent scripts):
+- `scripts/tag_birthstones.py` — auto-derives `birth_month_alignment` from each piece's `stones` array. Skips diamond unless it's the only stone (otherwise everything would tag as April). 58/60 pieces tagged.
+- `scripts/tag_cuts.py` — manual `cut` tagging on all 10 rings (Ecliptia: round, Vera Forma: princess, Eternal Wave: heart, Sovereign Crown: emerald, Royal Opulence: cushion, Whisper: oval, etc.).
+
+**Consultation behavior** (the user-visible part):
+- `config/prompts.py` SYSTEM_PROMPT operating-intelligence block lists all 16 axes with one-line rules + 4 visual-psychology framings (high-contrast / harmony / royal / quiet) + universal-safe combos. Explicit "never invent reasons" rule.
+- `SKILL_PROMPTS["product"]` contains the full **9-occasion playbook**:
+  - **Engagement** → *"does she lean classic or modern? long fingers, short, or balanced?"* — primary + 1 alt (skip statement tier).
+  - **Anniversary** → *"milestone year? quiet luxury or royal at heart?"* — 3-tier, royal psychology.
+  - **Gift for partner / mother / friend** — distinct openings, key axes, depth.
+  - **Self-purchase**, **formal event**, **milestone birthday**, **heritage addition**, **neutral** (no occasion stated).
+- General skill prompt tightened to hand off occasions cleanly (no duplicate appointment collection).
+
+**Spec**: `Data.txt` bumped to v3.0 with sections 17 (16 axes) + 18 (occasion playbook). Per project convention, NOT loaded into RAG.
+
+**Tests**: 54 new (28 engine + 10 matcher + 16 prompt-content). 122→**177 / 181 passing** (the 4 still failing are the same pre-existing stale tests from `eaa9cec`).
+
+**Live verification** (5-turn engagement journey + neutral negative case, see §2 table): bot opens with the engagement playbook question, calls `recommend_pieces` with `category=ring`, returns Vera Forma (princess cut → matches long fingers), echoes ONE styling reason, never pivots to appointment until the client explicitly asks → reference `APT-435CC498` written to Neon.
+
+### Render plan upgrade — Free → Standard (24/7 always-on)
+
+**Changed by client** in Render dashboard. Confirmed via `render services -o json --confirm` → `serviceDetails.plan: "standard"`. Five back-to-back `/health` probes all sub-second (0.28-0.31s) → no sleep, no cold start. Resolves SUMMARY.md §9 Priority 2 from previous session. p95 ≤ 3s SLA now reachable.
+
+### CORS lockdown (commit `7350a53`)
+
+**Problem**: previous CORS was `allow_origin_regex=".*"`. With the service now always-on, that's the largest abuse surface — any third-party site's JavaScript could call `/chat` and burn OpenAI credits or spam the concierge inbox.
 
 **Implemented**:
-- `widget3.html`: new `showAuthLoader()` / `hideAuthLoader()` helpers. Loader is a centered 760px panel matching the chat aesthetic (cream `#fbf8f1`, 1px tan border, rounded 10px, 300px min-height). Inside: "Au" monogram circle (52px, cocoa `#3a2f24`), **Authenticating** caption (15px Georgia serif), pulsing-dots animation (`@keyframes auDot` reused from the bot reply spinner), **PREPARING YOUR CONCIERGE** subline in 11px tan letter-spaced uppercase.
-- `injectKeyframes()` factored out so loader and reply spinner share the rule.
-- `showAuthLoader()` hides `#au-chat-panel` and `#au-chat-locked` so neither flashes before auth resolves.
-- `wire()` calls `showAuthLoader` at top, `hideAuthLoader` after `await ensureSession()`.
-- `BACKEND` const in widget3.html source updated from the dead trycloudflare URL to the Render URL (was out of sync with what's on aueshah.com page 1102).
-- New `scripts/push_widget.py` — reusable surgical update helper. Builds the JSON body with raw `<` and `>` byte-replaced by their JSON unicode-escape sequences (`<` / `>`) so Cloudflare's WAF doesn't reject the POST on literal `<script>`. POSTs via curl over http/1.1.
+- New setting `cors_allowed_origins` (env-driven, comma-separated, default `https://aueshah.com,https://www.aueshah.com`). `settings.cors_origins` property returns the parsed list.
+- `main.py` CORSMiddleware now reads `settings.cors_origins`. Methods narrowed from `*` to `GET, POST, PATCH, DELETE, OPTIONS`. Removed the dead "uncomment for production" comment block.
+- **Hardened the Private-Network-Access middleware** — previously it echoed back the requesting `Origin` header on PNA preflights, which would have silently bypassed the CORS lockdown for any browser setting `Access-Control-Request-Private-Network: true`. Now: PNA path returns **403** for unknown origins; only echoes `Access-Control-Allow-Origin` when the origin is in the allowlist.
 
-**Verified live on `https://aueshah.com/bespoke/`** (page modified `2026-05-07T23:53:12`): all loader markers present in public HTML — `showAuthLoader`, `hideAuthLoader`, `#au-auth-loader`, "Authenticating", "Preparing your concierge", `@keyframes auDot`, `aueshah.onrender.com`. Old `prayer-makeup-identity-respond.trycloudflare.com` URL fully removed.
+**Tests**: 8 new in `tests/integration/test_cors_lockdown.py`. **177→185 / 189 passing**.
+
+**Verified live on Render** post-deploy:
+- preflight from `https://aueshah.com` → 200 + correct allow-origin header
+- preflight from `https://www.aueshah.com` → 200 + correct allow-origin header
+- preflight from `https://evil-attacker.example` → **400 Bad Request**, no allow-origin echo
+- PNA bypass attempt from rogue origin → **403 Forbidden**
+- `/health` server-to-server still reachable
+
+For local dev or other deployments, override via `CORS_ALLOWED_ORIGINS` in `.env` (e.g. add `http://localhost:3000` for the Next.js test harness).
 
 ---
 
@@ -206,6 +261,9 @@ ADMIN_API_TOKEN=…                              (gates /admin/*)
 JWT_AUTH_SECRET_KEY='pEB-g<T%lIIb5#…'          (HS256, must match aueshah.com wp-config.php)
 WP_BASE_URL=https://aueshah.com
 WP_ISSUER=https://aueshah.com
+
+# Optional (default-locked to production hostnames if absent)
+CORS_ALLOWED_ORIGINS=https://aueshah.com,https://www.aueshah.com   # add localhost entries for dev
 
 # Not set
 SLACK_WEBHOOK_NOOR=
@@ -255,7 +313,7 @@ Lazy provisioning: a Neon row is created the first time a WP user opens chat.
 
 ## 9. What's remaining
 
-### PRIORITY 1 — Resend domain verification (the biggest functional gap)
+### PRIORITY 1 — Resend domain verification (the biggest functional gap, unchanged from last session)
 Until `aueshah.com` is added at **resend.com/domains** and DNS-verified, **only `shahs.jewel@gmail.com` is a deliverable recipient**. Sends to `service@aueshah.com` and to chat-user-supplied emails return Resend's sandbox 403 *"You can only send testing emails to your own email address…"* — handled gracefully (warning, not crash) but those emails never arrive.
 
 Steps:
@@ -264,60 +322,65 @@ Steps:
 3. Verify; usually 5–30 min
 4. On Render, change `RESEND_FROM_EMAIL=Aueshah Concierge <concierge@aueshah.com>` (or similar verified-domain sender)
 
-### PRIORITY 2 — Optional Render plan upgrade ($7/mo Starter)
-Free plan sleeps after 15 min idle → ~30s cold start on first request. Starter eliminates sleep, gives 5× CPU (cuts warm chat from ~4.8s to ~2–3s, back inside the p95 ≤ 3s SLA), zero-downtime deploys. Same URL, same env vars — no code change.
+### PRIORITY 2 — Real user end-to-end on aueshah.com/bespoke/ (carry-over)
+Open in a private window, log in via the chat widget, run a real engagement-ring conversation through the v3 playbook, confirm the 3-tier recommendation appears with the styling reason verbalized in the bot's voice. Then ask to book and confirm email lands at `shahs.jewel@gmail.com`. Anonymous `/chat` smoke tests passed (see §2 table) — but a WP-authed flow should be driven by the user in a logged-in browser.
 
-```bash
-render services update srv-d7t7qook1i2s73cebb0g --plan starter --confirm
-```
+### PRIORITY 3 — Catalog enrichment expansion (deferred)
+v3.0 ships with `cut` tagged on rings + `birth_month_alignment` on 58/60 pieces. The remaining face-shape / body-shape / hand-compat tagging on the 50 non-ring pieces (earrings / necklaces / pendants / etc.) was deferred — the engine derives reasonable signal from existing `metal_tone` + `style` + `narrative` text, and validating the engagement path with a real client should come first. If the client asks for tighter face-shape recommendations on earrings, the playbook is: extend `tag_*.py` scripts in `backend/scripts/`, run `--dry`, review, commit.
 
-The new auth loader masks cold-start visibly on the bespoke page, but a paid tier still improves real warm-chat latency.
-
-### PRIORITY 3 — Real user end-to-end on aueshah.com/bespoke/
-Open in a private window, log in via the chat widget, ask for a ring, give profile, confirm 3-layer recommendation appears with cohesive narrative. Then ask to book and confirm email lands at `shahs.jewel@gmail.com`. The four anonymous `/chat` smoke tests passed — but a real WP-authed flow should be done by the user (a real WP-minted token is only obtainable from a logged-in browser).
-
-### PRIORITY 4 — CORS lockdown
-Currently `allow_origin_regex=".*"`. For production, change to explicit `https://aueshah.com` (the production block is commented in `backend/app/main.py` lines ~71–81, ready to paste).
-
-### PRIORITY 5 — Deferred cleanup
+### PRIORITY 4 — Deferred cleanup
 | Task | Notes |
 |---|---|
-| ADR-0003 / 0004 / 0005 / 0006 | RS256→HS256 swap; SendGrid→Resend + appointment tool; service migration to client accounts; consult-first intelligence rewrite |
-| Update 4 stale tests | Match Zaid's no-gate personalization (not a code bug) |
+| ADR-0003 / 0004 / 0005 / 0006 / 0007 | RS256→HS256 swap; SendGrid→Resend + appointment tool; service migration to client accounts; consult-first intelligence rewrite (`43c203a`); **styling intelligence v3.0 (`f3b9a06`)**; **CORS lockdown (`7350a53`)** |
+| Update 4 stale tests | `test_gap_features.py` (2) + `test_summary_builder.py` (2) — match Zaid's no-gate personalization from `eaa9cec`. Not a code bug, the tests' expectations are stale. |
 | Slack webhooks | Set `SLACK_WEBHOOK_NOOR` / `SLACK_WEBHOOK_APPOINTMENTS` if client wants them |
 | WP `scripts/wp_mock.py` | Obsolete (was JWKS mock for the old RS256 flow) |
 | Old data migration | Greenfield client stack — prior 7 users / 108 vectors / appointments not migrated |
+
+### Resolved this session
+- **~~PRIORITY 2 Render plan upgrade~~** → Done. Service is on Standard ($25/mo, 24/7).
+- **~~PRIORITY 4 CORS lockdown~~** → Done. Locked to `aueshah.com` + `www.aueshah.com`, PNA bypass closed.
+- **~~Tester complaint about appointment-pivoting on neutral messages~~** → Resolved last session, reinforced this session with the v3 occasion playbook (engagement / anniversary / etc. each have their own consult flow that does NOT pivot to appointment unless the client explicitly asks).
 
 ---
 
 ## 10. Quick orientation for new Claude session
 
 ### Before any work
-1. Read `CLAUDE.md` (operational rules) + this file + `Data.txt` (intelligence spec).
+1. Read `CLAUDE.md` (operational rules) + this file + `Data.txt` (v3.0 intelligence spec) + `updated.pdf` (the source styling guide if doing styling work).
 2. `git status` / `git log -3 --oneline` / current branch.
 3. Check `backend/.env` for what's connected.
 4. If user mentions chat broken on the live site:
-   - First check: `curl -sS https://aueshah.onrender.com/health` (free plan may be cold-booting — give it 30s)
+   - First check: `curl -sS https://aueshah.onrender.com/health` (Standard plan = always warm; sub-second response. If it's slow, something else is wrong.)
    - Second check: `render logs --resources srv-d7t7qook1i2s73cebb0g --limit 50 --confirm -o text`
    - Third check: WP page 1102's `BACKEND` constant still says `https://aueshah.onrender.com`
-5. If user mentions chatbot pivots to appointment / generic answers:
-   - Triage routing — confirm message is landing in `product` (rule 4) not `general` (rule 5). Logs metadata.skill in `/chat` response.
-   - `recommend_pieces` tool fires — if not, the model is trying to RAG via `search_catalog` instead. Tighten product prompt.
+5. If user mentions chatbot pivots to appointment / generic answers / asks the wrong opening question:
+   - Triage routing — confirm message is landing in `product` (rule 4) not `general` (rule 5). Logs `metadata.skill` in `/chat` response.
+   - `recommend_pieces` tool fires — if not, the model is trying to RAG via `search_catalog` instead. Tighten product prompt or scope the playbook trigger.
+   - Wrong opening question — confirm the occasion playbook in `prompts.py` SKILL_PROMPTS["product"] still has the trigger phrase the user expects ("engagement", "anniversary", etc.). Cross-check against `styling_rules.json` `occasion_playbook` entries.
+6. If a CORS error appears in the user's browser console:
+   - Confirm the calling host is in `settings.cors_origins` (default = `aueshah.com` + `www.aueshah.com`).
+   - For local dev, set `CORS_ALLOWED_ORIGINS` in `backend/.env`.
 
 ### Key files to scan
-- `backend/app/core/agents_factory.py` — triage + 5 specialists + 5 tools (incl. `recommend_pieces`)
-- `backend/app/config/prompts.py` — brand brain, TONE, operating-rules block, 5 skill prompts
-- `backend/app/config/settings.py` — env vars + `concierge_alert_recipients`
-- `backend/app/services/product_catalog.py` — full-catalog matcher (3-tier output)
-- `backend/app/services/noor_catalog.py` — Noor matcher (parallel pattern)
-- `backend/app/services/appointment_workflow.py` + `noor_workflow.py` — multi-recipient fan-out
-- `backend/app/api/routes.py` — POST /chat, /appointment-request, /health
-- `backend/app/auth/wp_verifier.py` — HS256 WP token verification
-- `backend/app/db/repositories/users.py` — defensive upsert
-- `backend/app/db/models.py` — has `profile_facts: JSONB` (migration 0003)
-- `backend/scripts/widget3.html` — WP chat widget (inlined into Bespoke page) + auth loader
-- `backend/scripts/push_widget.py` — surgical WP-page-1102 update helper (WAF-safe)
-- `backend/requirements.txt` — must stay aligned with `pyproject.toml` (Render builds from this)
+- `backend/app/main.py` — CORSMiddleware (locked) + PNA middleware (tightened)
+- `backend/app/core/agents_factory.py` — triage + 5 specialists. `recommend_pieces` tool widened to 14 axes. Triage rule 4 catches occasions.
+- `backend/app/config/prompts.py` — v3.0 SYSTEM_PROMPT operating-intelligence (16 axes) + SKILL_PROMPTS["product"] **9-occasion playbook**.
+- `backend/app/config/settings.py` — env vars + `concierge_alert_recipients` + `cors_origins`.
+- `backend/app/data/styling_rules.json` — **single source of truth for the 16 axes + 9 playbooks**. Edit here, not in the prompt.
+- `backend/app/services/styling_engine.py` — `derive_expectations(...)` pure function. Add a new axis here AND in styling_rules.json.
+- `backend/app/services/product_catalog.py` — full-catalog matcher with `reasons` per pick.
+- `backend/app/services/noor_catalog.py` — Noor matcher (parallel pattern, not yet v3-extended).
+- `backend/app/services/appointment_workflow.py` + `noor_workflow.py` — multi-recipient fan-out.
+- `backend/app/data/products.json` — 60 pieces, now with `cut` (rings) + `birth_month_alignment` + `birth_month`.
+- `backend/app/api/routes.py` — POST /chat, /appointment-request, /health.
+- `backend/app/auth/wp_verifier.py` — HS256 WP token verification.
+- `backend/app/db/repositories/users.py` — defensive upsert.
+- `backend/app/db/models.py` — has `profile_facts: JSONB` (migration 0003).
+- `backend/scripts/widget3.html` — WP chat widget (inlined into Bespoke page) + auth loader.
+- `backend/scripts/push_widget.py` — surgical WP-page-1102 update helper (WAF-safe).
+- `backend/scripts/tag_birthstones.py`, `scripts/tag_cuts.py` — idempotent catalog enrichment helpers (re-run safely after any catalog edit).
+- `backend/requirements.txt` — must stay aligned with `pyproject.toml` (Render builds from this).
 
 ### Render operations
 ```bash
@@ -342,14 +405,17 @@ cd backend && python scripts/push_widget.py
 ```
 
 ### Non-negotiables
-- Factual detail in Qdrant + JSON, **never** the system prompt body.
-- Never hallucinate pieces, prices, stock, materials. Prefer uncertainty.
+- Factual detail (piece names, materials, stones, prices) lives in Qdrant + `products.json` / `noor_catalog.json`, **never** the system prompt body.
+- Styling **rules** live in `styling_rules.json` (the engine reads this). Behavior lives in prompts. Never duplicate rules into the prompt body.
+- Never hallucinate pieces, prices, stock, materials, or styling reasons. The matcher attaches `reasons` to each pick — the bot echoes one in its own voice; never invents.
 - API keys never leave the server. All AI calls server-side.
 - Keep diffs minimal. No unrelated refactors.
 - Live edits to `aueshah.com` are high blast-radius — show the diff and confirm before pushing.
-- `requirements.docx` is the authoritative client spec — all 17 sections must stay matched.
+- `requirements.docx` is the authoritative client spec — all 17 sections must stay matched. v3.0 satisfies the 2026-05-08 `updated.pdf` styling addendum.
 - `backend/requirements.txt` and `backend/pyproject.toml` must stay aligned (Render builds from `requirements.txt`).
 - **Default mode for the bot is consultation, not transaction.** Triage favors `product`; appointment collection is gated behind explicit booking phrases.
+- When the client states an occasion (engagement / anniversary / gift / formal event / etc.), the bot runs the matching **occasion playbook** from `SKILL_PROMPTS["product"]`, NOT the generic age/skin-tone profiling flow.
+- CORS is locked to `aueshah.com` + `www.aueshah.com` by default. Adding a new origin = update `CORS_ALLOWED_ORIGINS` env var, NOT relax the allowlist back to `.*`.
 
 ### Resume from
-**Priority 1: Resend domain verification.** Then **Priority 2: optional Render plan upgrade**. Priority 3 (real user end-to-end) is something the user should drive in their browser — anonymous smoke tests already validated the consult-first behavior across 4 representative messages.
+**Priority 1: Resend domain verification.** Then **Priority 2: real user end-to-end on aueshah.com/bespoke/** — drive a real engagement-ring conversation through the v3 playbook in a logged-in browser to confirm WP-authed flow works end-to-end (anonymous smoke tests in §2 already validated all the surface behaviors).
