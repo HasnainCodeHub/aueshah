@@ -431,11 +431,17 @@ def build_triage_agent() -> Agent:
 
     bespoke_agent = Agent(
         name="bespoke",
-        handoff_description="Handle custom, made-to-order, one-of-a-kind design requests. Route warmly to our atelier.",
+        handoff_description=(
+            "Handle EXPLICIT custom-design / made-to-order / one-of-a-kind design requests where the client used "
+            "phrases like 'bespoke', 'custom-made', 'design from scratch', 'commission a piece'. "
+            "DO NOT use this skill for engagement / anniversary / wedding / gift / proposal / heirloom inquiries — those "
+            "are consultation cues that route to `product`. When this skill IS the right one, consult the client deeply on "
+            "their vision (occasion, recipient, style, stone, emotion) BEFORE collecting any contact info — never email-first."
+        ),
         instructions=_specialist_instructions("bespoke"),
         model=model,
         model_settings=model_settings,
-        tools=[submit_appointment],
+        tools=[recommend_pieces, search_catalog, submit_appointment],
     )
 
     general_agent = Agent(
@@ -455,7 +461,21 @@ def build_triage_agent() -> Agent:
             "to the most appropriate specialist. You do not write replies yourself.\n\n"
             "HANDOFF RULES (apply in order — first match wins):\n"
             "1. If the message mentions the Noor Collection by name → hand off to `noor`.\n"
-            "2. If the message is about custom / bespoke / made-to-order / one-of-a-kind design → hand off to `bespoke`.\n"
+            "2. BESPOKE — hand off ONLY when the message contains one of these EXPLICIT custom-design phrases: "
+            "'bespoke', 'custom-made', 'custom-designed', 'custom design', 'made-to-order', 'one-of-a-kind', "
+            "'design from scratch', 'commission a piece', 'designed just for', 'create something unique for me', "
+            "'I want it customised'. \n"
+            "   STRICT ANTI-PATTERN — DO NOT route to bespoke just because an occasion or a future timeline is mentioned. "
+            "ALL of the following ALWAYS go to `product`, NEVER to `bespoke`, unless the client ALSO uses one of the "
+            "explicit custom-design phrases above:\n"
+            "     • 'engagement ring', 'engagement', 'I'm getting engaged', 'proposing next month', 'she said yes'\n"
+            "     • 'anniversary', 'we're celebrating X years', 'wedding band', 'wedding ring'\n"
+            "     • 'gift for my wife / partner / girlfriend / mother / sister / friend / daughter'\n"
+            "     • 'for myself', 'treating myself', 'something for me'\n"
+            "     • 'formal event', 'gala', 'wedding I'm attending', 'milestone birthday', 'heirloom', 'heritage piece'\n"
+            "   These are CONSULTATION cues. The product skill runs the matching occasion playbook (engagement / "
+            "anniversary / gift / etc.) and consults the client like a level-5 advisor. Bespoke is reserved ONLY for "
+            "clients who have explicitly told us they want a piece designed from scratch.\n"
             "3. If the message compares two or more specific pieces → hand off to `compare`.\n"
             "4. If the message expresses ANY of the following, hand off to `product`:\n"
             "   - interest in a piece or collection ('I want', 'I'm looking for', 'show me', 'do you have')\n"
@@ -467,7 +487,8 @@ def build_triage_agent() -> Agent:
             "5. Otherwise (pure greetings with no other intent, heritage / brand / philosophy questions, "
             "policies, care, warranty, repair, sizing, explicit appointment requests, anything unclear) → hand off to `general`.\n\n"
             "When in doubt between `product` and `general`, prefer `product` — the client experience "
-            "is consultative, not transactional. Never reply directly — always hand off."
+            "is consultative, not transactional. When in doubt between `bespoke` and `product`, prefer `product` "
+            "unless the explicit custom-design phrase is present. Never reply directly — always hand off."
         ),
         model=model,
         model_settings=ModelSettings(temperature=0.0),
