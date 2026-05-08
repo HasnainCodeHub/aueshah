@@ -34,51 +34,45 @@ app.add_middleware(ErrorHandlerMiddleware)
 # is also stamped on logs emitted by the error path.
 app.add_middleware(RequestContextMiddleware)
 
-# 2. CORS — DEV: allow all origins so the WP/Elementor editor can reach localhost.
-# ⚠️ PRODUCTION: replace with the locked-down block below before deploying.
+# 2. CORS — locked to the allowlist in settings.cors_origins. Default
+# allowlist is production-only (aueshah.com / www.aueshah.com); local dev
+# overrides via CORS_ALLOWED_ORIGINS in .env. allow_credentials=True is
+# required for the WP-bridged Bearer auth flow.
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=".*",   # wildcard that still permits credentials
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 
 # Chrome "Private Network Access" — public HTTPS sites calling http://127.0.0.1
-# require this header on the preflight (and the matching response). Without it
-# Chrome blocks the request with: "Permission was denied for this request to
-# access the `loopback` address space."
+# require this header on the preflight. Tightened: only echo the origin back
+# when it's in the CORS allowlist, otherwise the PNA path would silently
+# bypass the lockdown by reflecting any caller's origin.
 @app.middleware("http")
 async def private_network_access(request, call_next):
+    origin = request.headers.get("origin", "")
     if request.method == "OPTIONS" and request.headers.get("access-control-request-private-network", "").lower() == "true":
         from fastapi.responses import Response
-        origin = request.headers.get("origin", "*")
-        return Response(
-            status_code=204,
-            headers={
-                "Access-Control-Allow-Origin": origin,
-                "Access-Control-Allow-Credentials": "true",
-                "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": request.headers.get("access-control-request-headers", "*"),
-                "Access-Control-Allow-Private-Network": "true",
-                "Access-Control-Max-Age": "86400",
-            },
-        )
+        if origin in settings.cors_origins:
+            return Response(
+                status_code=204,
+                headers={
+                    "Access-Control-Allow-Origin": origin,
+                    "Access-Control-Allow-Credentials": "true",
+                    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": request.headers.get("access-control-request-headers", "*"),
+                    "Access-Control-Allow-Private-Network": "true",
+                    "Access-Control-Max-Age": "86400",
+                },
+            )
+        return Response(status_code=403)
     response = await call_next(request)
-    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    if origin in settings.cors_origins:
+        response.headers["Access-Control-Allow-Private-Network"] = "true"
     return response
-# PRODUCTION CORS (uncomment and remove the block above before deploying):
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[
-#         "https://aueshah.com",
-#         "https://www.aueshah.com",
-#     ],
-#     allow_credentials=True,
-#     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-#     allow_headers=["*"],
-# )
 
 # 3. Timeout — 15s hard cap on /chat requests
 app.add_middleware(TimeoutMiddleware)

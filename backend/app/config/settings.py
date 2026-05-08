@@ -77,6 +77,15 @@ class Settings(BaseSettings):
     noor_cooldown_days: int = 365
     noor_max_allocations: int = 143
 
+    # CORS — comma-separated allowlist. Defaults locked to production hostnames;
+    # override in .env for local dev (e.g. add http://localhost:3000 for the
+    # Next.js test harness or http://localhost:8001 for direct probes).
+    cors_allowed_origins: str = "https://aueshah.com,https://www.aueshah.com"
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [o.strip() for o in self.cors_allowed_origins.split(",") if o.strip()]
+
     class Config:
         env_file = ".env"
         case_sensitive = False
