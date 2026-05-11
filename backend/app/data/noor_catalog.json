@@ -1,6 +1,6 @@
 {
   "_source": "Scraped from https://aueshah.com/ — official Noor Collection product pages.",
-  "_note": "Limited edition: 143 pieces worldwide per SKU. Not publicly listed; private viewing by appointment only. All pieces are 925 sterling silver with 18-carat gold plating, zircon-set, Mughal jali-inspired.",
+  "_note": "Limited edition: 143 pieces worldwide per SKU. Not publicly listed on individual product pages (private viewing by appointment only) but prices are disclosed on the Noor Collection Story page. All pieces are 925 sterling silver with 18-carat gold plating, zircon-set, Mughal jali-inspired. Noor's birthday is 9 September — this is encoded as the '99' that joins '143' (I-love-you) in the Tiara price (€14,399).",
   "pieces": [
     {
       "id": "noor-ring",
@@ -14,7 +14,9 @@
       "age_tier": ["established", "mature"],
       "occasion": ["love", "anniversary", "legacy", "milestone"],
       "description": "Built on Mughal arch geometry, the Noor Ring rises from an open jali base cut with scrollwork visible through the lattice. A single pear-shaped zircon sits suspended within a pointed oval frame at the crown, hand-set, centered. A pavé border of brilliant-cut zircons traces the inner frame. The outer edges extend into four pointed lobes — a seal-like crest profile that sits wide and flat against the hand.",
-      "narrative": "Love outlasted the distance. 1,096 kilometres once existed between two people who refused to let it matter — he measured the distance, then made it the price of a ring."
+      "narrative": "Love outlasted the distance. 1,096 kilometres once existed between two people who refused to let it matter — he measured the distance, then made it the price of a ring.",
+      "price_eur": 1096,
+      "price_meaning": "The exact distance between them, in kilometres. A love that does not shrink with geography."
     },
     {
       "id": "noor-bracelet",
@@ -28,7 +30,9 @@
       "age_tier": ["established", "mature"],
       "occasion": ["love", "anniversary", "legacy"],
       "description": "A heritage cuff of articulated square jali panels, hand-linked. Open-cut Mughal lattice with pavé-set brilliant-cut zircons at every edge and corner; one brilliant-cut zircon open-set at the center of each panel, visible through the metalwork from every angle. The cuff conforms to the wrist as it moves.",
-      "narrative": "He spent more than a month counting every 'I love you' across every medium, every hour, every distance. When he reached 5,098, he made it the price — then built it into this cuff."
+      "narrative": "He spent more than a month counting every 'I love you' across every medium, every hour, every distance. When he reached 5,098, he made it the price — then built it into this cuff.",
+      "price_eur": 5098,
+      "price_meaning": "The exact number of times he said 'I love you' to her counted personally, across every message and call, since the day he fell."
     },
     {
       "id": "noor-earrings",
@@ -42,7 +46,9 @@
       "age_tier": ["young", "established", "mature"],
       "occasion": ["love", "gift", "celebration", "legacy"],
       "description": "Two stacked jali panels per piece, open-cut so metal recedes and stone remains. Two pear-shaped zircons anchor each panel; five free-hanging teardrop zircons descend from the lower panel, the largest at the center, graduating in size toward each side. Shoulder-length drops.",
-      "narrative": "Two pieces, one person — always together. Born the same year, made for each other."
+      "narrative": "Two pieces, one person — always together. Born the same year, made for each other.",
+      "price_eur": 2003,
+      "price_meaning": "The birth year of both Noor and Murshad. Two people, one number. Made for each other before they ever met."
     },
     {
       "id": "noor-necklace",
@@ -56,7 +62,9 @@
       "age_tier": ["established", "mature"],
       "occasion": ["love", "legacy", "milestone"],
       "description": "A collar necklace inspired by Mughal jali openwork and Pakhtoon traditional teardrop stone design. A center stone with graduating zircons, thirteen pear-shaped drops hanging freely along the lower edge, and pavé-set stones throughout.",
-      "narrative": "The Noor Necklace is reserved only for those who know that the most precious of things are kept closest to the heart — a name coded in numbers: 11 for N, two 00 for O-O, 9 for R."
+      "narrative": "The Noor Necklace is reserved only for those who know that the most precious of things are kept closest to the heart — a name coded in numbers: 11 for N, two 00 for O-O, 9 for R.",
+      "price_eur": 11009,
+      "price_meaning": "11 = N. 00 = OO. 9 = R. Her name, written in numbers. Priced in love. Worn over the heart where she lives."
     },
     {
       "id": "noor-tiara",
@@ -70,7 +78,9 @@
       "age_tier": ["established", "mature"],
       "occasion": ["legacy", "milestone", "celebration", "status"],
       "description": "A heritage headpiece built on Mughal jali openwork — pear-shaped gems rising in a balanced lattice. Each stone sparkles with intended brilliance; every curve, rise, and hand-set zircon reflects meticulous craftsmanship. Feeling should never outshine refinement.",
-      "narrative": "Where legacy chooses you. Built to last, meant to mean something — 143, the numerical code for 'I love you'."
+      "narrative": "Where legacy chooses you. Built to last, meant to mean something — 143, the numerical code for 'I love you'.",
+      "price_eur": 14399,
+      "price_meaning": "143, I love you in numbers. 99, her birthday, the 9th of September. Limited to 143 pieces only. Because that is exactly how many times he means it."
     }
   ]
 }

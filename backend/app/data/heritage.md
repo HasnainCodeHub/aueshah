@@ -70,7 +70,21 @@ The designer deliberately chose to avoid diamonds: "I did not choose diamonds. B
 source: https://aueshah.com/the-noor-collection-story/
 topic: noor_piece_symbolism
 
-The Noor Tiara is a declaration of sovereignty, limited to 143 pieces — "exactly how many times he means it." The Ring (€1,096) represents the distance in kilometres separating them. The Earrings (€2,003) share their birth year. The Bracelet (€5,098) holds the precise count of "I love you" statements made across every message and call. The Necklace (€11,009) encodes her name in numbers: 11=N, 00=OO, 9=R.
+Every Noor price is a number that means something to the two people the collection was made for. The Noor Tiara (€14,399) combines 143 — "I love you" in numbers — with 99, Noor's birthday on the 9th of September; the SKU itself is limited to 143 pieces, "exactly how many times he means it." The Noor Ring (€1,096) is the distance in kilometres separating them. The Noor Earrings (€2,003) share their birth year. The Noor Bracelet (€5,098) is the precise count of "I love you" statements he made across every message and call. The Noor Necklace (€11,009) encodes her name in numbers: 11=N, 00=OO, 9=R.
+
+---
+
+source: https://aueshah.com/the-noor-collection-story/
+topic: noor_birthday
+
+Noor's birthday is the 9th of September, written numerically as 9/9 or simply "99". This date is encoded in the Noor Tiara price of €14,399 — the digits read as "143" (I-love-you in numbers) followed by "99" (her birthday). The 9 September birthday is the only date directly referenced in the collection's pricing scheme.
+
+---
+
+source: https://aueshah.com/the-noor-collection-story/
+topic: noor_price_descriptions
+
+Each Noor piece carries a one-line gloss explaining what its price means, intended to be read alongside the figure on the Noor Collection Story page. Noor Tiara — €14,399: "143, I love you in numbers. 99, her birthday, the 9th of September. Limited to 143 pieces only. Because that is exactly how many times he means it." Noor Ring — €1,096: "The exact distance between them, in kilometres. A love that does not shrink with geography." Noor Earrings — €2,003: "The birth year of both Noor and Murshad. Two people, one number. Made for each other before they ever met." Noor Bracelet — €5,098: "The exact number of times he said 'I love you' to her counted personally, across every message and call, since the day he fell." Noor Necklace — €11,009: "11 = N. 00 = OO. 9 = R. Her name, written in numbers. Priced in love. Worn over the heart where she lives."
 
 ---
 
